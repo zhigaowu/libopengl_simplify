@@ -23,8 +23,6 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-#include <iostream>
-
 namespace gl_simplify {
 
     namespace core {
@@ -44,6 +42,25 @@ namespace gl_simplify {
         private:
             class LookState
             {
+                void eularToVector(const glm::vec3& camera_location)
+                {
+                    if (_pitch > 89.0f)
+                    {
+                        _pitch = 89.0f;
+                    }
+                    if (_pitch < -89.0f)
+                    {
+                        _pitch = -89.0f;
+                    }
+
+                    glm::vec3 direction(cos(glm::radians(_yaw)) * cos(glm::radians(_pitch)),
+                        sin(glm::radians(_pitch)),
+                        sin(glm::radians(_yaw)) * cos(glm::radians(_pitch)));
+
+                    _front = glm::normalize(direction);
+                    _target = camera_location + _front;
+                }
+
             protected:
                 glm::vec3 _target;
 
@@ -88,24 +105,9 @@ namespace gl_simplify {
                 void RotateTo(const glm::vec3& camera_location, GLfloat yaw, GLfloat pitch)
                 {
                     _yaw = yaw;
-
                     _pitch = pitch;
 
-                    if (_pitch > 89.0f)
-                    {
-                        _pitch = 89.0f;
-                    }
-                    if (_pitch < -89.0f)
-                    {
-                        _pitch = -89.0f;
-                    }
-
-                    glm::vec3 direction(cos(glm::radians(_yaw)) * cos(glm::radians(_pitch)),
-                        sin(glm::radians(_pitch)),
-                        sin(glm::radians(_yaw)) * cos(glm::radians(_pitch)));
-
-                    _front = glm::normalize(direction);
-                    _target = camera_location + _front;
+                    eularToVector(camera_location);
                 }
 
                 void Rotate(const glm::vec3& camera_location, GLfloat yaw_adjusted, GLfloat pitch_adjusted)
@@ -114,23 +116,7 @@ namespace gl_simplify {
 
                     _pitch += pitch_adjusted;
 
-                    if (_pitch > 89.0f)
-                    {
-                        _pitch = 89.0f;
-                    }
-                    if (_pitch < -89.0f)
-                    {
-                        _pitch = -89.0f;
-                    }
-
-                    glm::vec3 direction(cos(glm::radians(_yaw)) * cos(glm::radians(_pitch)),
-                        sin(glm::radians(_pitch)),
-                        sin(glm::radians(_yaw)) * cos(glm::radians(_pitch)));
-
-                    _front = glm::normalize(direction);
-                    _target = camera_location + _front;
-
-                    std::cout << "yaw: " << _yaw << ", pitch: " << _pitch << std::endl;
+                    eularToVector(camera_location);
                 }
 
             };
