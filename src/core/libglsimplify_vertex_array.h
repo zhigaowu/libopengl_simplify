@@ -23,7 +23,7 @@ namespace gl_simplify {
 
     namespace core {
 
-        class VertexArray {
+        class VertexArray : private NonCopyable {
         public:
             using VertexArrayConfigurer = std::function<void(VertexArray&)>;
 
@@ -44,13 +44,6 @@ namespace gl_simplify {
             {
                 glBindVertexArray(0);
             }
-
-        public:
-            VertexArray(VertexArray&&) = delete;
-            VertexArray& operator=(VertexArray&&) = delete;
-
-            VertexArray(const VertexArray&) = delete;
-            VertexArray& operator=(const VertexArray&) = delete;
         
         private:
             std::vector<GLuint> _buffer_ids;

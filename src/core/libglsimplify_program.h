@@ -17,7 +17,7 @@
 #ifndef GL_SIMPLIFY_CORE_PROGRAM_H
 #define GL_SIMPLIFY_CORE_PROGRAM_H
 
-#include "libglsimplify_shader.h"
+#include "libglsimplify_types.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -29,7 +29,10 @@ namespace gl_simplify {
 
     namespace core {
 
-        class Program {
+        // forward declaration
+        class Shader;
+
+        class Program : private NonCopyable {
             template<typename ValueType>
             struct UniformValueSetter
             {
@@ -313,13 +316,6 @@ namespace gl_simplify {
             Program& Use(const ProgramConfigurer& program_configuer);
 
             Variable GetVariable(const std::string& vavriable_name);
-
-        public:
-            Program(Program&&) = delete;
-            Program& operator=(Program&&) = delete;
-
-            Program(const Program&) = delete;
-            Program& operator=(const Program&) = delete;
         
         private:
             GLuint _program_id;

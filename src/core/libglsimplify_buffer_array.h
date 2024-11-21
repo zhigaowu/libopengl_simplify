@@ -17,7 +17,7 @@
 #ifndef GL_SIMPLIFY_CORE_BUFFER_ARRAY_H
 #define GL_SIMPLIFY_CORE_BUFFER_ARRAY_H
 
-#include "glad/glad.h"
+#include "libglsimplify_types.h"
 
 #include <functional>
 #include <vector>
@@ -26,7 +26,7 @@ namespace gl_simplify {
 
     namespace core {
 
-        class BufferArray {
+        class BufferArray : private NonCopyable {
         public:
             using BufferArrayConfigurer = std::function<void(BufferArray&)>;
 
@@ -58,13 +58,6 @@ namespace gl_simplify {
             {
                 glBindBuffer(_buffer_type, 0);  
             }
-
-        public:
-            BufferArray(BufferArray&&) = delete;
-            BufferArray& operator=(BufferArray&&) = delete;
-
-            BufferArray(const BufferArray&) = delete;
-            BufferArray& operator=(const BufferArray&) = delete;
         
         private:
             GLenum _buffer_type;

@@ -17,7 +17,7 @@
 #ifndef GL_SIMPLIFY_CORE_TEXTURE_BUFFER_H
 #define GL_SIMPLIFY_CORE_TEXTURE_BUFFER_H
 
-#include "glad/glad.h"
+#include "libglsimplify_types.h"
 
 #include <string>
 #include <vector>
@@ -26,7 +26,7 @@ namespace gl_simplify {
 
     namespace core {
 
-        class TextureBuffer {
+        class TextureBuffer : private NonCopyable {
         public:
             class Texture {
             public:
@@ -99,13 +99,6 @@ namespace gl_simplify {
             ~TextureBuffer();
 
             Texture& GetTexture(GLint index = 0, GLenum texture_type = GL_TEXTURE_2D);
-
-        public:
-            TextureBuffer(TextureBuffer&&) = delete;
-            TextureBuffer& operator=(TextureBuffer&&) = delete;
-
-            TextureBuffer(const TextureBuffer&) = delete;
-            TextureBuffer& operator=(const TextureBuffer&) = delete;
         
         private:
             std::vector<Texture> _textures;

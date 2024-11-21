@@ -35,6 +35,8 @@ namespace gl_simplify {
             , _monitor(nullptr)
             , _share(nullptr)
 
+            , _camera(nullptr)
+
             , _callback_window_size_changed()
 
             , _callback_key_event_occurred()
@@ -45,6 +47,80 @@ namespace gl_simplify {
 
             , _callback_wheel_scrolled()
         {
+            _callback_key_event_occurred = [this](GLFWwindow* window, int key, int scancode, int action, int mods) {
+                switch (key)
+                {
+                case GLFW_KEY_ESCAPE:
+                {
+                    glfwSetWindowShouldClose(window, true);
+                    break;
+                }
+                case GLFW_KEY_W:
+                case GLFW_KEY_UP:
+                {
+                    _camera->Forward();
+                    break;
+                }
+                case GLFW_KEY_S:
+                case GLFW_KEY_DOWN:
+                {
+                    _camera->Backward();
+                    break;
+                }
+                case GLFW_KEY_A:
+                case GLFW_KEY_LEFT:
+                {
+                    _camera->Left();
+                    break;
+                }
+                case GLFW_KEY_D:
+                case GLFW_KEY_RIGHT:
+                {
+                    _camera->Right();
+                    break;
+                }
+                default:
+                    break;
+                }
+            };
+
+            _callback_mouse_entered = [this] (GLFWwindow*, int entered) {
+                ;
+            };
+
+            _callback_mouse_clicked = [this] (GLFWwindow*, int key, int action, int mods) {
+                if (GLFW_MOUSE_BUTTON_LEFT == key)
+                {
+                    _mouse.left_button_down = 1 == action;
+                }
+
+                if (GLFW_MOUSE_BUTTON_RIGHT == key)
+                {
+                    _mouse.right_button_down = 1 == action;
+                }
+
+                if (GLFW_MOUSE_BUTTON_MIDDLE == key)
+                {
+                    _mouse.middle_button_down = 1 == action;
+                }
+            };
+
+            _callback_mouse_moved = [this] (GLFWwindow*, double xpos, double ypos) {
+                if (_mouse.right_button_down)
+                {
+                    float xoffset = xpos - _mouse.x;
+                    float yoffset = _mouse.y - ypos; // reversed since y-coordinates range from bottom to top
+
+                    const float sensitivity = 0.1f;
+                    xoffset *= sensitivity;
+                    yoffset *= sensitivity;
+
+                    _camera->Rotate(xoffset, yoffset);
+                }
+
+                _mouse.x = xpos;
+                _mouse.y = ypos;
+            };
         }
 
         Window::~Window()
@@ -66,6 +142,8 @@ namespace gl_simplify {
                 std::atomic_thread_fence(std::memory_order_acq_rel);
 
                 gladLoadGL();
+
+                _camera = new entity::Camera((float)width / (float)height);
 
                 glfwSetFramebufferSizeCallback(_window, Window::glfw_callback_framebuffer_size_changed);
 
@@ -98,7 +176,7 @@ namespace gl_simplify {
             while (!glfwWindowShouldClose(_window))
             {
                 // render window
-                callback_render_window(_window);
+                callback_render_window(_window, _camera);
 
                 // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
                 // -------------------------------------------------------------------------------
@@ -112,8 +190,13 @@ namespace gl_simplify {
             if (_window)
             {
                 glfwDestroyWindow(_window);
-
                 _window = nullptr;
+            }
+
+            if (_camera)
+            {
+                delete _camera;
+                _camera = nullptr;
             }
         }
 

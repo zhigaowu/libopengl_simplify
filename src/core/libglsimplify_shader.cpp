@@ -1,26 +1,18 @@
 
 #include "libglsimplify_shader.h"
 
+#include "libglsimplify_program.h"
+
 namespace gl_simplify {
 
     namespace core {
 
-        GLint Shader::MaxVertexAttributesSupported()
-        {
-            GLint value = 0;
-            glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &value);
-            return value;
-        }
-
-        Shader::Shader(GLenum shader_type)
+        Shader::Shader(GLenum shader_type, const std::string& source_code)
             : id(glCreateShader(shader_type))
             , type(shader_type)
-            
-            , _sources_code()
-            , _sources_code_ref()
+
+            , source(source_code)
         {
-            _sources_code.reserve(64);
-            _sources_code_ref.reserve(64);
         }
 
         Shader::~Shader()
@@ -28,17 +20,13 @@ namespace gl_simplify {
             glDeleteShader(id);
         }
 
-        Shader &Shader::AddSource(const ShaderSource &source)
-        {
-            _sources_code.emplace_back(source.Code());
-            _sources_code_ref.push_back(_sources_code.back().c_str());
-
-            return *this;
-        }
-
         bool Shader::Compile(GLchar* error, GLsizei error_length)
         {
-            glShaderSource(id, static_cast<GLsizei>(_sources_code.size()), _sources_code_ref.data(), nullptr);
+            std::string source_string = source.Source();
+
+            const GLchar* sources[1] = { source_string.c_str() };
+
+            glShaderSource(id, 1, sources, nullptr);
             glCompileShader(id);
 
             int success = 0;
@@ -54,6 +42,10 @@ namespace gl_simplify {
                 
                 return false;
             }
+        }
+
+        void Shader::Update(Program &program)
+        {
         }
     }
 }

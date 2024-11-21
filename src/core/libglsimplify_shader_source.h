@@ -17,7 +17,7 @@
 #ifndef GL_SIMPLIFY_CORE_SHADER_SOURCE_H
 #define GL_SIMPLIFY_CORE_SHADER_SOURCE_H
 
-#include "glad/glad.h"
+#include "libglsimplify_types.h"
 
 #include <sstream>
 
@@ -25,21 +25,15 @@ namespace gl_simplify {
 
     namespace core {
 
-        class ShaderSource {
+        class ShaderSource : private NonCopyable {
         public:
-            explicit ShaderSource(const std::string& lines = "");
+            explicit ShaderSource(const std::string& source = "");
             ~ShaderSource();
-            
-            ShaderSource& operator << (const std::string& lines);
 
-            std::string Code() const;
+            ShaderSource& operator << (const char* source);
+            ShaderSource& operator << (const std::string& source);
 
-        public:
-            ShaderSource(ShaderSource&&) = delete;
-            ShaderSource& operator=(ShaderSource&&) = delete;
-
-            ShaderSource(const ShaderSource&) = delete;
-            ShaderSource& operator=(const ShaderSource&) = delete;
+            std::string Source() const;
         
         private:
             std::stringstream _source_stream;

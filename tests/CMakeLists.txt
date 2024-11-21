@@ -14,11 +14,16 @@ PRINT_CPLUS_FLAGS()
 MESSAGE(STATUS "--------------------------------------------------")
 
 # 将所有 src/*.cpp 文件列出来
-FILE(GLOB SIMPLIFY_SOURCES ${CMAKE_SOURCE_DIR}/src/glfw/*.cpp ${CMAKE_SOURCE_DIR}/src/core/*.cpp)
-FILE(GLOB MAIN_SOURCES ${PROJECT_SOURCE_DIR}/src/*.cpp)
+FILE(GLOB_RECURSE SIMPLIFY_SOURCES 
+    ${CMAKE_SOURCE_DIR}/src/*.cpp 
+    ${CMAKE_SOURCE_DIR}/src/*.h)
+
+FILE(GLOB_RECURSE PROJECT_SOURCES 
+    ${PROJECT_SOURCE_DIR}/src/*.cpp 
+    ${PROJECT_SOURCE_DIR}/src/*.h)
 
 # 所有的源文件+头文件需要在这个地方添加
-ADD_EXECUTABLE(tests ${glad_SOURCES} ${SIMPLIFY_SOURCES} ${MAIN_SOURCES})
+ADD_EXECUTABLE(tests ${glad_SOURCES} ${SIMPLIFY_SOURCES} ${PROJECT_SOURCES})
 
 IF (MSVC)
     # Tell MSVC to use main instead of WinMain

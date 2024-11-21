@@ -17,9 +17,13 @@
 #ifndef GL_SIMPLIFY_GLFW_WINDOW_H
 #define GL_SIMPLIFY_GLFW_WINDOW_H
 
-#include "glad/glad.h"
+#include "core/libglsimplify_types.h"
 
-#include "GLFW/glfw3.h"
+#include "libglsimplify_mouse.h"
+
+#include "entity/libglsimplify_camera.h"
+
+#include <GLFW/glfw3.h>
 
 #include <functional>
 
@@ -37,7 +41,7 @@ namespace gl_simplify {
 
         using CallbackWheelScrolled = std::function<void(GLFWwindow*, double, double)>; // double xoffset, double yoffset
 
-        using CallbackRenderWindow = std::function<void(GLFWwindow*)>;
+        using CallbackRenderWindow = std::function<void(GLFWwindow*, entity::Camera*)>;
 
         void Initialize(int glMajorVersion = 4, int glMinorVersion = 6);
 
@@ -45,10 +49,12 @@ namespace gl_simplify {
 
         void Shutdown();
 
-        class Window {
+        class Window : private core::NonCopyable {
         public:
             Window();
             ~Window();
+
+            entity::Camera* Camera() { return _camera; }
 
             GLFWwindow* Create(int width, int height, const char* title, GLFWmonitor* monitor = nullptr, GLFWwindow* share = nullptr);
 
@@ -56,7 +62,15 @@ namespace gl_simplify {
 
             void SetWindowSizeChangedCallback(const CallbackWindowSizeChanged& callback_window_size_changed)
             {
-                _callback_window_size_changed = callback_window_size_changed;
+                _callback_window_size_changed = [this, callback_window_size_changed] (GLFWwindow* window, int width, int height) {
+                    // change viewport
+                    glViewport(0, 0, width, height);
+                    
+                    // change camera perspective
+                    _camera->SetPerspectiveAspect((float)width / (float)height);
+                    
+                    callback_window_size_changed(window, width, height);
+                };
             }
 
             void SetKeyEventCallback(const CallbackKeyEventOcurred& callback_key_event_occurred)
@@ -68,26 +82,37 @@ namespace gl_simplify {
                 const CallbackMouseClicked& callback_mouse_clicked, 
                 const CallbackMouseMoved& callback_mouse_moved)
             {
-                _callback_mouse_entered = callback_mouse_entered;
-                _callback_mouse_clicked = callback_mouse_clicked;
-                _callback_mouse_moved = callback_mouse_moved;
+                CallbackMouseEntered default_callback_mouse_entered = _callback_mouse_entered;
+                _callback_mouse_entered = [default_callback_mouse_entered, callback_mouse_entered](GLFWwindow* window, int entered) {
+                    default_callback_mouse_entered(window, entered);
+                    callback_mouse_entered(window, entered);
+                };
+
+                CallbackMouseClicked default_callback_mouse_clicked = _callback_mouse_clicked;
+                _callback_mouse_clicked = [default_callback_mouse_clicked, callback_mouse_clicked](GLFWwindow* window, int key, int action, int mods) {
+                    default_callback_mouse_clicked(window, key, action, mods);
+                    callback_mouse_clicked(window, key, action, mods);
+                };
+
+                CallbackMouseMoved default_callback_mouse_moved = _callback_mouse_moved;
+                _callback_mouse_moved = [default_callback_mouse_moved, callback_mouse_moved](GLFWwindow* window, double xpos, double ypos) {
+                    default_callback_mouse_moved(window, xpos, ypos);
+                    callback_mouse_moved(window, xpos, ypos);
+                };
             }
 
             void SetWheelScrollCallback(const CallbackWheelScrolled& callback_wheel_scrolled)
             {
-                _callback_wheel_scrolled = callback_wheel_scrolled;
+                _callback_wheel_scrolled = [this, callback_wheel_scrolled] (GLFWwindow* window, double xoffset, double yoffset) {
+                    _camera->AdjustPerspectiveFovyDegree(-yoffset);
+
+                    callback_wheel_scrolled(window, xoffset, yoffset);
+                };
             }
             
-            void Show(const CallbackRenderWindow& callback_render_window = [] (GLFWwindow*) {});
+            void Show(const CallbackRenderWindow& callback_render_window = [] (GLFWwindow*, entity::Camera*) {});
 
             void Destroy();
-
-        public:
-            Window(Window&&) = delete;
-            Window& operator=(Window&&) = delete;
-
-            Window(const Window&) = delete;
-            Window& operator=(const Window&) = delete;
 
         private:
             static void glfw_callback_framebuffer_size_changed(GLFWwindow* window, int width, int height);
@@ -106,6 +131,10 @@ namespace gl_simplify {
         private:
             GLFWmonitor* _monitor;
             GLFWwindow* _share;
+
+        private:
+            Mouse _mouse;
+            entity::Camera* _camera;
 
         private:
             CallbackWindowSizeChanged _callback_window_size_changed;

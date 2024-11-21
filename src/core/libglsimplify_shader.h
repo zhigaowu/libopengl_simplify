@@ -19,38 +19,28 @@
 
 #include "libglsimplify_shader_source.h"
 
-#include <vector>
-
 namespace gl_simplify {
 
     namespace core {
 
-        class Shader {
-        public:
-            static GLint MaxVertexAttributesSupported();
+        // forward declaration
+        class Program;
 
+        class Shader : private NonCopyable {
         public:
             GLuint id;
             GLenum type;
+
+        public:
+            ShaderSource source;
             
         public:
-            explicit Shader(GLenum shader_type = GL_VERTEX_SHADER);
-            ~Shader();
-
-            Shader& AddSource(const ShaderSource& source);
+            explicit Shader(GLenum shader_type, const std::string& source_code = "");
+            virtual ~Shader();
 
             bool Compile(GLchar* error, GLsizei error_length);
 
-        public:
-            Shader(Shader&&) = delete;
-            Shader& operator=(Shader&&) = delete;
-
-            Shader(const Shader&) = delete;
-            Shader& operator=(const Shader&) = delete;
-        
-        private:
-            std::vector<std::string> _sources_code;
-            std::vector<const char*> _sources_code_ref;
+            virtual void Update(Program& program);
         };
     }
 }
