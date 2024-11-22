@@ -313,8 +313,6 @@ namespace gl_simplify {
 
             Program& Use();
 
-            Program& Use(const ProgramConfigurer& program_configuer);
-
             Variable GetVariable(const std::string& vavriable_name);
         
         private:

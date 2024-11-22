@@ -13,6 +13,7 @@ namespace gl_simplify {
             , _vertex_shader(nullptr)
 
             , _color_shader(nullptr)
+            , _texture_shader(nullptr)
 
             , _attatch_shader(nullptr)
 
@@ -27,9 +28,15 @@ namespace gl_simplify {
                 delete _color_shader;
                 _color_shader = nullptr;
             }
+
+            if (_texture_shader)
+            {
+                delete _texture_shader;
+                _texture_shader = nullptr;
+            }
         }
 
-        void Entity::Move(const glm::vec3& position)
+        void Entity::Translate(const glm::vec3& position)
         {
             // transform matrix for render
             _model_transform = glm::translate(_model_transform, position);
@@ -55,7 +62,7 @@ namespace gl_simplify {
             // create new color attach
             if (!_color_shader)
             {
-                _color_shader = new core::ColorShader(color);
+                _color_shader = new core::ColorShader(_program);
 
                 if ((linked = _color_shader->Compile(error, error_length)))
                 {
@@ -73,14 +80,30 @@ namespace gl_simplify {
             return linked;
         }
 
-        /*bool Entity::Attach(const core::TextureBuffer::Texture &texture, GLchar* error, GLsizei error_length)
+        bool Entity::Attach(const std::string& texture_file, GLchar* error, GLsizei error_length)
         {
-            Detach();
+            bool linked = true;
 
-            _attatch_shader = new core::ColorShader(color);
+            // create new color attach
+            if (!_texture_shader)
+            {
+                _texture_shader = new core::TextureShader(_program);
 
-            return false;
-        }*/
+                if ((linked = _texture_shader->Compile(error, error_length)))
+                {
+                    linked = _program.Attach(*_vertex_shader).Attach(*_texture_shader).Link(error, error_length);
+                }
+            }
+
+            if (linked)
+            {
+                _texture_shader->SetFile(texture_file);
+            }
+
+            _attatch_shader = _texture_shader;
+
+            return linked;
+        }
        
     }
 }

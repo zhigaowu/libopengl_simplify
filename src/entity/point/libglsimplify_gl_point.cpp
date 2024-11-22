@@ -32,10 +32,14 @@ namespace gl_simplify {
             bool GLPoint::Initialize(GLchar *error, GLsizei error_length)
             {
                 float vertices[] = {
-                    0.0f,  0.0f, 0.0f
+                    0.5f,  0.5f, 0.0f,  // top right
+                    0.5f, -0.5f, 0.0f,  // bottom right
+                    -0.5f, -0.5f, 0.0f,  // bottom left
+                    -0.5f,  0.5f, 0.0f   // top left
                 };
                 unsigned int indices[] = {
-                    0
+                    0, 1, 3,  // first Triangle
+                    1, 2, 3   // second Triangle
                 };
 
                 _vao.Bind();
@@ -50,7 +54,7 @@ namespace gl_simplify {
 
                 _vao.Unbind();
                 
-                _vertex_shader = new core::VertexShader();
+                _vertex_shader = new core::VertexShader(_program);
                 _vertex_shader->source << "layout (location = 0) in vec3 model_position;";
 
                 _vertex_shader->source << "uniform float point_size;";
@@ -79,13 +83,13 @@ namespace gl_simplify {
                 _program.GetVariable("projection").SetMat(camera->GetProjection());
 
                 // update shader veriables
-                _vertex_shader->Update(_program);
-                _attatch_shader->Update(_program);
+                _vertex_shader->Update();
+                _attatch_shader->Update();
 
                 // draw point
                 _vao.Bind();
 
-                glDrawElements(GL_POINTS, 1, GL_UNSIGNED_INT, 0);
+                glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
                 _vao.Unbind();
             }

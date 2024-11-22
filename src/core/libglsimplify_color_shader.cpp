@@ -7,9 +7,9 @@ namespace gl_simplify {
 
     namespace core {
 
-        ColorShader::ColorShader(const glm::vec4& color)
-            : Shader(GL_FRAGMENT_SHADER)
-            , _color(color)
+        ColorShader::ColorShader(Program& program)
+            : Shader(program, GL_FRAGMENT_SHADER)
+            , _color(glm::vec4(1.0, 1.0, 1.0, 1.0))
         {
             source << "out vec4 FragColor;";
             source << "";
@@ -30,9 +30,9 @@ namespace gl_simplify {
             _color = color;
         }
 
-        void ColorShader::Update(Program &program)
+        void ColorShader::Update()
         {
-            program.GetVariable("input_color").SetVec(_color);
+            _program.GetVariable("input_color").SetVec(_color);
         }
     }
 }

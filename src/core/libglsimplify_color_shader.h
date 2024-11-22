@@ -32,12 +32,12 @@ namespace gl_simplify {
             glm::vec4 _color;
 
         public:
-            explicit ColorShader(const glm::vec4& color = glm::vec4(0.6, 0.6, 0.6, 1.0));
+            explicit ColorShader(Program& program);
             ~ColorShader();
 
             void SetColor(const glm::vec4& color);
 
-            void Update(Program& program) override;
+            void Update() override;
         };
     }
 }

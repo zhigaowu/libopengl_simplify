@@ -19,9 +19,6 @@
 
 #include "entity/libglsimplify_entity.h"
 
-#include "core/libglsimplify_buffer_array.h"
-#include "core/libglsimplify_vertex_array.h"
-
 namespace gl_simplify {
 
     namespace entity {

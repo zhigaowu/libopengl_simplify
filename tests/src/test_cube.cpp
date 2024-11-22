@@ -4,11 +4,11 @@
 
 #include "scene/libglsimplify_scene.h"
 
-#include "entity/point/libglsimplify_gl_point.h"
+#include "entity/libglsimplify_cube.h"
 
 #include <iostream>
 
-int test_points(int argc, char **argv, int width, int height)
+int test_cube(int argc, char **argv, int width, int height)
 {
     int res = -1;
 
@@ -33,37 +33,35 @@ int test_points(int argc, char **argv, int width, int height)
 
         do
         {
-            gl_simplify::entity::point::GLPoint* point = new gl_simplify::entity::point::GLPoint();
+            gl_simplify::entity::Cube* cube = new gl_simplify::entity::Cube();
 
-            if (!point->Initialize(error, sizeof(error)))
+            if (!cube->Initialize(error, sizeof(error)))
             {
-                std::cout << "initialize point failed: " << error << std::endl;
+                std::cout << "initialize cube failed: " << error << std::endl;
 
-                delete point;
-                point = nullptr;
+                delete cube;
+                cube = nullptr;
                 break;
             }
 
-            if (!point->Attach(glm::vec4(0.0, 0.2, 0.3, 1.0), error, sizeof(error)))
+            if (!cube->Attach("D:/Downloads/Chrome/texture2.jpg", error, sizeof(error)))
             {
-                std::cout << "attach point color failed: " << error << std::endl;
+                std::cout << "attach cube texture failed: " << error << std::endl;
 
-                delete point;
-                point = nullptr;
+                delete cube;
+                cube = nullptr;
                 break;
             }
-
-            point->SetSize(100);
             
-            scene.AddEntity(point);
+            scene.AddEntity(cube);
         } while (false);
 
         scene.GetBackground().SetColor(glm::vec4(0.2f, 0.3f, 0.3f, 1.0f));
 
         gl_simplify::entity::Camera* camera = window.Camera();
-        camera->Translate(glm::vec3(0.0f, 0.0f, 5.0f));
-        camera->LookAt(glm::vec3(0.0f, 0.0f, 0.0f));
-        //camera->LookFront(glm::vec3(0.0f, 0.0f, -1.0f));
+        camera->Translate(glm::vec3(0.0f, 2.0f, 8.0f));
+        //camera->LookAt(glm::vec3(0.0f, 2.0f, 0.0f));
+        camera->LookFront(glm::vec3(0.0f, 0.0f, -1.0f));
 
         window.Show([&scene] (GLFWwindow*, gl_simplify::entity::Camera* camera) {
                 scene.Render(camera);

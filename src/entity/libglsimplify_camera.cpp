@@ -3,18 +3,20 @@
 
 #include <cmath>
 
+#include <iostream>
+
 namespace gl_simplify {
 
     namespace entity {
 
         namespace {
+
             ViewState::ViewState(Camera& camera)
                 : _camera(camera)
-                
-                , _target()
-                , _front()
 
-                , _yaw(-90.0f), _pitch(0.0f)
+                , _target()
+                
+                , _front()
             {
             }
 
@@ -24,6 +26,8 @@ namespace gl_simplify {
 
             FreeViewState::FreeViewState(Camera& camera)
                 : ViewState(camera)
+
+                , _yaw(-90.0f), _pitch(0.0f)
             {
             }
 
@@ -31,17 +35,33 @@ namespace gl_simplify {
             {
             }
 
-            void FreeViewState::Look(const glm::vec3& vec)
+            void FreeViewState::updateView()
             {
-                _front = glm::normalize(vec);
+                // keep view in the front
                 _target = _camera._position + _front;
             }
 
-            void FreeViewState::Rotate(GLfloat yaw_adjusted, GLfloat pitch_adjusted)
+            void FreeViewState::Look(const glm::vec3& vec)
             {
-                _yaw += yaw_adjusted;
+                _front = glm::normalize(vec);
 
-                _pitch += pitch_adjusted;
+                updateView();
+            }
+
+            void FreeViewState::Move(const glm::vec3& step)
+            {
+                glm::vec3 top_right_direction = glm::normalize(glm::normalize(glm::cross(_camera._up, _front)) + _camera._up);
+
+                _camera.Translate(_camera._move_sensitive * step * top_right_direction);
+
+                updateView();
+            }
+
+            void FreeViewState::Rotate(const glm::vec3& step)
+            {
+                _yaw += step.y * _camera._rotate_sensitive;
+
+                _pitch += step.z * _camera._rotate_sensitive;
 
                 if (_pitch > 89.0f)
                 {
@@ -57,99 +77,124 @@ namespace gl_simplify {
                     sin(glm::radians(_yaw)) * cos(glm::radians(_pitch)));
 
                 _front = glm::normalize(direction);
-                _target = _camera._position + _front;
+
+                updateView();
             }
 
             void FreeViewState::Forward()
             {
-                _camera.Move(_camera._move_sensitive * _front);
+                _camera.Translate(_camera._move_sensitive * _front);
+
+                updateView();
             }
 
             void FreeViewState::Backward()
             {
-                _camera.Move(-1.0f * _camera._move_sensitive * _front);
+                _camera.Translate(-1.0f * _camera._move_sensitive * _front);
+
+                updateView();
             }
             
             void FreeViewState::Left()
             {
-                glm::vec3 move_steps = _camera._move_sensitive * glm::normalize(glm::cross(_camera._up, _front));
+                _camera.Translate(_camera._move_sensitive * glm::normalize(glm::cross(_camera._up, _front)));
 
-                // update _target
-                _target = (_camera._position + move_steps) + _front;
+                updateView();
             }
             
             void FreeViewState::Right()
             {
-                glm::vec3 move_steps = _camera._move_sensitive * glm::normalize(glm::cross(_front, _camera._up));
+                _camera.Translate(_camera._move_sensitive * glm::normalize(glm::cross(_front, _camera._up)));
 
-                // update _target
-                _target = (_camera._position + move_steps) + _front;
+                updateView();
             }
-        }
 
-        FocusViewState::FocusViewState(Camera& camera)
+            FocusViewState::FocusViewState(Camera& camera)
                 : ViewState(camera)
             {
             }
 
-        FocusViewState::~FocusViewState()
-        {
-        }
-
-        void FocusViewState::Look(const glm::vec3& target)
-        {
-            _target = target;
-
-            _front = glm::normalize(_target - _camera._position);
-        }
-
-        void FocusViewState::Rotate(GLfloat yaw_adjusted, GLfloat pitch_adjusted)
-        {
-            _yaw += yaw_adjusted;
-
-            _pitch += pitch_adjusted;
-
-            if (_pitch > 89.0f)
+            FocusViewState::~FocusViewState()
             {
-                _pitch = 89.0f;
-            }
-            if (_pitch < -89.0f)
-            {
-                _pitch = -89.0f;
             }
 
-            glm::vec3 direction(cos(glm::radians(_yaw)) * cos(glm::radians(_pitch)),
-                sin(glm::radians(_pitch)),
-                sin(glm::radians(_yaw)) * cos(glm::radians(_pitch)));
+            void FocusViewState::updateView()
+            {
+                // keep view on the target
+                _front = glm::normalize(_target - _camera._position);
 
-            _front = glm::normalize(direction);
-            _target = _camera._position + _front;
-        }
+                glm::vec3 right = glm::normalize(glm::cross(_camera._up, _front));
 
-        void FocusViewState::Forward()
-        {
-            _camera.Move(_camera._move_sensitive * _front);
-        }
+                _camera._up = glm::normalize(glm::cross(_front, right));
+            }
 
-        void FocusViewState::Backward()
-        {
-            _camera.Move(-1.0f * _camera._move_sensitive * _front);
-        }
-        
-        void FocusViewState::Left()
-        {
-            glm::vec3 move_steps = _camera._move_sensitive * glm::normalize(glm::cross(_camera._up, _front));
+            void FocusViewState::Look(const glm::vec3& target)
+            {
+                _target = target;
 
-            // update _front
-            _front = glm::normalize(_target - (_camera._position + move_steps));
-        }
-        
-        void FocusViewState::Right()
-        {
-            glm::vec3 move_steps = _camera._move_sensitive * glm::normalize(glm::cross(_front, _camera._up));
+                updateView();
+            }
 
-            // update _front
-            _front = glm::normalize(_target - (_camera._position + move_steps));
+            void FocusViewState::Move(const glm::vec3& step)
+            {
+                glm::vec3 top_right_direction = glm::normalize(glm::normalize(glm::cross(_camera._up, _front)) + _camera._up);
+
+                glm::vec3 top_right_offset = _camera._move_sensitive * step * top_right_direction;
+
+                // move camera
+                _camera.Translate(top_right_offset);
+
+                updateView();
+            }
+
+            void FocusViewState::Rotate(const glm::vec3& step)
+            {
+                ;
+            }
+
+            void FocusViewState::Forward()
+            {
+                _camera.Translate(_camera._move_sensitive * _front);
+            }
+
+            void FocusViewState::Backward()
+            {
+                _camera.Translate(-1.0f * _camera._move_sensitive * _front);
+            }
+            
+            void FocusViewState::Left()
+            {
+                // get rotation matrix
+                glm::mat4 rotation_around_y = glm::rotate(glm::mat4(1.0f), _camera._rotate_sensitive, glm::vec3(0.0, 1.0, 0.0));
+
+                // get camera local position in target coordinate system
+                glm::vec4 camera_position_to_target = rotation_around_y * glm::vec4(_camera._position - _target, 1.0f);
+
+                // change local position back to world position
+                glm::vec3 camera_position_to_world = _target + glm::vec3(camera_position_to_target);
+
+                // move
+                _camera.Translate(camera_position_to_world - _camera._position);
+
+                updateView();
+            }
+            
+            void FocusViewState::Right()
+            {
+                // get rotation matrix
+                glm::mat4 rotation_around_y = glm::rotate(glm::mat4(1.0f), -_camera._rotate_sensitive, glm::vec3(0.0, 1.0, 0.0));
+
+                // get camera local position in target coordinate system
+                glm::vec4 camera_position_to_target = rotation_around_y * glm::vec4(_camera._position - _target, 1.0f);
+
+                // change local position back to world position
+                glm::vec3 camera_position_to_world = _target + glm::vec3(camera_position_to_target);
+
+                // move
+                _camera.Translate(camera_position_to_world - _camera._position);
+
+                updateView();
+            }
         }
 
         void Camera::fixPerspectiveFovy()
@@ -173,8 +218,8 @@ namespace gl_simplify {
 
             , _up(up)
 
-            , _move_sensitive(0.05f)
-            , _rotate_sensitive(0.05f)
+            , _move_sensitive(0.03f)
+            , _rotate_sensitive(0.1f)
             
             , _min_fovy_radian(glm::radians(1.0f))
             , _max_fovy_radian(glm::radians(60.0f))
@@ -212,6 +257,16 @@ namespace gl_simplify {
             _view_state->Look(front);
         }
 
+        void Camera::Move(const glm::vec3& step)
+        {
+            _view_state->Move(step);
+        }
+
+        void Camera::Rotate(const glm::vec3& step)
+        {
+            _view_state->Rotate(step);
+        }
+
         void Camera::Forward()
         {
             _view_state->Forward();
@@ -230,12 +285,6 @@ namespace gl_simplify {
         void Camera::Right()
         {
             _view_state->Right();
-        }
-
-        void Camera::Rotate(GLfloat yaw_adjusted, GLfloat pitch_adjusted)
-        {
-            _view_state = &_free_view_state;
-            _view_state->Rotate(yaw_adjusted, pitch_adjusted);
         }
 
         void Camera::SetPerspectiveAspect(GLfloat aspect)

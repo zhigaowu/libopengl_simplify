@@ -50,15 +50,6 @@ namespace gl_simplify {
             return *this;
         }
 
-        Program &Program::Use(const ProgramConfigurer &program_configuer)
-        {
-            glUseProgram(_program_id);
-
-            program_configuer(*this);
-
-            return *this;
-        }
-
         Program::Variable Program::GetVariable(const std::string &vavriable_name)
         {
             return Variable(glGetUniformLocation(_program_id, vavriable_name.c_str()));

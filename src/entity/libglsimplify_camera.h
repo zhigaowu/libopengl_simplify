@@ -37,19 +37,19 @@ namespace gl_simplify {
                 glm::vec3 _front;
 
             protected:
-                GLfloat _yaw;
-                GLfloat _pitch;
+                virtual void updateView() = 0;
 
             public:
                 ViewState(Camera& camera);
                 virtual ~ViewState();
 
                 const glm::vec3& GetTarget() { return _target; }
-                const glm::vec3& GetFront() { return _front; }
                 
                 virtual void Look(const glm::vec3& vec) = 0;
 
-                virtual void Rotate(GLfloat yaw_adjusted, GLfloat pitch_adjusted) = 0;
+                virtual void Move(const glm::vec3& step) = 0;
+
+                virtual void Rotate(const glm::vec3& step) = 0;
 
                 virtual void Forward() = 0;
                 virtual void Backward() = 0;
@@ -58,15 +58,25 @@ namespace gl_simplify {
 
             };
             
+            // look in the front direction
             class FreeViewState : public ViewState
             {
+            private:
+                GLfloat _yaw;
+                GLfloat _pitch;
+
+            private:
+                void updateView() override;
+
             public:
                 FreeViewState(Camera& camera);
                 ~FreeViewState();
 
                 void Look(const glm::vec3& vec) override;
 
-                void Rotate(GLfloat yaw_adjusted, GLfloat pitch_adjusted) override;
+                void Move(const glm::vec3& step) override;
+
+                void Rotate(const glm::vec3& step) override;
 
                 void Forward() override;
 
@@ -77,15 +87,21 @@ namespace gl_simplify {
                 void Right() override;
             };
 
+            // keep the target in the view center
             class FocusViewState : public ViewState
             {
+            private:
+                void updateView() override;
+
             public:
                 FocusViewState(Camera& camera);
                 ~FocusViewState();
 
                 void Look(const glm::vec3& target) override;
 
-                void Rotate(GLfloat yaw_adjusted, GLfloat pitch_adjusted) override;
+                void Move(const glm::vec3& step) override;
+
+                void Rotate(const glm::vec3& step) override;
 
                 void Forward() override;
 
@@ -136,12 +152,14 @@ namespace gl_simplify {
 
             void LookFront(const glm::vec3& front);
 
+            void Move(const glm::vec3& step);
+            
+            void Rotate(const glm::vec3& step);
+
             void Forward();
             void Backward();
             void Left();
             void Right();
-            
-            void Rotate(GLfloat yaw_adjusted, GLfloat pitch_adjusted);
 
             void SetPerspectiveAspect(GLfloat aspect);
 

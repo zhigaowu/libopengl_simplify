@@ -33,7 +33,7 @@ namespace gl_simplify {
             static GLint MaxVertexAttributesSupported();
 
         public:
-            VertexShader();
+            explicit VertexShader(Program& program);
             virtual ~VertexShader();
         };
     }

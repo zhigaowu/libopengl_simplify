@@ -14,8 +14,8 @@ namespace gl_simplify {
             return value;
         }
 
-        VertexShader::VertexShader()
-            : Shader(GL_VERTEX_SHADER)
+        VertexShader::VertexShader(Program& program)
+            : Shader(program, GL_VERTEX_SHADER)
         {
             
         }

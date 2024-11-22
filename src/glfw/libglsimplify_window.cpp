@@ -106,16 +106,14 @@ namespace gl_simplify {
             };
 
             _callback_mouse_moved = [this] (GLFWwindow*, double xpos, double ypos) {
+                if (_mouse.middle_button_down)
+                {
+                    _camera->Move(glm::vec3(xpos - _mouse.x, ypos - _mouse.y, 1.0f));
+                }
+
                 if (_mouse.right_button_down)
                 {
-                    float xoffset = xpos - _mouse.x;
-                    float yoffset = _mouse.y - ypos; // reversed since y-coordinates range from bottom to top
-
-                    const float sensitivity = 0.1f;
-                    xoffset *= sensitivity;
-                    yoffset *= sensitivity;
-
-                    _camera->Rotate(xoffset, yoffset);
+                    _camera->Rotate(glm::vec3(0, xpos - _mouse.x, _mouse.y - ypos));
                 }
 
                 _mouse.x = xpos;
