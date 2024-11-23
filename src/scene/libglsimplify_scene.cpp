@@ -18,18 +18,25 @@ namespace gl_simplify {
 
         bool Scene::Create(GLchar *error, GLsizei error_length)
         {
+            // -------- default render option ---------
             glEnable(GL_DEPTH_TEST);
 
             glEnable(GL_CULL_FACE);
             glFrontFace(GL_CCW);
             glCullFace(GL_BACK);
 
-            //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+            SetRenderMode(RenderMode::Fill);
 
+            // -------- other initialization ---------
             (void)error;
             (void)error_length;
 
             return true;
+        }
+
+        void Scene::SetRenderMode(RenderMode render_mode)
+        {
+            glPolygonMode(GL_FRONT_AND_BACK, static_cast<GLint>(render_mode));
         }
 
         void Scene::AddEntity(entity::Entity* entity)

@@ -28,6 +28,13 @@ namespace gl_simplify {
     namespace scene {
 
         class Scene : private core::NonCopyable {
+        public:
+            enum class RenderMode {
+                Point = GL_POINT,
+                Line = GL_LINE,
+                Fill = GL_FILL
+            };
+
         private:
             Background _background;
 
@@ -43,6 +50,8 @@ namespace gl_simplify {
             Background& GetBackground() { return _background; }
 
             bool Create(GLchar* error, GLsizei error_length);
+
+            void SetRenderMode(RenderMode render_mode);
 
             void AddEntity(entity::Entity* entity);
             void DestroyEntity(entity::Entity* entity);
