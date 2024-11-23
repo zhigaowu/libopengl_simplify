@@ -45,7 +45,7 @@ int test_all(int argc, char **argv, int width, int height)
                 break;
             }
 
-            if (!plane->Attach("D:/Downloads/Chrome/texture1.jpg", error, sizeof(error)))
+            if (!plane->Attach("../../resource/texture/plane_rock.jpg", error, sizeof(error)))
             {
                 std::cout << "attach plane texture failed: " << error << std::endl;
 
@@ -73,7 +73,7 @@ int test_all(int argc, char **argv, int width, int height)
                 break;
             }
 
-            if (!cube->Attach("D:/Downloads/Chrome/texture2.jpg", error, sizeof(error)))
+            if (!cube->Attach("../../resource/texture/wood.jpg", error, sizeof(error)))
             {
                 std::cout << "attach cube texture failed: " << error << std::endl;
 
@@ -89,8 +89,8 @@ int test_all(int argc, char **argv, int width, int height)
 
         gl_simplify::entity::Camera* camera = window.Camera();
         camera->Translate(glm::vec3(0.0f, 2.0f, 8.0f));
-        //camera->LookAt(glm::vec3(0.0f, 2.0f, 0.0f));
-        camera->LookFront(glm::vec3(0.0f, 0.0f, -1.0f));
+        camera->LookAt(glm::vec3(0.0f, 2.0f, 0.0f));
+        //camera->LookFront(glm::vec3(0.0f, 0.0f, -1.0f));
 
         window.Show([&scene] (GLFWwindow*, gl_simplify::entity::Camera* camera) {
                 scene.Render(camera);

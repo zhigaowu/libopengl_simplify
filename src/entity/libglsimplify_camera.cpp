@@ -50,9 +50,11 @@ namespace gl_simplify {
 
             void FreeViewState::Move(const glm::vec3& step)
             {
-                glm::vec3 top_right_direction = glm::normalize(glm::normalize(glm::cross(_camera._up, _front)) + _camera._up);
+                glm::vec3 right = step.x * glm::normalize(glm::cross(_camera._up, _front));
+                glm::vec3 up = step.y * _camera._up;
+                glm::vec3 top_right_direction = (right + up);
 
-                _camera.Translate(_camera._move_sensitive * step * top_right_direction);
+                _camera.Translate(_camera._move_sensitive * top_right_direction);
 
                 updateView();
             }
@@ -137,12 +139,11 @@ namespace gl_simplify {
 
             void FocusViewState::Move(const glm::vec3& step)
             {
-                glm::vec3 top_right_direction = glm::normalize(glm::normalize(glm::cross(_camera._up, _front)) + _camera._up);
+                glm::vec3 right = step.x * glm::normalize(glm::cross(_camera._up, _front));
+                glm::vec3 up = step.y * _camera._up;
+                glm::vec3 top_right_direction = (right + up);
 
-                glm::vec3 top_right_offset = _camera._move_sensitive * step * top_right_direction;
-
-                // move camera
-                _camera.Translate(top_right_offset);
+                _camera.Translate(_camera._move_sensitive * top_right_direction);
 
                 updateView();
             }

@@ -108,7 +108,7 @@ namespace gl_simplify {
             _callback_mouse_moved = [this] (GLFWwindow*, double xpos, double ypos) {
                 if (_mouse.middle_button_down)
                 {
-                    _camera->Move(glm::vec3(xpos - _mouse.x, ypos - _mouse.y, 1.0f));
+                    _camera->Move(glm::vec3(xpos - _mouse.x, ypos - _mouse.y, 0.0f));
                 }
 
                 if (_mouse.right_button_down)
@@ -118,6 +118,17 @@ namespace gl_simplify {
 
                 _mouse.x = xpos;
                 _mouse.y = ypos;
+            };
+
+            _callback_wheel_scrolled = [this](GLFWwindow*, double xpos, double ypos) {
+                if (ypos > 0)
+                {
+                    _camera->Forward();
+                }
+                else
+                {
+                    _camera->Backward();
+                }
             };
         }
 

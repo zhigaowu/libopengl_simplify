@@ -44,7 +44,7 @@ int test_plane(int argc, char **argv, int width, int height)
                 break;
             }
 
-            if (!plane->Attach("D:/Downloads/Chrome/texture1.jpg", error, sizeof(error)))
+            if (!plane->Attach("../../resource/texture/plane_rock.jpg", error, sizeof(error)))
             {
                 std::cout << "attach plane texture failed: " << error << std::endl;
 

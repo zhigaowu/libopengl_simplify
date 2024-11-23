@@ -44,7 +44,7 @@ int test_cube(int argc, char **argv, int width, int height)
                 break;
             }
 
-            if (!cube->Attach("D:/Downloads/Chrome/texture2.jpg", error, sizeof(error)))
+            if (!cube->Attach("../../resource/texture/wood.jpg", error, sizeof(error)))
             {
                 std::cout << "attach cube texture failed: " << error << std::endl;
 
