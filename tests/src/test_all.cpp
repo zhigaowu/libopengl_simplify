@@ -54,8 +54,8 @@ int test_all(int argc, char **argv, int width, int height)
                 break;
             }
 
-            plane->Scale(glm::vec3(4.0, 0.0, 4.0));
-            plane->Translate(glm::vec3(0.0, -8.0, 0.0));
+            plane->Translate(glm::vec3(0.0, -1.01, 0.0));
+            plane->Scale(glm::vec3(4.0, 1.0, 4.0));
             
             scene.AddEntity(plane);
         } while (false);
@@ -88,8 +88,8 @@ int test_all(int argc, char **argv, int width, int height)
         scene.GetBackground().SetColor(glm::vec4(0.2f, 0.3f, 0.3f, 1.0f));
 
         gl_simplify::entity::Camera* camera = window.Camera();
-        camera->Translate(glm::vec3(0.0f, 2.0f, 8.0f));
-        camera->LookAt(glm::vec3(0.0f, 2.0f, 0.0f));
+        camera->Translate(glm::vec3(0.0f, 7.0f, 7.0f));
+        camera->LookAt(glm::vec3(0.0f, 0.0f, 0.0f));
         //camera->LookFront(glm::vec3(0.0f, 0.0f, -1.0f));
 
         window.Show([&scene] (GLFWwindow*, gl_simplify::entity::Camera* camera) {
