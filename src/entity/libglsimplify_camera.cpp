@@ -237,13 +237,9 @@ namespace gl_simplify {
         {
         }
 
-        bool Camera::Initialize(GLchar *error, GLsizei error_length)
+        bool Camera::ResetDataBuffer(GLchar *error, GLsizei error_length)
         {
             return true;
-        }
-
-        void Camera::Render(Camera* camera)
-        {
         }
 
         void Camera::LookAt(const glm::vec3 &target)
@@ -339,7 +335,7 @@ namespace gl_simplify {
             _projection = glm::perspective(_projection_component.x, _projection_component.y, _projection_component.z, _projection_component.w);
         }
 
-        glm::mat4 Camera::GetView()
+        glm::mat4 Camera::GetView() const
         {
             return glm::lookAt( _position, _view_state->GetTarget(), _up);
         }

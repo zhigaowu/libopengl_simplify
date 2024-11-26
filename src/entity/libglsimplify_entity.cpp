@@ -23,6 +23,20 @@ namespace gl_simplify {
 
         Entity::~Entity()
         {
+        }
+
+        bool Entity::Create(GLchar *error, GLsizei error_length)
+        {
+            if (InitializeVertexShader(error, error_length))
+            {
+                return ResetDataBuffer(error, error_length);
+            }
+
+            return false;
+        }
+
+        void Entity::Destroy()
+        {
             if (_color_shader)
             {
                 delete _color_shader;
@@ -33,6 +47,12 @@ namespace gl_simplify {
             {
                 delete _texture_shader;
                 _texture_shader = nullptr;
+            }
+
+            if (_vertex_shader)
+            {
+                delete _vertex_shader;
+                _vertex_shader = nullptr;
             }
         }
 
@@ -62,7 +82,7 @@ namespace gl_simplify {
             // create new color attach
             if (!_color_shader)
             {
-                _color_shader = new core::ColorShader(_program);
+                _color_shader = new shader::ColorShader(this);
 
                 if ((linked = _color_shader->Compile(error, error_length)))
                 {
@@ -87,7 +107,7 @@ namespace gl_simplify {
             // create new color attach
             if (!_texture_shader)
             {
-                _texture_shader = new core::TextureShader(_program);
+                _texture_shader = new shader::TextureShader(this);
 
                 if ((linked = _texture_shader->Compile(error, error_length)))
                 {
@@ -104,7 +124,31 @@ namespace gl_simplify {
 
             return linked;
         }
-       
+
+        bool Entity::InitializeVertexShader(GLchar *error, GLsizei error_length)
+        {
+            _vertex_shader = new shader::VertexShader(this);
+
+            return _vertex_shader->Compile(error, error_length);
+        }
+
+        void Entity::Draw()
+        {
+        }
+
+        void Entity::Render(Camera *camera)
+        {
+            _vertex_shader->SetCamera(camera);
+            
+            // use program, begin to update program variables
+            _program.Use();
+
+            // update shader veriables
+            _vertex_shader->Update();
+            _attatch_shader->Update();
+
+            Draw();
+        }
     }
 }
 

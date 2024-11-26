@@ -42,8 +42,8 @@ namespace gl_simplify {
             virtual ~Shader();
 
             bool Compile(GLchar* error, GLsizei error_length);
-
-            virtual void Update();
+            
+            virtual void Update() {}
         };
     }
 }

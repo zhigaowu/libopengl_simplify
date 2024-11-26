@@ -1,14 +1,16 @@
 
 #include "libglsimplify_color_shader.h"
 
-#include "libglsimplify_program.h"
+#include "entity/libglsimplify_entity.h"
+
+#include "core/libglsimplify_program.h"
 
 namespace gl_simplify {
 
-    namespace core {
+    namespace shader {
 
-        ColorShader::ColorShader(Program& program)
-            : Shader(program, GL_FRAGMENT_SHADER)
+        ColorShader::ColorShader(entity::Entity* entity)
+            : Shader(entity->GetProgram(), GL_FRAGMENT_SHADER)
             , _color(glm::vec4(1.0, 1.0, 1.0, 1.0))
         {
             source << "out vec4 FragColor;";

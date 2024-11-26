@@ -3,7 +3,7 @@
  *
  *       Filename:  libglsimplify_cube.h
  *
- *    Description:  opengl cube in the scene
+ *    Description:  cube in the scene
  *
  *        Version:  1.0
  *        Created:  2024-11-22 14:56:29
@@ -32,8 +32,8 @@ namespace gl_simplify {
             explicit Cube(const glm::vec3& position = glm::vec3(0.0, 0.0, 0.0));
             ~Cube();
 
-            bool Initialize(GLchar* error, GLsizei error_length) override;
-            void Render(Camera* camera) override;
+            bool ResetDataBuffer(GLchar* error, GLsizei error_length) override;
+            void Draw() override;
         };
     }
 }

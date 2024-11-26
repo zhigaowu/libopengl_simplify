@@ -35,9 +35,9 @@ int test_cube(int argc, char **argv, int width, int height)
         {
             gl_simplify::entity::Cube* cube = new gl_simplify::entity::Cube();
 
-            if (!cube->Initialize(error, sizeof(error)))
+            if (!cube->Create(error, sizeof(error)))
             {
-                std::cout << "initialize cube failed: " << error << std::endl;
+                std::cout << "create cube failed: " << error << std::endl;
 
                 delete cube;
                 cube = nullptr;

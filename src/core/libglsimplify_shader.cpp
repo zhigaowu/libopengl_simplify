@@ -45,10 +45,6 @@ namespace gl_simplify {
                 return false;
             }
         }
-
-        void Shader::Update()
-        {
-        }
     }
 }
 

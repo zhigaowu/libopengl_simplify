@@ -34,8 +34,8 @@ namespace gl_simplify {
 
             void SetSize(GLfloat size);
 
-            bool Initialize(GLchar* error, GLsizei error_length) override;
-            void Render(Camera* camera) override;
+            bool ResetDataBuffer(GLchar* error, GLsizei error_length) override;
+            void Draw() override;
         };
     }
 }

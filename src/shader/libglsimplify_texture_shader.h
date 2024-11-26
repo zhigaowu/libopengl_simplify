@@ -14,28 +14,28 @@
  * ==========================================================================
  */
 
-#ifndef GL_SIMPLIFY_CORE_TEXTURE_SHADER_H
-#define GL_SIMPLIFY_CORE_TEXTURE_SHADER_H
+#ifndef GL_SIMPLIFY_SHADER_TEXTURE_SHADER_H
+#define GL_SIMPLIFY_SHADER_TEXTURE_SHADER_H
 
-#include "libglsimplify_shader.h"
+#include "core/libglsimplify_shader.h"
 
-#include "libglsimplify_texture_buffer.h"
-
-#include <glm/glm.hpp>
+#include "core/libglsimplify_texture_buffer.h"
 
 namespace gl_simplify {
 
-    namespace core {
+    // forward declaration
+    namespace entity {
+        class Entity;
+    }
 
-        // forward declaration
-        class Program;
+    namespace shader {
 
-        class TextureShader : public Shader {
+        class TextureShader : public core::Shader {
             GLuint _texture_unit;
-            TextureBuffer _texture_buffer;
+            core::TextureBuffer _texture_buffer;
 
         public:
-            explicit TextureShader(Program& program, GLuint texture_unit = GL_TEXTURE0);
+            explicit TextureShader(entity::Entity* entity, GLuint texture_unit = GL_TEXTURE0);
             ~TextureShader();
 
             void SetFile(const std::string& path);
@@ -45,4 +45,4 @@ namespace gl_simplify {
     }
 }
 
-#endif // GL_SIMPLIFY_CORE_TEXTURE_SHADER_H
+#endif // GL_SIMPLIFY_SHADER_TEXTURE_SHADER_H

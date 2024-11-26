@@ -36,9 +36,9 @@ int test_all(int argc, char **argv, int width, int height)
         {
             gl_simplify::entity::Plane* plane = new gl_simplify::entity::Plane();
 
-            if (!plane->Initialize(error, sizeof(error)))
+            if (!plane->Create(error, sizeof(error)))
             {
-                std::cout << "initialize plane failed: " << error << std::endl;
+                std::cout << "create plane failed: " << error << std::endl;
 
                 delete plane;
                 plane = nullptr;
@@ -64,9 +64,9 @@ int test_all(int argc, char **argv, int width, int height)
         {
             gl_simplify::entity::Cube* cube = new gl_simplify::entity::Cube();
 
-            if (!cube->Initialize(error, sizeof(error)))
+            if (!cube->Create(error, sizeof(error)))
             {
-                std::cout << "initialize cube failed: " << error << std::endl;
+                std::cout << "create cube failed: " << error << std::endl;
 
                 delete cube;
                 cube = nullptr;

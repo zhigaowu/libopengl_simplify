@@ -3,7 +3,7 @@
  *
  *       Filename:  libglsimplify_color_shader.h
  *
- *    Description:  shader logic
+ *    Description:  color shader logic
  *
  *        Version:  1.0
  *        Created:  2024-11-19 19:30:29
@@ -14,25 +14,25 @@
  * ==========================================================================
  */
 
-#ifndef GL_SIMPLIFY_CORE_COLOR_SHADER_H
-#define GL_SIMPLIFY_CORE_COLOR_SHADER_H
+#ifndef GL_SIMPLIFY_SHADER_COLOR_SHADER_H
+#define GL_SIMPLIFY_SHADER_COLOR_SHADER_H
 
-#include "libglsimplify_shader.h"
-
-#include <glm/glm.hpp>
+#include "core/libglsimplify_shader.h"
 
 namespace gl_simplify {
 
-    namespace core {
+    // forward declaration
+    namespace entity {
+        class Entity;
+    }
 
-        // forward declaration
-        class Program;
+    namespace shader {
 
-        class ColorShader : public Shader {
+        class ColorShader : public core::Shader {
             glm::vec4 _color;
 
         public:
-            explicit ColorShader(Program& program);
+            explicit ColorShader(entity::Entity* entity);
             ~ColorShader();
 
             void SetColor(const glm::vec4& color);
@@ -42,4 +42,4 @@ namespace gl_simplify {
     }
 }
 
-#endif // GL_SIMPLIFY_CORE_COLOR_SHADER_H
+#endif // GL_SIMPLIFY_SHADER_COLOR_SHADER_H

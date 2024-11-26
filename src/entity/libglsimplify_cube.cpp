@@ -20,7 +20,7 @@ namespace gl_simplify {
         {
         }
 
-        bool Cube::Initialize(GLchar *error, GLsizei error_length)
+        bool Cube::ResetDataBuffer(GLchar *, GLsizei)
         {
             static float vertices[] = {
                 // Positions          // Normals           // Texture Coords
@@ -76,6 +76,7 @@ namespace gl_simplify {
                 20, 21, 22, 20, 22, 23
             };
 
+            // upload data and set data format
             _vao.Bind();
 
             _vbo.Bind();
@@ -88,39 +89,12 @@ namespace gl_simplify {
             _ebo.Upload(sizeof(indices), indices, GL_STATIC_DRAW);
 
             _vao.Unbind();
-            
-            _vertex_shader = new core::VertexShader(_program);
-            _vertex_shader->source << "layout (location = 0) in vec3 model_position;";
-            _vertex_shader->source << "layout (location = 1) in vec2 texture_position;";
 
-            _vertex_shader->source << "uniform mat4 model;";
-            _vertex_shader->source << "uniform mat4 view;";
-            _vertex_shader->source << "uniform mat4 projection;";
-
-            _vertex_shader->source << "out vec2 TexCoord;";
-
-            _vertex_shader->source << "void main()";
-            _vertex_shader->source << "{" ;
-            _vertex_shader->source << "   gl_Position = projection * view * model * vec4(model_position, 1.0);";
-            _vertex_shader->source << "   TexCoord = vec2(texture_position.x, 1.0 - texture_position.y);";
-            _vertex_shader->source << "}";
-
-            return _vertex_shader->Compile(error, error_length);
+            return true;
         }
 
-        void Cube::Render(Camera* camera)
+        void Cube::Draw()
         {
-            // use program, begin to update program variables
-            _program.Use();
-
-            _program.GetVariable("model").SetMat(_model_transform);
-            _program.GetVariable("view").SetMat(camera->GetView());
-            _program.GetVariable("projection").SetMat(camera->GetProjection());
-
-            // update shader veriables
-            _vertex_shader->Update();
-            _attatch_shader->Update();
-
             // draw point
             _vao.Bind();
 

@@ -1,14 +1,16 @@
 
 #include "libglsimplify_texture_shader.h"
 
-#include "libglsimplify_program.h"
+#include "entity/libglsimplify_entity.h"
+
+#include "core/libglsimplify_program.h"
 
 namespace gl_simplify {
 
-    namespace core {
+    namespace shader {
 
-        TextureShader::TextureShader(Program& program, GLuint texture_unit)
-            : Shader(program, GL_FRAGMENT_SHADER)
+        TextureShader::TextureShader(entity::Entity* entity, GLuint texture_unit)
+            : Shader(entity->GetProgram(), GL_FRAGMENT_SHADER)
             
             , _texture_unit(texture_unit)
             , _texture_buffer()

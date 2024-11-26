@@ -145,8 +145,7 @@ namespace gl_simplify {
             explicit Camera(GLfloat aspect, GLfloat fovy = glm::radians(45.0f), GLfloat near = 0.1f, GLfloat far = 100.0f, const glm::vec3& up = glm::vec3(0.0f, 1.0f, 0.0f));
             ~Camera();
 
-            bool Initialize(GLchar* error, GLsizei error_length) override;
-            void Render(Camera* camera) override;
+            bool ResetDataBuffer(GLchar* error, GLsizei error_length) override;
 
             void LookAt(const glm::vec3& target);
 
@@ -171,9 +170,9 @@ namespace gl_simplify {
             void SetPerspectiveNear(GLfloat near);
             void SetPerspectiveFar(GLfloat far);
 
-            const glm::mat4& GetProjection() {  return _projection; }
+            const glm::mat4& GetProjection() const {  return _projection; }
 
-            glm::mat4 GetView();
+            glm::mat4 GetView() const;
         };
     }
 }
