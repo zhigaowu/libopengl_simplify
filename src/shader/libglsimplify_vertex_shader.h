@@ -50,6 +50,9 @@ namespace gl_simplify {
             void SetCamera(const entity::Camera* camera);
 
             void Update() override;
+        
+        private:
+            VertexShader() = delete;
         };
     }
 }

@@ -26,7 +26,7 @@ namespace gl_simplify {
             _program.GetVariable("point_size").SetValue(size);
         }
 
-        bool Plane::ResetDataBuffer(GLchar *, GLsizei)
+        bool Plane::Update(GLchar *, GLsizei)
         {
             float vertices[] = {
                 -1.0f,  0.0f, -1.0f, 0.0f, 0.0f,  // 0 top left

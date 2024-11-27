@@ -32,7 +32,7 @@ namespace gl_simplify {
             explicit Cube(const glm::vec3& position = glm::vec3(0.0, 0.0, 0.0));
             ~Cube();
 
-            bool ResetDataBuffer(GLchar* error, GLsizei error_length) override;
+            bool Update(GLchar* error, GLsizei error_length) override;
             void Draw() override;
         };
     }

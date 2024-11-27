@@ -47,7 +47,7 @@ namespace gl_simplify {
             }
         }
 
-        void Scene::DestroyEntity(entity::Entity *entity)
+        void Scene::DeleteEntity(entity::Entity *entity)
         {
             _entities.erase(entity);
         }
@@ -64,7 +64,14 @@ namespace gl_simplify {
 
         void Scene::Destroy()
         {
+            for (Entities::iterator it = _entities.begin(); it != _entities.end(); ++it)
+            {
+                it->second->Destroy();
+
+                delete it->second;
+            }
             
+            _entities.clear();
         }
     }
 }

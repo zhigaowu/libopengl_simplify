@@ -38,6 +38,9 @@ namespace gl_simplify {
             void SetColor(const glm::vec4& color);
 
             void Update() override;
+        
+        private:
+            ColorShader() = delete;
         };
     }
 }

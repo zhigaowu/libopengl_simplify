@@ -237,7 +237,7 @@ namespace gl_simplify {
         {
         }
 
-        bool Camera::ResetDataBuffer(GLchar *error, GLsizei error_length)
+        bool Camera::Update(GLchar *error, GLsizei error_length)
         {
             return true;
         }

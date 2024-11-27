@@ -29,7 +29,7 @@ namespace gl_simplify {
         {
             if (InitializeVertexShader(error, error_length))
             {
-                return ResetDataBuffer(error, error_length);
+                return Update(error, error_length);
             }
 
             return false;

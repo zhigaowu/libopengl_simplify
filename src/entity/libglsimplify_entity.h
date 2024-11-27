@@ -74,7 +74,7 @@ namespace gl_simplify {
             bool Attach(const std::string& texture_file, GLchar* error, GLsizei error_length);
 
             virtual bool InitializeVertexShader(GLchar* error, GLsizei error_length);
-            virtual bool ResetDataBuffer(GLchar* error, GLsizei error_length) = 0;
+            virtual bool Update(GLchar* error, GLsizei error_length) = 0;
 
             virtual void Draw();
             virtual void Render(Camera* camera);

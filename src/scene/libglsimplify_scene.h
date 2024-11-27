@@ -54,7 +54,7 @@ namespace gl_simplify {
             void SetRenderMode(RenderMode render_mode);
 
             void AddEntity(entity::Entity* entity);
-            void DestroyEntity(entity::Entity* entity);
+            void DeleteEntity(entity::Entity* entity);
 
             void Render(entity::Camera* camera);
 

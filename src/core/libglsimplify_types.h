@@ -21,6 +21,16 @@
 
 #include <glm/glm.hpp>
 
+#if __cplusplus < 202002L
+
+namespace std {
+    namespace numbers {
+        const constexpr double pi = 3.141592653589793;
+    }
+}
+
+#endif
+
 namespace gl_simplify {
 
     namespace core {

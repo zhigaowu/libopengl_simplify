@@ -41,6 +41,9 @@ namespace gl_simplify {
             void SetFile(const std::string& path);
 
             void Update() override;
+        
+        private:
+            TextureShader() = delete;
         };
     }
 }

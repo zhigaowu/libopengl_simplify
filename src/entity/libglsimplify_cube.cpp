@@ -20,7 +20,7 @@ namespace gl_simplify {
         {
         }
 
-        bool Cube::ResetDataBuffer(GLchar *, GLsizei)
+        bool Cube::Update(GLchar *, GLsizei)
         {
             static float vertices[] = {
                 // Positions          // Normals           // Texture Coords

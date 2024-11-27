@@ -34,7 +34,7 @@ namespace gl_simplify {
 
             void SetSize(GLfloat size);
 
-            bool ResetDataBuffer(GLchar* error, GLsizei error_length) override;
+            bool Update(GLchar* error, GLsizei error_length) override;
             void Draw() override;
         };
     }
