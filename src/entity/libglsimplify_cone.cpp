@@ -49,21 +49,21 @@ namespace gl_simplify {
             // point 0
             GLfloat* point_data = _vertices.data();
             point_data[1] = 1.0f; // y
-            point_data[6] = 0.5f; // texture_x
-            point_data[7] = 0.5f; // texture_y
+            point_data[6] = 0.5f; // u
+            point_data[7] = 0.5f; // v
             point_data += STRIDE_STEP;
 
             // point 1
             point_data[1] = -1.0f; // y
-            point_data[6] = 0.5f; // texture_x
-            point_data[7] = 0.5f; // texture_y
+            point_data[6] = 0.5f; // u
+            point_data[7] = 0.5f; // v
             point_data += STRIDE_STEP;
 
             // point 2
             point_data[0] = -1.0f; // x
             point_data[1] = -1.0f; // y
-            point_data[6] = 0.0f; // texture_x
-            point_data[7] = 0.5f; // texture_y
+            point_data[6] = 0.0f; // u
+            point_data[7] = 0.5f; // v
             point_data += STRIDE_STEP;
 
             GLfloat theta = _theta;
@@ -78,16 +78,16 @@ namespace gl_simplify {
                 GLfloat x = std::cos(theta + std::numbers::pi);
                 GLfloat z = std::sin(theta);
 
-                GLfloat texture_x = 0.5f * (1.0f - std::cos(theta));
-                GLfloat texture_y = 0.5f * (1.0f - std::sin(theta));
+                GLfloat u = 0.5f * (1.0f - std::cos(theta));
+                GLfloat v = 0.5f * (1.0f - std::sin(theta));
 
                 // ------------- make up vertice data ------------
                 // bottom point
                 point_data[0] = x; // x
                 point_data[1] = -1.0; // y
                 point_data[2] = z; // z
-                point_data[6] = texture_x; // texture_x
-                point_data[7] = texture_y; // texture_y
+                point_data[6] = u; // u
+                point_data[7] = v; // v
                 point_data += STRIDE_STEP;
 
                 theta += _theta;
