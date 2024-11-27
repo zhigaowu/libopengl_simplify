@@ -1,5 +1,5 @@
 
-#include "libglsimplify_cylinder.h"
+#include "libglsimplify_cone.h"
 
 #include "entity/libglsimplify_camera.h"
 
@@ -9,7 +9,7 @@ namespace gl_simplify {
 
         static constexpr GLsizei STRIDE_STEP = 8; // Positions(3) Normals(3) Texture Coords(2)
 
-        Cylinder::Cylinder(GLint segments, const glm::vec3& position)
+        Cone::Cone(GLint segments, const glm::vec3& position)
             : Entity(position)
 
             , _vbo()
@@ -24,11 +24,11 @@ namespace gl_simplify {
             SetSegments(segments);
         }
 
-        Cylinder::~Cylinder()
+        Cone::~Cone()
         {
         }
 
-        void Cylinder::SetSegments(GLint segments)
+        void Cone::SetSegments(GLint segments)
         {
             if (segments < 3)
             {
@@ -37,14 +37,14 @@ namespace gl_simplify {
 
             _theta = (std::numbers::pi * 2) / segments;
 
-            GLint point_number = (segments + 1) << 1;
-            GLint triangle_number = segments << 2;
+            GLint point_number = segments + 2;
+            GLint triangle_number = segments << 1;
 
             _vertices.resize(point_number * STRIDE_STEP, 0.0f);
             _indices.resize(triangle_number * 3, 0u);
         }
 
-        bool Cylinder::Update(GLchar *, GLsizei)
+        bool Cone::Update(GLchar *, GLsizei)
         {
             // point 0
             GLfloat* point_data = _vertices.data();
@@ -61,13 +61,6 @@ namespace gl_simplify {
 
             // point 2
             point_data[0] = -1.0f; // x
-            point_data[1] = 1.0f; // y
-            point_data[6] = 0.0f; // texture_x
-            point_data[7] = 0.5f; // texture_y
-            point_data += STRIDE_STEP;
-
-            // point 3
-            point_data[0] = -1.0f; // x
             point_data[1] = -1.0f; // y
             point_data[6] = 0.0f; // texture_x
             point_data[7] = 0.5f; // texture_y
@@ -75,10 +68,7 @@ namespace gl_simplify {
 
             GLfloat theta = _theta;
 
-            GLint point_top_index1 = 2;
-            GLint point_bottom_index1 = 3;
-            GLint point_top_index2 = 4;
-            GLint point_bottom_index2 = 5;
+            GLint point_bottom_index = 3;
 
             GLuint* indice_data = _indices.data();
 
@@ -92,14 +82,6 @@ namespace gl_simplify {
                 GLfloat texture_y = 0.5f * (1.0f - std::sin(theta));
 
                 // ------------- make up vertice data ------------
-                // top point
-                point_data[0] = x; // x
-                point_data[1] = 1.0; // y
-                point_data[2] = z; // z
-                point_data[6] = texture_x; // texture_x
-                point_data[7] = texture_y; // texture_y
-                point_data += STRIDE_STEP;
-
                 // bottom point
                 point_data[0] = x; // x
                 point_data[1] = -1.0; // y
@@ -111,64 +93,34 @@ namespace gl_simplify {
                 theta += _theta;
                 
                 // ------------- make up indice data ------------
-                // top triangle
-                indice_data[0] = 0;
-                indice_data[1] = point_top_index1;
-                indice_data[2] = point_top_index2;
-                indice_data += 3;
-
                 // bottom triangle
                 indice_data[0] = 1;
-                indice_data[1] = point_bottom_index2;
-                indice_data[2] = point_bottom_index1;
+                indice_data[1] = point_bottom_index;
+                indice_data[2] = point_bottom_index - 1;
                 indice_data += 3;
 
-                // side rectangle(2 triangles)
-                // first triangle
-                indice_data[0] = point_top_index1;
-                indice_data[1] = point_bottom_index1;
-                indice_data[2] = point_bottom_index2;
+                // side triangle
+                indice_data[0] = 0;
+                indice_data[1] = point_bottom_index - 1;
+                indice_data[2] = point_bottom_index;
                 indice_data += 3;
 
-                // second triangle
-                indice_data[0] = point_top_index1;
-                indice_data[1] = point_bottom_index2;
-                indice_data[2] = point_top_index2;
-                indice_data += 3;
-
-                point_top_index1 += 2;
-                point_bottom_index1 += 2;
-                point_top_index2 += 2;
-                point_bottom_index2 += 2;
+                point_bottom_index += 1;
             }
 
-            point_top_index2 = 2;
-            point_bottom_index2 = 3;
+            point_bottom_index -= 1;
                 
             // ------------- make up indice data ------------
-            // top triangle
-            indice_data[0] = 0;
-            indice_data[1] = point_top_index1;
-            indice_data[2] = point_top_index2;
-            indice_data += 3;
-
             // bottom triangle
             indice_data[0] = 1;
-            indice_data[1] = point_bottom_index2;
-            indice_data[2] = point_bottom_index1;
+            indice_data[1] = 2;
+            indice_data[2] = point_bottom_index;
             indice_data += 3;
 
-            // side rectangle(2 triangles)
-            // first triangle
-            indice_data[0] = point_top_index1;
-            indice_data[1] = point_bottom_index1;
-            indice_data[2] = point_bottom_index2;
-            indice_data += 3;
-
-            // second triangle
-            indice_data[0] = point_top_index1;
-            indice_data[1] = point_bottom_index2;
-            indice_data[2] = point_top_index2;
+            // side triangle
+            indice_data[0] = 0;
+            indice_data[1] = point_bottom_index;
+            indice_data[2] = 2;
             indice_data += 3;
 
             // upload data and set data format
@@ -188,7 +140,7 @@ namespace gl_simplify {
             return true;
         }
 
-        void Cylinder::Draw()
+        void Cone::Draw()
         {
             // draw point
             _vao.Bind();

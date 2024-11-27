@@ -8,6 +8,7 @@
 #include "entity/libglsimplify_plane.h"
 
 #include "entity/libglsimplify_cylinder.h"
+#include "entity/libglsimplify_cone.h"
 
 #include <iostream>
 
@@ -125,6 +126,44 @@ int test_all(int argc, char **argv, int width, int height)
             cylinder->Translate(glm::vec3(3.0, 0.0, 0.0));
             
             scene.AddEntity(cylinder);
+        } while (false);
+
+        do
+        {
+            gl_simplify::entity::Cone* cone = new gl_simplify::entity::Cone();
+
+            if (!cone->Create(error, sizeof(error)))
+            {
+                std::cout << "create cone failed: " << error << std::endl;
+
+                delete cone;
+                cone = nullptr;
+                break;
+            }
+
+#if false
+            if (!cone->Attach(glm::vec4(0.0, 0.5, 0.0, 0.9), error, sizeof(error)))
+            {
+                std::cout << "attach cone color failed: " << error << std::endl;
+
+                delete cone;
+                cone = nullptr;
+                break;
+            }
+#else
+            if (!cone->Attach("../../resource/texture/wood.jpg", error, sizeof(error)))
+            {
+                std::cout << "attach cone texture failed: " << error << std::endl;
+
+                delete cone;
+                cone = nullptr;
+                break;
+            }
+#endif
+
+            cone->Translate(glm::vec3(0.0, 0.0, -3.0));
+            
+            scene.AddEntity(cone);
         } while (false);
 
         scene.GetBackground().SetColor(glm::vec4(0.2f, 0.3f, 0.3f, 1.0f));

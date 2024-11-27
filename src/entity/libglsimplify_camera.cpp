@@ -1,10 +1,6 @@
 
 #include "libglsimplify_camera.h"
 
-#include <cmath>
-
-#include <iostream>
-
 namespace gl_simplify {
 
     namespace entity {

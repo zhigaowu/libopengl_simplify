@@ -21,6 +21,8 @@
 
 #include <glm/glm.hpp>
 
+#include <cmath>
+
 #if __cplusplus < 202002L
 
 namespace std {
