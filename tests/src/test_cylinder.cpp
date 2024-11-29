@@ -41,8 +41,7 @@ int test_cylinder(int argc, char **argv, int width, int height)
 
         scene.GetLight()->TranslateTo(glm::vec3(2.0, 4.0, 4.0));
 
-        gl_simplify::material::SharedMaterial wood = gl_simplify::material::MaterialFactory::Instance()->Create();
-        wood->SetColor(glm::vec4(1.0f, 0.5f, 0.31f, 1.0f));
+        gl_simplify::material::SharedMaterial wood = gl_simplify::material::MaterialFactory::GetShared(gl_simplify::material::MaterialFactory::PredefinedMaterialType::Chrome);
         wood->SetTexture("../../resource/texture/wood.jpg");
 
         do

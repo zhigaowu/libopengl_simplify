@@ -73,7 +73,7 @@ namespace gl_simplify {
             , _ebo(nullptr)
             , _vao(nullptr)
 
-            , _material(material::MaterialFactory::Instance()->Create())
+            , _material(material::MaterialFactory::Create(glm::vec4(1.0f), glm::vec4(1.0f), glm::vec4(1.0f), 32.0f))
         {
             updateNormalModel();
         }
@@ -116,6 +116,21 @@ namespace gl_simplify {
             _model = glm::rotate(_model, glm::radians(degrees), axis);
 
             updateNormalModel();
+        }
+
+        void Entity::RotateAround(GLfloat degrees, const glm::vec3 &axis, const glm::vec3 &target)
+        {
+            // get rotation matrix
+            glm::mat4 rotation_matrix = glm::rotate(glm::mat4(1.0f), degrees, axis);
+
+            // get local position in target coordinate system
+            glm::vec4 position_to_target = rotation_matrix * glm::vec4(_position - target, 1.0f);
+
+            // change local position back to world position
+            glm::vec3 position_to_world = target + glm::vec3(position_to_target);
+
+            // move
+            Translate(position_to_world - _position);
         }
 
         void Entity::Scale(const glm::vec3 &size)

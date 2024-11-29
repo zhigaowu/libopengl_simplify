@@ -37,14 +37,13 @@ int test_all(int argc, char **argv, int width, int height)
             break;
         }
 
-        scene.GetLight()->TranslateTo(glm::vec3(2.0, 4.0, 4.0));
+        scene.GetLight()->TranslateTo(glm::vec3(4.0, 4.0, 4.0));
+        scene.GetLight()->SetAmbient(glm::vec4(0.5f, 0.5f, 0.5f, 1.0f));
 
-        gl_simplify::material::SharedMaterial rock = gl_simplify::material::MaterialFactory::Instance()->Create();
-        rock->SetColor(glm::vec4(0.753f, 0.753f, 0.753f, 1.0f));
+        gl_simplify::material::SharedMaterial rock = gl_simplify::material::MaterialFactory::GetShared(gl_simplify::material::MaterialFactory::PredefinedMaterialType::PlasticWhite);
         rock->SetTexture("../../resource/texture/plane_rock.jpg");
 
-        gl_simplify::material::SharedMaterial wood = gl_simplify::material::MaterialFactory::Instance()->Create();
-        wood->SetColor(glm::vec4(1.0f, 0.5f, 0.31f, 1.0f));
+        gl_simplify::material::SharedMaterial wood = gl_simplify::material::MaterialFactory::GetShared(gl_simplify::material::MaterialFactory::PredefinedMaterialType::Chrome);
         wood->SetTexture("../../resource/texture/wood.jpg");
 
         do
@@ -105,6 +104,8 @@ int test_all(int argc, char **argv, int width, int height)
 
         window.Show([&scene] (GLFWwindow*, gl_simplify::entity::Camera* camera) {
                 scene.Render(camera);
+
+                scene.GetLight()->RotateAround(0.001f, glm::vec3(0.0f, 1.0f, 0.0f));
             });
 
         res = 0;

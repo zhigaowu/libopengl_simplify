@@ -30,8 +30,8 @@ namespace gl_simplify {
 
             void UpdateCameraView(entity::Camera* camera) override;
 
-            void UpdateAmbient(const glm::vec4& ambient) override;
             void UpdateLight(light::Light* light) override;
+            void UpdateMaterial(material::SharedMaterial material) override;
 
             void Render(entity::Entity* entity) override;
         };

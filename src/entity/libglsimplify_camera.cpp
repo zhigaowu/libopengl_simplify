@@ -164,34 +164,14 @@ namespace gl_simplify {
             
             void FocusViewState::Left()
             {
-                // get rotation matrix
-                glm::mat4 rotation_around_y = glm::rotate(glm::mat4(1.0f), _camera._rotate_sensitive, glm::vec3(0.0, 1.0, 0.0));
-
-                // get camera local position in target coordinate system
-                glm::vec4 camera_position_to_target = rotation_around_y * glm::vec4(_camera._position - _target, 1.0f);
-
-                // change local position back to world position
-                glm::vec3 camera_position_to_world = _target + glm::vec3(camera_position_to_target);
-
-                // move
-                _camera.Translate(camera_position_to_world - _camera._position);
+                _camera.RotateAround(_camera._rotate_sensitive, glm::vec3(0.0, 1.0, 0.0), _target);
 
                 updateView();
             }
             
             void FocusViewState::Right()
             {
-                // get rotation matrix
-                glm::mat4 rotation_around_y = glm::rotate(glm::mat4(1.0f), -_camera._rotate_sensitive, glm::vec3(0.0, 1.0, 0.0));
-
-                // get camera local position in target coordinate system
-                glm::vec4 camera_position_to_target = rotation_around_y * glm::vec4(_camera._position - _target, 1.0f);
-
-                // change local position back to world position
-                glm::vec3 camera_position_to_world = _target + glm::vec3(camera_position_to_target);
-
-                // move
-                _camera.Translate(camera_position_to_world - _camera._position);
+                _camera.RotateAround(-_camera._rotate_sensitive, glm::vec3(0.0, 1.0, 0.0), _target);
 
                 updateView();
             }

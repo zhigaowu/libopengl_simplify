@@ -9,12 +9,10 @@ namespace gl_simplify {
 
         Scene::Scene()
             : _background()
-
-            , _ambient()
             
             , _render_model(new model::PhongModel())
 
-            , _light(new light::Light(glm::vec4(1.0, 1.0, 1.0, 1.0)))
+            , _light(new light::Light())
 
             , _entities()
         {
@@ -44,14 +42,14 @@ namespace gl_simplify {
 
             _render_model->Use();
 
-            _render_model->UpdateAmbient(_ambient);
-
             _render_model->UpdateCameraView(camera);
             
             _render_model->UpdateLight(_light);
 
             for (Entities::iterator it = _entities.begin(); it != _entities.end(); ++it)
             {
+                _render_model->UpdateMaterial(it->second->GetMaterial());
+                
                 _render_model->Render(it->second);
             }
         }

@@ -5,10 +5,12 @@ namespace gl_simplify {
 
     namespace light {
 
-        Light::Light(const glm::vec4& color, const glm::vec3& position)
+        Light::Light(const glm::vec3& position)
             : Entity(position)
 
-            , _color(color)
+            , _ambient(1.0f, 1.0f, 1.0f, 1.0f)
+            , _diffuse(1.0f, 1.0f, 1.0f, 1.0f)
+            , _specular(1.0f, 1.0f, 1.0f, 1.0f)
         {
         }
 
@@ -16,14 +18,34 @@ namespace gl_simplify {
         {
         }
 
-        void Light::SetColor(const glm::vec4& color)
+        void Light::SetAmbient(const glm::vec4& ambient)
         {
-            _color = color;
+            _ambient = ambient;
         }
 
-        const glm::vec4 &Light::GetColor()
+        const glm::vec4 &Light::GetAmbient()
         {
-            return _color;
+            return _ambient;
+        }
+
+        void Light::SetDiffuse(const glm::vec4& diffuse)
+        {
+            _diffuse = diffuse;
+        }
+
+        const glm::vec4 &Light::GetDiffuse()
+        {
+            return _diffuse;
+        }
+
+        void Light::SetSpecular(const glm::vec4& specular)
+        {
+            _specular = specular;
+        }
+
+        const glm::vec4 &Light::GetSpecular()
+        {
+            return _specular;
         }
 
         void Light::Create()

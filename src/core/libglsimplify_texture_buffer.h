@@ -34,9 +34,16 @@ namespace gl_simplify {
                 GLenum type;
 
             public:
+                GLint width;
+                GLint height;
+
+            public:
                 explicit Texture(GLuint texture_id = 0, GLenum texture_type = 0)
                     : id(texture_id)
                     , type(texture_type)
+
+                    , width(0)
+                    , height(0)
                 {
                 }
 
@@ -46,6 +53,9 @@ namespace gl_simplify {
                 Texture(Texture&& ref)
                     : id(ref.id)
                     , type(ref.type)
+
+                    , width(ref.width)
+                    , height(ref.height)
                 {
                 }
 
@@ -54,12 +64,18 @@ namespace gl_simplify {
                     id = ref.id;
                     type = ref.type;
 
+                    width = ref.width;
+                    height = ref.height;
+
                     return *this;
                 }
 
                 Texture(const Texture& ref)
                     : id(ref.id)
                     , type(ref.type)
+
+                    , width(ref.width)
+                    , height(ref.height)
                 {
                 }
 
@@ -67,6 +83,9 @@ namespace gl_simplify {
                 {
                     id = ref.id;
                     type = ref.type;
+
+                    width = ref.width;
+                    height = ref.height;
 
                     return *this;
                 }

@@ -8,15 +8,7 @@
 namespace gl_simplify {
 
     namespace material {
-
-        Material::Material(GLuint texture_unit)
-            : _texture_unit(texture_unit)
-            , _texture_buffer()
-
-            , _color(glm::vec4(1.0, 1.0, 1.0, 1.0))
-
-            , _specular_strength(0.5f)
-            , _specular_shininess(32)
+        void Material::generateDefaultTexture()
         {
             // default texture with white color [has no effect on color]
             _texture_buffer.GetTexture().Bind(_texture_unit);
@@ -28,6 +20,71 @@ namespace gl_simplify {
                 .SetParameter(GL_TEXTURE_MAG_FILTER, GL_LINEAR).UploadColor(glm::vec4(1.0, 1.0, 1.0, 1.0));
                 
             _texture_buffer.GetTexture().Unbind();
+        }
+
+        Material::Material(GLfloat shininess)
+            : _texture_unit(GL_TEXTURE0)
+            , _texture_buffer()
+
+            , _ambient(1.0f, 1.0f, 1.0f, 1.0f)
+            , _diffuse(1.0f, 1.0f, 1.0f, 1.0f)
+            , _specular(1.0f, 1.0f, 1.0f, 1.0f)
+
+            , _shininess(shininess)
+        {
+            generateDefaultTexture();
+        }
+
+        Material::Material(const glm::vec4& ambient, GLfloat shininess)
+            : _texture_unit(GL_TEXTURE0)
+            , _texture_buffer()
+
+            , _ambient(ambient)
+            , _diffuse(1.0f, 1.0f, 1.0f, 1.0f)
+            , _specular(1.0f, 1.0f, 1.0f, 1.0f)
+
+            , _shininess(shininess)
+        {
+            generateDefaultTexture();
+        }
+
+        Material::Material(const glm::vec4& ambient, const glm::vec4& diffuse, GLfloat shininess)
+            : _texture_unit(GL_TEXTURE0)
+            , _texture_buffer()
+
+            , _ambient(ambient)
+            , _diffuse(diffuse)
+            , _specular(1.0f, 1.0f, 1.0f, 1.0f)
+
+            , _shininess(shininess)
+        {
+            generateDefaultTexture();
+        }
+
+        Material::Material(const glm::vec4& ambient, const glm::vec4& diffuse, const glm::vec4& specular, GLfloat shininess)
+            : _texture_unit(GL_TEXTURE0)
+            , _texture_buffer()
+
+            , _ambient(ambient)
+            , _diffuse(diffuse)
+            , _specular(specular)
+
+            , _shininess(shininess)
+        {
+            generateDefaultTexture();
+        }
+
+        Material::Material(const std::string& path, GLuint texture_unit)
+            : _texture_unit(texture_unit)
+            , _texture_buffer()
+
+            , _ambient(1.0f, 1.0f, 1.0f, 1.0f)
+            , _diffuse(1.0f, 1.0f, 1.0f, 1.0f)
+            , _specular(1.0f, 1.0f, 1.0f, 1.0f)
+
+            , _shininess(32.0f)
+        {
+            SetTexture(path);
         }
 
         Material::~Material()
@@ -57,34 +114,56 @@ namespace gl_simplify {
             _texture_buffer.GetTexture().Unbind();
         }
 
-        void Material::SetColor(const glm::vec4 &color)
+        void Material::SetAmbient(const glm::vec4& ambient)
         {
-            _color = color;
+            _ambient = ambient;
         }
 
-        const glm::vec4 &Material::GetColor()
+        const glm::vec4 &Material::GetAmbient()
         {
-            return _color;
+            return _ambient;
         }
 
-        void Material::SetSpecularStrength(GLfloat specular_strength)
+        void Material::SetDiffuse(const glm::vec4& diffuse)
         {
-            _specular_strength = specular_strength;
+            _diffuse = diffuse;
         }
 
-        GLfloat Material::GetSpecularStrength()
+        const glm::vec4 &Material::GetDiffuse()
         {
-            return _specular_strength;
+            return _diffuse;
         }
 
-        void Material::SetSpecularShininess(GLuint specular_shininess)
+        void Material::SetSpecular(const glm::vec4& specular)
         {
-            _specular_shininess = specular_shininess;
+            _specular = specular;
         }
 
-        GLuint Material::GetSpecularShininess()
+        const glm::vec4 &Material::GetSpecular()
         {
-            return _specular_shininess;
+            return _specular;
+        }
+
+        void Material::SetShininess(GLfloat shininess)
+        {
+            _shininess = shininess;
+        }
+
+        GLfloat Material::GetShininess()
+        {
+            return _shininess;
+        }
+
+        void Material::Copy(Material *other)
+        {
+            if (other)
+            {
+                _shininess = other->_shininess;
+
+                _ambient = other->_ambient;
+                _diffuse = other->_diffuse;
+                _specular = other->_specular;
+            }
         }
     }
 }

@@ -25,14 +25,22 @@ namespace gl_simplify {
 
         class Light : public entity::Entity {
         protected:
-            glm::vec4 _color;
+            glm::vec4 _ambient;
+            glm::vec4 _diffuse;
+            glm::vec4 _specular;
 
         public:
-            explicit Light(const glm::vec4& color, const glm::vec3& position = glm::vec3(8.0, 8.0, 8.0));
+            explicit Light(const glm::vec3& position = glm::vec3(8.0, 8.0, 8.0));
             virtual ~Light();
 
-            void SetColor(const glm::vec4& color);
-            const glm::vec4& GetColor();
+            void SetAmbient(const glm::vec4& ambient);
+            const glm::vec4& GetAmbient();
+
+            void SetDiffuse(const glm::vec4& diffuse);
+            const glm::vec4& GetDiffuse();
+
+            void SetSpecular(const glm::vec4& specular);
+            const glm::vec4& GetSpecular();
 
             void Create() override;
         };

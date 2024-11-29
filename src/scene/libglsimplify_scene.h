@@ -18,7 +18,6 @@
 #define GL_SIMPLIFY_SCENE_SCENE_H
 
 #include "libglsimplify_background.h"
-#include "libglsimplify_ambient.h"
 
 #include "entity/libglsimplify_camera.h"
 #include "model/libglsimplify_render_model.h"
@@ -43,9 +42,6 @@ namespace gl_simplify {
             Background _background;
 
         private:
-            Ambient _ambient;
-
-        private:
             model::RenderModel* _render_model;
 
         private:
@@ -61,7 +57,6 @@ namespace gl_simplify {
             virtual ~Scene();
 
             Background& GetBackground() { return _background; }
-            Ambient& GetAmbient() { return _ambient; };
 
             light::Light* GetLight() { return _light; }
 

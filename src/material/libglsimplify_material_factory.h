@@ -29,12 +29,48 @@ namespace gl_simplify {
             ~MaterialFactory();
 
         public:
-            static void Initialize();
-            static void Shutdown();
-            
-            static MaterialFactory* Instance();
+            /*
+             * reference:
+             * http://www.it.hiof.no/~borres/j3d/explain/light/p-materials.html
+            */
+            enum class PredefinedMaterialType {
+                Brass = 0,
+                Bronze,
+                BronzePolished,
+                Chrome,
+                Copper,
+                CopperPolished,
+                Gold,
+                GoldPolished,
+                Tin,
+                Silver,
+                SilverPolished,
+                Emerald,
+                Jade,
+                Obsidian,
+                Perl,
+                Ruby,
+                Turquoise,
+                PlasticBlack,
+                PlasticCyan,
+                PlasticGreen,
+                PlasticRed,
+                PlasticWhite,
+                PlasticYellow,
+                RubberBlack,
+                RubberCyan,
+                RubberGreen,
+                RubberRed,
+                RubberWhite,
+                RubberYellow
+            };
 
-            SharedMaterial Create(GLuint texture_unit = GL_TEXTURE0);
+        public:
+            static SharedMaterial Create();
+
+            static SharedMaterial Create(const glm::vec4& ambient, const glm::vec4& diffuse, const glm::vec4& specular, GLfloat shininess);
+
+            static SharedMaterial GetShared(const PredefinedMaterialType& material_type);
         };
     }
 }

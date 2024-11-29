@@ -33,8 +33,7 @@ int test_plane(int argc, char **argv, int width, int height)
             break;
         }
 
-        gl_simplify::material::SharedMaterial rock = gl_simplify::material::MaterialFactory::Instance()->Create();
-        rock->SetColor(glm::vec4(0.753f, 0.753f, 0.753f, 1.0f));
+        gl_simplify::material::SharedMaterial rock = gl_simplify::material::MaterialFactory::GetShared(gl_simplify::material::MaterialFactory::PredefinedMaterialType::Chrome);
         rock->SetTexture("../../resource/texture/plane_rock.jpg");
 
         do

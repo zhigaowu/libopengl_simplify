@@ -21,6 +21,7 @@
 
 #include "entity/libglsimplify_camera.h"
 #include "light/libglsimplify_light.h"
+#include "material/libglsimplify_material.h"
 
 namespace gl_simplify {
 
@@ -44,8 +45,8 @@ namespace gl_simplify {
 
             virtual void UpdateCameraView(entity::Camera* camera) = 0;
 
-            virtual void UpdateAmbient(const glm::vec4& ambient) = 0;
             virtual void UpdateLight(light::Light* light) = 0;
+            virtual void UpdateMaterial(material::SharedMaterial material) = 0;
 
             virtual void Render(entity::Entity* entity) = 0;
         };

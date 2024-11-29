@@ -33,19 +33,19 @@ namespace gl_simplify {
 
         TextureBuffer::Texture &TextureBuffer::Texture::UploadColor(const glm::vec4 &color, GLint level, GLint border)
         {
-            static constexpr const int rows = 64;
-            static constexpr const int cols = 64;
+            width = 64;
+            height = 64;
 
-            GLubyte data[64 * (64 * 3)] = {0};
+            std::vector<GLubyte> texture_memory(height * (width * 3), 0);
 
             GLubyte R = color.r * 255;
             GLubyte G = color.g * 255;
             GLubyte B = color.b * 255;
 
-            GLubyte* rgb = data;
-            for (int r = 0; r < rows; ++r)
+            GLubyte* rgb = texture_memory.data();
+            for (int r = 0; r < height; ++r)
             {
-                for (int c = 0; c < cols; ++c)
+                for (int c = 0; c < width; ++c)
                 {
                     rgb[0] = R;
                     rgb[1] = G;
@@ -55,7 +55,7 @@ namespace gl_simplify {
                 }
             }
             
-            glTexImage2D(type, level, GL_RGB, rows, cols, border, GL_RGB, GL_UNSIGNED_BYTE, data);
+            glTexImage2D(type, level, GL_RGB, width, height, border, GL_RGB, GL_UNSIGNED_BYTE, texture_memory.data());
             glGenerateMipmap(type);
 
             return *this;
@@ -75,7 +75,7 @@ namespace gl_simplify {
         {
             stbi_set_flip_vertically_on_load(flip_vertical == 0);
             
-            int width, height, nrChannels;
+            int nrChannels;
             unsigned char *data = stbi_load(image_path.c_str(), &width, &height, &nrChannels, 0);
 
             (void)nrChannels;

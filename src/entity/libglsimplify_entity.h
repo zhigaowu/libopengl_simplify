@@ -71,6 +71,7 @@ namespace gl_simplify {
             void TranslateTo(const glm::vec3& position);
             
             void Rotate(GLfloat degrees, const glm::vec3& axis);
+            void RotateAround(GLfloat degrees, const glm::vec3& axis, const glm::vec3 &target = glm::vec3(0.0f));
 
             void Scale(const glm::vec3& size);
 
