@@ -1,6 +1,8 @@
 
 #include "libglsimplify_window.h"
 
+#include "material/libglsimplify_material_factory.h"
+
 #include <atomic>
 
 namespace gl_simplify {
@@ -163,6 +165,8 @@ namespace gl_simplify {
                 glfwSetCursorPosCallback(_window, Window::glfw_callback_mouse_moved);
 
                 glfwSetScrollCallback(_window, Window::glfw_callback_wheel_scrolled);
+
+                material::MaterialFactory::Initialize();
             }
 
             return _window;
@@ -196,6 +200,8 @@ namespace gl_simplify {
 
         void Window::Destroy()
         {
+            material::MaterialFactory::Shutdown();
+
             if (_window)
             {
                 glfwDestroyWindow(_window);

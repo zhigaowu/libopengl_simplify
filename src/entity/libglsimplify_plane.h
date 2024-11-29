@@ -24,18 +24,11 @@ namespace gl_simplify {
     namespace entity {
 
         class Plane : public Entity {
-            gl_simplify::core::BufferArray _vbo;
-            gl_simplify::core::BufferArray _ebo;
-            gl_simplify::core::VertexArray _vao;
-
         public:
             explicit Plane(const glm::vec3& position = glm::vec3(0.0, 0.0, 0.0));
             ~Plane();
 
-            void SetSize(GLfloat size);
-
-            bool Update(GLchar* error, GLsizei error_length) override;
-            void Draw() override;
+            void Create() override;
         };
     }
 }

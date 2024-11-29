@@ -1,18 +1,12 @@
 
 #include "libglsimplify_cube.h"
 
-#include "entity/libglsimplify_camera.h"
-
 namespace gl_simplify {
 
     namespace entity {
 
         Cube::Cube(const glm::vec3& position)
             : Entity(position)
-
-            , _vbo()
-            , _ebo(GL_ELEMENT_ARRAY_BUFFER)
-            , _vao()
         {
         }
 
@@ -20,7 +14,7 @@ namespace gl_simplify {
         {
         }
 
-        bool Cube::Update(GLchar *, GLsizei)
+        void Cube::Create()
         {
             static float vertices[] = {
                 // Positions          // Normals           // Texture Coords
@@ -76,31 +70,15 @@ namespace gl_simplify {
                 20, 21, 22, 20, 22, 23
             };
 
-            // upload data and set data format
-            _vao.Bind();
+            _vertices.resize(sizeof(vertices) / sizeof(GLfloat));
+            _indices.resize(sizeof(indices) / sizeof(GLuint));
 
-            _vbo.Bind();
-            _vbo.Upload(sizeof(vertices), vertices, GL_STATIC_DRAW);
-            _vbo.SetAttribute(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
-            _vbo.SetAttribute(1, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
-            _vbo.Unbind();
+            memcpy(_vertices.data(), vertices, sizeof(vertices));
+            memcpy(_indices.data(), indices, sizeof(indices));
 
-            _ebo.Bind();
-            _ebo.Upload(sizeof(indices), indices, GL_STATIC_DRAW);
+            createDefaultArrays();
 
-            _vao.Unbind();
-
-            return true;
-        }
-
-        void Cube::Draw()
-        {
-            // draw point
-            _vao.Bind();
-
-            glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
-
-            _vao.Unbind();
+            bindDefaultVertexLayout();
         }
     }
 }

@@ -6,6 +6,8 @@
 
 #include "entity/libglsimplify_plane.h"
 
+#include "material/libglsimplify_material_factory.h"
+
 #include <iostream>
 
 int test_plane(int argc, char **argv, int width, int height)
@@ -31,28 +33,17 @@ int test_plane(int argc, char **argv, int width, int height)
             break;
         }
 
+        gl_simplify::material::SharedMaterial rock = gl_simplify::material::MaterialFactory::Instance()->Create();
+        rock->SetColor(glm::vec4(0.753f, 0.753f, 0.753f, 1.0f));
+        rock->SetTexture("../../resource/texture/plane_rock.jpg");
+
         do
         {
             gl_simplify::entity::Plane* plane = new gl_simplify::entity::Plane();
 
-            if (!plane->Create(error, sizeof(error)))
-            {
-                std::cout << "create plane failed: " << error << std::endl;
+            plane->Create();
 
-                delete plane;
-                plane = nullptr;
-                break;
-            }
-
-            if (!plane->Attach("../../resource/texture/plane_rock.jpg", error, sizeof(error)))
-            {
-                std::cout << "attach plane texture failed: " << error << std::endl;
-
-                delete plane;
-                plane = nullptr;
-                break;
-            }
-
+            plane->Attatch(rock);
             plane->Scale(glm::vec3(4.0, 0.0, 4.0));
             plane->Translate(glm::vec3(0.0, -8.0, 0.0));
             
@@ -62,9 +53,9 @@ int test_plane(int argc, char **argv, int width, int height)
         scene.GetBackground().SetColor(glm::vec4(0.2f, 0.3f, 0.3f, 1.0f));
 
         gl_simplify::entity::Camera* camera = window.Camera();
-        camera->Translate(glm::vec3(0.0f, 2.0f, 8.0f));
-        //camera->LookAt(glm::vec3(0.0f, 2.0f, 0.0f));
-        camera->LookFront(glm::vec3(0.0f, 0.0f, -1.0f));
+        camera->Translate(glm::vec3(0.0f, 8.0f, 8.0f));
+        camera->LookAt(glm::vec3(0.0f, 2.0f, 0.0f));
+        //camera->LookFront(glm::vec3(0.0f, 0.0f, -1.0f));
 
         window.Show([&scene] (GLFWwindow*, gl_simplify::entity::Camera* camera) {
                 scene.Render(camera);

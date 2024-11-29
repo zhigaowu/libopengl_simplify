@@ -24,16 +24,11 @@ namespace gl_simplify {
     namespace entity {
 
         class Cube : public Entity {
-            gl_simplify::core::BufferArray _vbo;
-            gl_simplify::core::BufferArray _ebo;
-            gl_simplify::core::VertexArray _vao;
-
         public:
             explicit Cube(const glm::vec3& position = glm::vec3(0.0, 0.0, 0.0));
             ~Cube();
 
-            bool Update(GLchar* error, GLsizei error_length) override;
-            void Draw() override;
+            void Create() override;
         };
     }
 }

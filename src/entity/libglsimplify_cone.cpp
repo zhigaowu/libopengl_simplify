@@ -1,25 +1,14 @@
 
 #include "libglsimplify_cone.h"
 
-#include "entity/libglsimplify_camera.h"
-
 namespace gl_simplify {
 
     namespace entity {
 
-        static constexpr GLsizei STRIDE_STEP = 8; // Positions(3) Normals(3) Texture Coords(2)
-
         Cone::Cone(GLint segments, const glm::vec3& position)
             : Entity(position)
 
-            , _vbo()
-            , _ebo(GL_ELEMENT_ARRAY_BUFFER)
-            , _vao()
-
-            , _theta(0.0f)
-
-            , _vertices()
-            , _indices()
+            , _segments(segments)
         {
             SetSegments(segments);
         }
@@ -35,119 +24,157 @@ namespace gl_simplify {
                 segments = 3;
             }
 
-            _theta = (std::numbers::pi * 2) / segments;
-
-            GLint point_number = segments + 2;
-            GLint triangle_number = segments << 1;
-
-            _vertices.resize(point_number * STRIDE_STEP, 0.0f);
-            _indices.resize(triangle_number * 3, 0u);
+            _segments = segments;
         }
 
-        bool Cone::Update(GLchar *, GLsizei)
+        void Cone::Create()
         {
-            // point 0
+            // allocate data buffer
+            const GLfloat theta_step = (std::numbers::pi * 2) / _segments;
+
+            GLint triangle_number = _segments << 1;
+            GLint point_number = triangle_number * 3;
+
+            _vertices.resize(point_number * VERTEX_STRIDE_WITH_NORMAL_UV, 0.0f);
+            _indices.resize(point_number, 0u);
+
+            // prepare the top and bottom circle information
+            const glm::vec3 top_circle_center_position(0.0f, 1.0f, 0.0f);
+            const glm::vec2 top_circle_center_uv(0.5f, 0.5f);
+
+            const glm::vec3 bottom_circle_center_position(0.0f, -1.0f, 0.0f);
+            const glm::vec2 bottom_circle_center_uv(0.5f, 0.5f);
+            const glm::vec3 bottom_circle_plane_normal(0.0f, -1.0f, 0.0f);
+
+            // make up the vertex and indice data
+            GLfloat theta = 0.0f;
+
             GLfloat* point_data = _vertices.data();
-            point_data[1] = 1.0f; // y
-            point_data[6] = 0.5f; // u
-            point_data[7] = 0.5f; // v
-            point_data += STRIDE_STEP;
-
-            // point 1
-            point_data[1] = -1.0f; // y
-            point_data[6] = 0.5f; // u
-            point_data[7] = 0.5f; // v
-            point_data += STRIDE_STEP;
-
-            // point 2
-            point_data[0] = -1.0f; // x
-            point_data[1] = -1.0f; // y
-            point_data[6] = 0.0f; // u
-            point_data[7] = 0.5f; // v
-            point_data += STRIDE_STEP;
-
-            GLfloat theta = _theta;
-
-            GLint point_bottom_index = 3;
-
             GLuint* indice_data = _indices.data();
 
-            GLfloat* point_end = _vertices.data() + _vertices.size();
-            while (point_data < point_end)
+            GLuint point_index = 0;
+
+            // -- vertex data is orgnized in counter-clockwise order
+            for (GLint segment = 0; segment < _segments; ++segment)
             {
+                /*
+                 * ----------- bottom triangle ------------
+                */
+                // next bottom point
                 GLfloat x = std::cos(theta + std::numbers::pi);
                 GLfloat z = std::sin(theta);
+                glm::vec3 next_bottom_point_position(x, bottom_circle_center_position.y, z);
 
                 GLfloat u = 0.5f * (1.0f - std::cos(theta));
                 GLfloat v = 0.5f * (1.0f - std::sin(theta));
+                glm::vec2 next_bottom_point_uv(u, v);
 
-                // ------------- make up vertice data ------------
-                // bottom point
-                point_data[0] = x; // x
-                point_data[1] = -1.0; // y
-                point_data[2] = z; // z
-                point_data[6] = u; // u
-                point_data[7] = v; // v
-                point_data += STRIDE_STEP;
+                // first bottom point
+                theta += theta_step;
 
-                theta += _theta;
-                
-                // ------------- make up indice data ------------
-                // bottom triangle
-                indice_data[0] = 1;
-                indice_data[1] = point_bottom_index;
-                indice_data[2] = point_bottom_index - 1;
-                indice_data += 3;
+                x = std::cos(theta + std::numbers::pi);
+                z = std::sin(theta);
+                glm::vec3 first_bottom_point_position(x, bottom_circle_center_position.y, z);
 
-                // side triangle
-                indice_data[0] = 0;
-                indice_data[1] = point_bottom_index - 1;
-                indice_data[2] = point_bottom_index;
-                indice_data += 3;
+                u = 0.5f * (1.0f - std::cos(theta));
+                v = 0.5f * (1.0f - std::sin(theta));
+                glm::vec2 first_bottom_point_uv(u, v);
 
-                point_bottom_index += 1;
+                // bottom center point
+                point_data[0] = bottom_circle_center_position.x; // x
+                point_data[1] = bottom_circle_center_position.y; // y
+                point_data[2] = bottom_circle_center_position.z; // z
+                point_data[3] = bottom_circle_plane_normal.x; // normal_x
+                point_data[4] = bottom_circle_plane_normal.y; // normal_y
+                point_data[5] = bottom_circle_plane_normal.z; // normal_z
+                point_data[6] = bottom_circle_center_uv.x; // u
+                point_data[7] = bottom_circle_center_uv.y; // v
+                point_data += VERTEX_STRIDE_WITH_NORMAL_UV;
+
+                *indice_data = point_index++;
+                ++indice_data;
+
+                // first bottom point
+                point_data[0] = first_bottom_point_position.x; // x
+                point_data[1] = first_bottom_point_position.y; // y
+                point_data[2] = first_bottom_point_position.z; // z
+                point_data[3] = bottom_circle_plane_normal.x; // normal_x
+                point_data[4] = bottom_circle_plane_normal.y; // normal_y
+                point_data[5] = bottom_circle_plane_normal.z; // normal_z
+                point_data[6] = first_bottom_point_uv.x; // u
+                point_data[7] = first_bottom_point_uv.y; // v
+                point_data += VERTEX_STRIDE_WITH_NORMAL_UV;
+
+                *indice_data = point_index++;
+                ++indice_data;
+
+                // next bottom point
+                point_data[0] = next_bottom_point_position.x; // x
+                point_data[1] = next_bottom_point_position.y; // y
+                point_data[2] = next_bottom_point_position.z; // z
+                point_data[3] = bottom_circle_plane_normal.x; // normal_x
+                point_data[4] = bottom_circle_plane_normal.y; // normal_y
+                point_data[5] = bottom_circle_plane_normal.z; // normal_z
+                point_data[6] = next_bottom_point_uv.x; // u
+                point_data[7] = next_bottom_point_uv.y; // v
+                point_data += VERTEX_STRIDE_WITH_NORMAL_UV;
+
+                *indice_data = point_index++;
+                ++indice_data;
+
+                /*
+                 * ----------- side triangle ------------
+                */
+                glm::vec3 top_center_point_to_next_bottom_point_direction = next_bottom_point_position - top_circle_center_position;
+                glm::vec3 top_center_point_to_first_bottom_point_direction = first_bottom_point_position - top_circle_center_position;
+                glm::vec3 side_triangle_plane_normal = glm::normalize(glm::cross(top_center_point_to_next_bottom_point_direction, top_center_point_to_first_bottom_point_direction));
+
+                // top center point
+                point_data[0] = top_circle_center_position.x; // x
+                point_data[1] = top_circle_center_position.y; // y
+                point_data[2] = top_circle_center_position.z; // z
+                point_data[3] = side_triangle_plane_normal.x; // normal_x
+                point_data[4] = side_triangle_plane_normal.y; // normal_y
+                point_data[5] = side_triangle_plane_normal.z; // normal_z
+                point_data[6] = top_circle_center_uv.x; // u
+                point_data[7] = top_circle_center_uv.y; // v
+                point_data += VERTEX_STRIDE_WITH_NORMAL_UV;
+
+                *indice_data = point_index++;
+                ++indice_data;
+
+                // next bottom point
+                point_data[0] = next_bottom_point_position.x; // x
+                point_data[1] = next_bottom_point_position.y; // y
+                point_data[2] = next_bottom_point_position.z; // z
+                point_data[3] = side_triangle_plane_normal.x; // normal_x
+                point_data[4] = side_triangle_plane_normal.y; // normal_y
+                point_data[5] = side_triangle_plane_normal.z; // normal_z
+                point_data[6] = next_bottom_point_uv.x; // u
+                point_data[7] = next_bottom_point_uv.y; // v
+                point_data += VERTEX_STRIDE_WITH_NORMAL_UV;
+
+                *indice_data = point_index++;
+                ++indice_data;
+
+                // first bottom point
+                point_data[0] = first_bottom_point_position.x; // x
+                point_data[1] = first_bottom_point_position.y; // y
+                point_data[2] = first_bottom_point_position.z; // z
+                point_data[3] = side_triangle_plane_normal.x; // normal_x
+                point_data[4] = side_triangle_plane_normal.y; // normal_y
+                point_data[5] = side_triangle_plane_normal.z; // normal_z
+                point_data[6] = first_bottom_point_uv.x; // u
+                point_data[7] = first_bottom_point_uv.y; // v
+                point_data += VERTEX_STRIDE_WITH_NORMAL_UV;
+
+                *indice_data = point_index++;
+                ++indice_data;
             }
 
-            point_bottom_index -= 1;
-                
-            // ------------- make up indice data ------------
-            // bottom triangle
-            indice_data[0] = 1;
-            indice_data[1] = 2;
-            indice_data[2] = point_bottom_index;
-            indice_data += 3;
+            createDefaultArrays();
 
-            // side triangle
-            indice_data[0] = 0;
-            indice_data[1] = point_bottom_index;
-            indice_data[2] = 2;
-            indice_data += 3;
-
-            // upload data and set data format
-            _vao.Bind();
-
-            _vbo.Bind();
-            _vbo.Upload(sizeof(GLfloat) * _vertices.size(), _vertices.data(), GL_STATIC_DRAW);
-            _vbo.SetAttribute(0, 3, GL_FLOAT, GL_FALSE, STRIDE_STEP * sizeof(float), (void*)0);
-            _vbo.SetAttribute(1, 2, GL_FLOAT, GL_FALSE, STRIDE_STEP * sizeof(float), (void*)(6 * sizeof(float)));
-            _vbo.Unbind();
-
-            _ebo.Bind();
-            _ebo.Upload(sizeof(GLuint) * _indices.size(), _indices.data(), GL_STATIC_DRAW);
-
-            _vao.Unbind();
-
-            return true;
-        }
-
-        void Cone::Draw()
-        {
-            // draw point
-            _vao.Bind();
-
-            glDrawElements(GL_TRIANGLES, _indices.size(), GL_UNSIGNED_INT, 0);
-
-            _vao.Unbind();
+            bindDefaultVertexLayout();
         }
     }
 }

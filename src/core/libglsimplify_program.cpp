@@ -1,8 +1,6 @@
 
 #include "libglsimplify_program.h"
 
-#include "libglsimplify_shader.h"
-
 namespace gl_simplify {
 
     namespace core {

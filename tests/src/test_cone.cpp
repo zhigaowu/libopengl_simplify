@@ -6,6 +6,8 @@
 
 #include "entity/libglsimplify_cone.h"
 
+#include "material/libglsimplify_material_factory.h"
+
 #include <iostream>
 
 int test_cone(int argc, char **argv, int width, int height)
@@ -37,38 +39,18 @@ int test_cone(int argc, char **argv, int width, int height)
             segments = atoi(argv[4]);
         }
 
+        scene.GetLight()->TranslateTo(glm::vec3(2.0, 4.0, 4.0));
+
+        gl_simplify::material::SharedMaterial wood = gl_simplify::material::MaterialFactory::Instance()->Create();
+        wood->SetColor(glm::vec4(1.0f, 0.5f, 0.31f, 1.0f));
+        wood->SetTexture("../../resource/texture/wood.jpg");
+
         do
         {
             gl_simplify::entity::Cone* cone = new gl_simplify::entity::Cone(segments);
 
-            if (!cone->Create(error, sizeof(error)))
-            {
-                std::cout << "create cone failed: " << error << std::endl;
-
-                delete cone;
-                cone = nullptr;
-                break;
-            }
-
-#if false
-            if (!cone->Attach(glm::vec4(0.0, 0.5, 0.0, 0.9), error, sizeof(error)))
-            {
-                std::cout << "attach cone color failed: " << error << std::endl;
-
-                delete cone;
-                cone = nullptr;
-                break;
-            }
-#else
-            if (!cone->Attach("../../resource/texture/wood.jpg", error, sizeof(error)))
-            {
-                std::cout << "attach cone texture failed: " << error << std::endl;
-
-                delete cone;
-                cone = nullptr;
-                break;
-            }
-#endif
+            cone->Create();
+            cone->Attatch(wood);
             
             scene.AddEntity(cone);
         } while (false);

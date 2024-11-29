@@ -1,6 +1,9 @@
 
 #include "libglsimplify_camera.h"
 
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 namespace gl_simplify {
 
     namespace entity {
@@ -233,9 +236,8 @@ namespace gl_simplify {
         {
         }
 
-        bool Camera::Update(GLchar *error, GLsizei error_length)
+        void Camera::Create()
         {
-            return true;
         }
 
         void Camera::LookAt(const glm::vec3 &target)

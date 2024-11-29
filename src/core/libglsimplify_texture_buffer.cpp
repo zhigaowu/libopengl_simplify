@@ -31,13 +31,47 @@ namespace gl_simplify {
             return _textures[index];
         }
 
-        TextureBuffer::Texture& TextureBuffer::Texture::UploadImage(const std::string &image_path
-            , GLboolean flip_vertical/* = 0*/
-            , GLint level/* = 0*/
-            , GLint internalformat/* = GL_RGB*/
-            , GLint border/* = 0*/
-            , GLenum format/* = GL_RGB*/
-            , GLenum data_type/* = GL_UNSIGNED_BYTE*/)
+        TextureBuffer::Texture &TextureBuffer::Texture::UploadColor(const glm::vec4 &color, GLint level, GLint border)
+        {
+            static constexpr const int rows = 64;
+            static constexpr const int cols = 64;
+
+            GLubyte data[64 * (64 * 3)] = {0};
+
+            GLubyte R = color.r * 255;
+            GLubyte G = color.g * 255;
+            GLubyte B = color.b * 255;
+
+            GLubyte* rgb = data;
+            for (int r = 0; r < rows; ++r)
+            {
+                for (int c = 0; c < cols; ++c)
+                {
+                    rgb[0] = R;
+                    rgb[1] = G;
+                    rgb[2] = B;
+
+                    rgb += 3;
+                }
+            }
+            
+            glTexImage2D(type, level, GL_RGB, rows, cols, border, GL_RGB, GL_UNSIGNED_BYTE, data);
+            glGenerateMipmap(type);
+
+            return *this;
+        }
+
+        TextureBuffer::Texture &TextureBuffer::Texture::UploadImage(const std::string &image_path, GLboolean flip_vertical /* = 0*/
+                                                                    ,
+                                                                    GLint level /* = 0*/
+                                                                    ,
+                                                                    GLint internalformat /* = GL_RGB*/
+                                                                    ,
+                                                                    GLint border /* = 0*/
+                                                                    ,
+                                                                    GLenum format /* = GL_RGB*/
+                                                                    ,
+                                                                    GLenum data_type /* = GL_UNSIGNED_BYTE*/)
         {
             stbi_set_flip_vertically_on_load(flip_vertical == 0);
             

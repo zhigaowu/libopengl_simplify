@@ -71,9 +71,9 @@ namespace gl_simplify {
                     return *this;
                 }
 
-                Texture& Bind(GLuint texture_unit_id = GL_TEXTURE0)
+                Texture& Bind(GLuint texture_unit = GL_TEXTURE0)
                 {
-                    glActiveTexture(texture_unit_id);
+                    glActiveTexture(texture_unit);
                     glBindTexture(type, id);
 
                     return *this;
@@ -85,6 +85,8 @@ namespace gl_simplify {
 
                     return *this;
                 }
+
+                Texture& UploadColor(const glm::vec4& color, GLint level = 0, GLint border = 0);
 
                 Texture& UploadImage(const std::string &image_path, GLboolean flip_vertical = 0, GLint level = 0, GLint internalformat = GL_RGB, GLint border = 0, GLenum format = GL_RGB, GLenum data_type = GL_UNSIGNED_BYTE);
 

@@ -17,67 +17,68 @@
 #ifndef GL_SIMPLIFY_ENTITY_ENTITY_H
 #define GL_SIMPLIFY_ENTITY_ENTITY_H
 
-#include "core/libglsimplify_program.h"
-
 #include "core/libglsimplify_buffer_array.h"
 #include "core/libglsimplify_vertex_array.h"
 
-#include "shader/libglsimplify_vertex_shader.h"
-
-#include "shader/libglsimplify_color_shader.h"
-#include "shader/libglsimplify_texture_shader.h"
+#include "material/libglsimplify_material.h"
 
 namespace gl_simplify {
 
     namespace entity {
 
-        // forward declaration
-        class Camera;
+        constexpr const GLsizei VERTEX_STRIDE_WITH_NORMAL_UV = 8; // Positions(3) Normals(3) Texture Coords(2)
 
         class Entity : private core::NonCopyable {
         protected:
             glm::vec3 _position;
+            glm::mat4 _model;
+            glm::mat3 _normal_model;
 
         protected:
-            core::Program _program;
+            std::vector<GLfloat> _vertices;
+            std::vector<GLuint> _indices;
 
         protected:
-            shader::VertexShader* _vertex_shader;
+            core::BufferArray* _vbo;
+            core::BufferArray* _ebo;
+            core::VertexArray* _vao;
 
         protected:
-            shader::ColorShader* _color_shader;
-            shader::TextureShader* _texture_shader;
+            material::SharedMaterial _material;
 
         protected:
-            core::Shader* _attatch_shader;
+            void updateNormalModel();
 
         protected:
-            glm::mat4 _model_transform;
+            void createDefaultArrays();
+            void bindDefaultVertexLayout();
+            void destroyDefaultArrays();
             
         public:
             explicit Entity(const glm::vec3& position = glm::vec3(0.0, 0.0, 0.0));
             virtual ~Entity();
 
-            const glm::mat4& GetModel() { return _model_transform; }
-            core::Program& GetProgram() { return _program; }
+            const glm::vec3& GetPosition() { return _position; }
+            const glm::mat4& GetModel() { return _model; }
+            const glm::mat3& GetNormalModel() { return _normal_model; }
 
-            bool Create(GLchar* error, GLsizei error_length);
-            void Destroy();
+            material::SharedMaterial& GetMaterial() { return _material; }
+
+            void Attatch(material::SharedMaterial material);
 
             void Translate(const glm::vec3& position);
+
+            void TranslateTo(const glm::vec3& position);
             
             void Rotate(GLfloat degrees, const glm::vec3& axis);
 
             void Scale(const glm::vec3& size);
 
-            bool Attach(const glm::vec4& color, GLchar* error, GLsizei error_length);
-            bool Attach(const std::string& texture_file, GLchar* error, GLsizei error_length);
+            virtual void Create() = 0;
 
-            virtual bool InitializeVertexShader(GLchar* error, GLsizei error_length);
-            virtual bool Update(GLchar* error, GLsizei error_length) = 0;
+            virtual void Destroy();
 
-            virtual void Draw();
-            virtual void Render(Camera* camera);
+            virtual void Render();
         };
     }
 }

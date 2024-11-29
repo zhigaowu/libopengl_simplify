@@ -6,6 +6,8 @@
 
 #include "entity/libglsimplify_cylinder.h"
 
+#include "material/libglsimplify_material_factory.h"
+
 #include <iostream>
 
 int test_cylinder(int argc, char **argv, int width, int height)
@@ -37,38 +39,18 @@ int test_cylinder(int argc, char **argv, int width, int height)
             segments = atoi(argv[4]);
         }
 
+        scene.GetLight()->TranslateTo(glm::vec3(2.0, 4.0, 4.0));
+
+        gl_simplify::material::SharedMaterial wood = gl_simplify::material::MaterialFactory::Instance()->Create();
+        wood->SetColor(glm::vec4(1.0f, 0.5f, 0.31f, 1.0f));
+        wood->SetTexture("../../resource/texture/wood.jpg");
+
         do
         {
             gl_simplify::entity::Cylinder* cylinder = new gl_simplify::entity::Cylinder(segments);
 
-            if (!cylinder->Create(error, sizeof(error)))
-            {
-                std::cout << "create cylinder failed: " << error << std::endl;
-
-                delete cylinder;
-                cylinder = nullptr;
-                break;
-            }
-
-#if false
-            if (!cylinder->Attach(glm::vec4(0.0, 0.5, 0.0, 0.9), error, sizeof(error)))
-            {
-                std::cout << "attach cylinder color failed: " << error << std::endl;
-
-                delete cylinder;
-                cylinder = nullptr;
-                break;
-            }
-#else
-            if (!cylinder->Attach("../../resource/texture/wood.jpg", error, sizeof(error)))
-            {
-                std::cout << "attach cylinder texture failed: " << error << std::endl;
-
-                delete cylinder;
-                cylinder = nullptr;
-                break;
-            }
-#endif
+            cylinder->Create();
+            cylinder->Attatch(wood);
             
             scene.AddEntity(cylinder);
         } while (false);

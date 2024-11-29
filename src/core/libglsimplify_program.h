@@ -17,7 +17,7 @@
 #ifndef GL_SIMPLIFY_CORE_PROGRAM_H
 #define GL_SIMPLIFY_CORE_PROGRAM_H
 
-#include "libglsimplify_types.h"
+#include "libglsimplify_shader.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -28,9 +28,6 @@
 namespace gl_simplify {
 
     namespace core {
-
-        // forward declaration
-        class Shader;
 
         class Program : private NonCopyable {
             template<typename ValueType>

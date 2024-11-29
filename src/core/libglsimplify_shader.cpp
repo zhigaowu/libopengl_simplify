@@ -7,13 +7,11 @@ namespace gl_simplify {
 
     namespace core {
 
-        Shader::Shader(Program& program, GLenum shader_type, const std::string& source_code)
+        Shader::Shader(GLenum shader_type, const std::string& source_code)
             : id(glCreateShader(shader_type))
             , type(shader_type)
 
             , source(source_code)
-
-            , _program(program)
         {
         }
 

@@ -4,6 +4,8 @@
 
 #include "scene/libglsimplify_scene.h"
 
+#include "material/libglsimplify_material_factory.h"
+
 #include "entity/libglsimplify_cube.h"
 #include "entity/libglsimplify_plane.h"
 
@@ -35,28 +37,23 @@ int test_all(int argc, char **argv, int width, int height)
             break;
         }
 
+        scene.GetLight()->TranslateTo(glm::vec3(2.0, 4.0, 4.0));
+
+        gl_simplify::material::SharedMaterial rock = gl_simplify::material::MaterialFactory::Instance()->Create();
+        rock->SetColor(glm::vec4(0.753f, 0.753f, 0.753f, 1.0f));
+        rock->SetTexture("../../resource/texture/plane_rock.jpg");
+
+        gl_simplify::material::SharedMaterial wood = gl_simplify::material::MaterialFactory::Instance()->Create();
+        wood->SetColor(glm::vec4(1.0f, 0.5f, 0.31f, 1.0f));
+        wood->SetTexture("../../resource/texture/wood.jpg");
+
         do
         {
             gl_simplify::entity::Plane* plane = new gl_simplify::entity::Plane();
 
-            if (!plane->Create(error, sizeof(error)))
-            {
-                std::cout << "create plane failed: " << error << std::endl;
+            plane->Create();
 
-                delete plane;
-                plane = nullptr;
-                break;
-            }
-
-            if (!plane->Attach("../../resource/texture/plane_rock.jpg", error, sizeof(error)))
-            {
-                std::cout << "attach plane texture failed: " << error << std::endl;
-
-                delete plane;
-                plane = nullptr;
-                break;
-            }
-
+            plane->Attatch(rock);
             plane->Translate(glm::vec3(0.0, -1.01, 0.0));
             plane->Scale(glm::vec3(8.0, 1.0, 8.0));
             
@@ -67,24 +64,9 @@ int test_all(int argc, char **argv, int width, int height)
         {
             gl_simplify::entity::Cube* cube = new gl_simplify::entity::Cube();
 
-            if (!cube->Create(error, sizeof(error)))
-            {
-                std::cout << "create cube failed: " << error << std::endl;
+            cube->Create();
 
-                delete cube;
-                cube = nullptr;
-                break;
-            }
-
-            if (!cube->Attach("../../resource/texture/wood.jpg", error, sizeof(error)))
-            {
-                std::cout << "attach cube texture failed: " << error << std::endl;
-
-                delete cube;
-                cube = nullptr;
-                break;
-            }
-
+            cube->Attatch(wood);
             cube->Translate(glm::vec3(-3.0, 0.0, 0.0));
             
             scene.AddEntity(cube);
@@ -94,35 +76,9 @@ int test_all(int argc, char **argv, int width, int height)
         {
             gl_simplify::entity::Cylinder* cylinder = new gl_simplify::entity::Cylinder();
 
-            if (!cylinder->Create(error, sizeof(error)))
-            {
-                std::cout << "create cylinder failed: " << error << std::endl;
+            cylinder->Create();
 
-                delete cylinder;
-                cylinder = nullptr;
-                break;
-            }
-
-#if false
-            if (!cylinder->Attach(glm::vec4(0.0, 0.5, 0.0, 0.9), error, sizeof(error)))
-            {
-                std::cout << "attach cylinder color failed: " << error << std::endl;
-
-                delete cylinder;
-                cylinder = nullptr;
-                break;
-            }
-#else
-            if (!cylinder->Attach("../../resource/texture/wood.jpg", error, sizeof(error)))
-            {
-                std::cout << "attach cylinder texture failed: " << error << std::endl;
-
-                delete cylinder;
-                cylinder = nullptr;
-                break;
-            }
-#endif
-
+            cylinder->Attatch(wood);
             cylinder->Translate(glm::vec3(3.0, 0.0, 0.0));
             
             scene.AddEntity(cylinder);
@@ -132,35 +88,9 @@ int test_all(int argc, char **argv, int width, int height)
         {
             gl_simplify::entity::Cone* cone = new gl_simplify::entity::Cone();
 
-            if (!cone->Create(error, sizeof(error)))
-            {
-                std::cout << "create cone failed: " << error << std::endl;
+            cone->Create();
 
-                delete cone;
-                cone = nullptr;
-                break;
-            }
-
-#if false
-            if (!cone->Attach(glm::vec4(0.0, 0.5, 0.0, 0.9), error, sizeof(error)))
-            {
-                std::cout << "attach cone color failed: " << error << std::endl;
-
-                delete cone;
-                cone = nullptr;
-                break;
-            }
-#else
-            if (!cone->Attach("../../resource/texture/wood.jpg", error, sizeof(error)))
-            {
-                std::cout << "attach cone texture failed: " << error << std::endl;
-
-                delete cone;
-                cone = nullptr;
-                break;
-            }
-#endif
-
+            cone->Attatch(wood);
             cone->Translate(glm::vec3(0.0, 0.0, -3.0));
             
             scene.AddEntity(cone);
@@ -169,7 +99,7 @@ int test_all(int argc, char **argv, int width, int height)
         scene.GetBackground().SetColor(glm::vec4(0.2f, 0.3f, 0.3f, 1.0f));
 
         gl_simplify::entity::Camera* camera = window.Camera();
-        camera->Translate(glm::vec3(0.0f, 7.0f, 7.0f));
+        camera->Translate(glm::vec3(0.0f, 12.0f, 12.0f));
         camera->LookAt(glm::vec3(0.0f, 0.0f, 0.0f));
         //camera->LookFront(glm::vec3(0.0f, 0.0f, -1.0f));
 

@@ -6,6 +6,8 @@
 
 #include "entity/libglsimplify_cube.h"
 
+#include "material/libglsimplify_material_factory.h"
+
 #include <iostream>
 
 int test_cube(int argc, char **argv, int width, int height)
@@ -31,27 +33,19 @@ int test_cube(int argc, char **argv, int width, int height)
             break;
         }
 
+        scene.GetLight()->TranslateTo(glm::vec3(2.0, 4.0, 4.0));
+
+        gl_simplify::material::SharedMaterial wood = gl_simplify::material::MaterialFactory::Instance()->Create();
+        wood->SetColor(glm::vec4(1.0f, 0.5f, 0.31f, 1.0f));
+        wood->SetTexture("../../resource/texture/wood.jpg");
+        
         do
         {
             gl_simplify::entity::Cube* cube = new gl_simplify::entity::Cube();
 
-            if (!cube->Create(error, sizeof(error)))
-            {
-                std::cout << "create cube failed: " << error << std::endl;
+            cube->Create();
 
-                delete cube;
-                cube = nullptr;
-                break;
-            }
-
-            if (!cube->Attach("../../resource/texture/wood.jpg", error, sizeof(error)))
-            {
-                std::cout << "attach cube texture failed: " << error << std::endl;
-
-                delete cube;
-                cube = nullptr;
-                break;
-            }
+            cube->Attatch(wood);
             
             scene.AddEntity(cube);
         } while (false);
@@ -59,9 +53,9 @@ int test_cube(int argc, char **argv, int width, int height)
         scene.GetBackground().SetColor(glm::vec4(0.2f, 0.3f, 0.3f, 1.0f));
 
         gl_simplify::entity::Camera* camera = window.Camera();
-        camera->Translate(glm::vec3(0.0f, 2.0f, 8.0f));
-        //camera->LookAt(glm::vec3(0.0f, 2.0f, 0.0f));
-        camera->LookFront(glm::vec3(0.0f, 0.0f, -1.0f));
+        camera->Translate(glm::vec3(0.0f, 8.0f, 8.0f));
+        camera->LookAt(glm::vec3(0.0f, 0.0f, 0.0f));
+        //camera->LookFront(glm::vec3(0.0f, 0.0f, -1.0f));
 
         window.Show([&scene] (GLFWwindow*, gl_simplify::entity::Camera* camera) {
                 scene.Render(camera);

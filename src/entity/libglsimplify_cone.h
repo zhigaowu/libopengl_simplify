@@ -47,14 +47,7 @@ namespace gl_simplify {
     namespace entity {
 
         class Cone : public Entity {
-            gl_simplify::core::BufferArray _vbo;
-            gl_simplify::core::BufferArray _ebo;
-            gl_simplify::core::VertexArray _vao;
-
-            GLfloat _theta;
-
-            std::vector<GLfloat> _vertices;
-            std::vector<GLuint> _indices;
+            GLint _segments;
 
         public:
             explicit Cone(GLint segments = 32, const glm::vec3& position = glm::vec3(0.0, 0.0, 0.0));
@@ -62,8 +55,7 @@ namespace gl_simplify {
 
             void SetSegments(GLint segments);
 
-            bool Update(GLchar* error, GLsizei error_length) override;
-            void Draw() override;
+            void Create() override;
         };
     }
 }

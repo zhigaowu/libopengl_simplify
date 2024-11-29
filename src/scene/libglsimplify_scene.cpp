@@ -1,12 +1,20 @@
 
 #include "libglsimplify_scene.h"
 
+#include "model/libglsimplify_phong_model.h"
+
 namespace gl_simplify {
 
     namespace scene {
 
         Scene::Scene()
             : _background()
+
+            , _ambient()
+            
+            , _render_model(new model::PhongModel())
+
+            , _light(new light::Light(glm::vec4(1.0, 1.0, 1.0, 1.0)))
 
             , _entities()
         {
@@ -27,38 +35,24 @@ namespace gl_simplify {
 
             SetRenderMode(RenderMode::Fill);
 
-            // -------- other initialization ---------
-            (void)error;
-            (void)error_length;
-
-            return true;
-        }
-
-        void Scene::SetRenderMode(RenderMode render_mode)
-        {
-            glPolygonMode(GL_FRONT_AND_BACK, static_cast<GLint>(render_mode));
-        }
-
-        void Scene::AddEntity(entity::Entity* entity)
-        {
-            if (entity)
-            {
-                _entities.emplace(entity, entity);
-            }
-        }
-
-        void Scene::DeleteEntity(entity::Entity *entity)
-        {
-            _entities.erase(entity);
+            return _render_model->Build(error, error_length);
         }
 
         void Scene::Render(entity::Camera* camera)
         {
             _background.Update();
 
+            _render_model->Use();
+
+            _render_model->UpdateAmbient(_ambient);
+
+            _render_model->UpdateCameraView(camera);
+            
+            _render_model->UpdateLight(_light);
+
             for (Entities::iterator it = _entities.begin(); it != _entities.end(); ++it)
             {
-                it->second->Render(camera);
+                _render_model->Render(it->second);
             }
         }
 
@@ -72,6 +66,39 @@ namespace gl_simplify {
             }
             
             _entities.clear();
+
+            delete _render_model;
+            _render_model = nullptr;
+
+            delete _light;
+            _light = nullptr;
+        }
+
+        void Scene::SetRenderMode(RenderMode render_mode)
+        {
+            glPolygonMode(GL_FRONT_AND_BACK, static_cast<GLint>(render_mode));
+        }
+
+        void Scene::SetRenderModel(model::RenderModel *render_model)
+        {
+            if (render_model)
+            {
+                delete _render_model;
+                _render_model = render_model;
+            }
+        }
+
+        void Scene::AddEntity(entity::Entity* entity)
+        {
+            if (entity)
+            {
+                _entities.emplace(entity, entity);
+            }
+        }
+
+        void Scene::DeleteEntity(entity::Entity *entity)
+        {
+            _entities.erase(entity);
         }
     }
 }

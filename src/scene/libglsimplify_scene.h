@@ -17,9 +17,13 @@
 #ifndef GL_SIMPLIFY_SCENE_SCENE_H
 #define GL_SIMPLIFY_SCENE_SCENE_H
 
-#include "entity/libglsimplify_camera.h"
-
 #include "libglsimplify_background.h"
+#include "libglsimplify_ambient.h"
+
+#include "entity/libglsimplify_camera.h"
+#include "model/libglsimplify_render_model.h"
+
+#include "light/libglsimplify_light.h"
 
 #include <map>
 
@@ -39,26 +43,37 @@ namespace gl_simplify {
             Background _background;
 
         private:
+            Ambient _ambient;
+
+        private:
+            model::RenderModel* _render_model;
+
+        private:
+            light::Light* _light;
+
+        private:
             // eneities
             using Entities = std::map<entity::Entity*, entity::Entity*>;
             Entities _entities;
 
         public:
             Scene();
-            ~Scene();
+            virtual ~Scene();
 
             Background& GetBackground() { return _background; }
+            Ambient& GetAmbient() { return _ambient; };
 
-            bool Create(GLchar* error, GLsizei error_length);
+            light::Light* GetLight() { return _light; }
+
+            virtual bool Create(GLchar* error, GLsizei error_length);
+            virtual void Render(entity::Camera* camera);
+            virtual void Destroy();
 
             void SetRenderMode(RenderMode render_mode);
+            void SetRenderModel(model::RenderModel* render_model);
 
             void AddEntity(entity::Entity* entity);
             void DeleteEntity(entity::Entity* entity);
-
-            void Render(entity::Camera* camera);
-
-            void Destroy();
         };
     }
 }
