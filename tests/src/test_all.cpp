@@ -37,14 +37,21 @@ int test_all(int argc, char **argv, int width, int height)
             break;
         }
 
-        scene.GetLight()->TranslateTo(glm::vec3(4.0, 4.0, 4.0));
-        scene.GetLight()->SetAmbient(glm::vec4(0.5f, 0.5f, 0.5f, 1.0f));
+        scene.GetBackground().SetColor(glm::vec4(0.2f, 0.3f, 0.3f, 1.0f));
+
+        gl_simplify::entity::Camera* camera = window.Camera();
+        camera->Translate(glm::vec3(8.0f, 8.0f, 8.0f));
+        camera->LookAt(glm::vec3(0.0f, 0.0f, 0.0f));
+        //camera->LookFront(glm::vec3(0.0f, 0.0f, -1.0f));
+
+        scene.GetLight()->TranslateTo(glm::vec3(0.0, 3.0, 3.0));
+        scene.GetLight()->SetAmbient(glm::vec4(0.2, 0.2, 0.2, 1.0));
+        scene.GetLight()->SetDiffuse(glm::vec4(0.5, 0.5, 0.5, 1.0));
 
         gl_simplify::material::SharedMaterial rock = gl_simplify::material::MaterialFactory::GetShared(gl_simplify::material::MaterialFactory::PredefinedMaterialType::PlasticWhite);
-        rock->SetTexture("../../resource/texture/plane_rock.jpg");
 
         gl_simplify::material::SharedMaterial wood = gl_simplify::material::MaterialFactory::GetShared(gl_simplify::material::MaterialFactory::PredefinedMaterialType::Chrome);
-        wood->SetTexture("../../resource/texture/wood.jpg");
+        //wood->SetTexture("resource/texture/wood.jpg");
 
         do
         {
@@ -54,18 +61,19 @@ int test_all(int argc, char **argv, int width, int height)
 
             plane->Attatch(rock);
             plane->Translate(glm::vec3(0.0, -1.01, 0.0));
-            plane->Scale(glm::vec3(8.0, 1.0, 8.0));
+            plane->Scale(glm::vec3(24.0, 1.0, 24.0));
             
             scene.AddEntity(plane);
         } while (false);
 
         do
         {
+            gl_simplify::material::SharedMaterial box_material = gl_simplify::material::MaterialFactory::Create("resource/texture/diffuse_cube.png", "resource/texture/specular_cube.png", 64.0f);
             gl_simplify::entity::Cube* cube = new gl_simplify::entity::Cube();
 
             cube->Create();
 
-            cube->Attatch(wood);
+            cube->Attatch(box_material);
             cube->Translate(glm::vec3(-3.0, 0.0, 0.0));
             
             scene.AddEntity(cube);
@@ -95,17 +103,10 @@ int test_all(int argc, char **argv, int width, int height)
             scene.AddEntity(cone);
         } while (false);
 
-        scene.GetBackground().SetColor(glm::vec4(0.2f, 0.3f, 0.3f, 1.0f));
-
-        gl_simplify::entity::Camera* camera = window.Camera();
-        camera->Translate(glm::vec3(0.0f, 12.0f, 12.0f));
-        camera->LookAt(glm::vec3(0.0f, 0.0f, 0.0f));
-        //camera->LookFront(glm::vec3(0.0f, 0.0f, -1.0f));
-
         window.Show([&scene] (GLFWwindow*, gl_simplify::entity::Camera* camera) {
                 scene.Render(camera);
 
-                scene.GetLight()->RotateAround(0.001f, glm::vec3(0.0f, 1.0f, 0.0f));
+                scene.GetLight()->RotateAround(0.01f, glm::vec3(0.0f, 1.0f, 0.0f));
             });
 
         res = 0;

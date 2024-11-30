@@ -8,140 +8,131 @@
 namespace gl_simplify {
 
     namespace material {
-        void Material::generateDefaultTexture()
-        {
-            // default texture with white color [has no effect on color]
-            _texture_buffer.GetTexture().Bind(_texture_unit);
-            
-            _texture_buffer.GetTexture()
-                .SetParameter(GL_TEXTURE_WRAP_S, GL_REPEAT)
-                .SetParameter(GL_TEXTURE_WRAP_T, GL_REPEAT)
-                .SetParameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR)
-                .SetParameter(GL_TEXTURE_MAG_FILTER, GL_LINEAR).UploadColor(glm::vec4(1.0, 1.0, 1.0, 1.0));
-                
-            _texture_buffer.GetTexture().Unbind();
-        }
+
+        static const GLint MAP_SIZE = 2;
+
+        static const GLint DIFFUSE_MAP_INDEX = 0;
+        static const GLint SPECULAR_MAP_INDEX = 1;
+
+        static const GLuint DIFFUSE_MAP_UNIT = GL_TEXTURE0;
+        static const GLuint SPECULAR_MAP_UNIT = GL_TEXTURE1;
 
         Material::Material(GLfloat shininess)
-            : _texture_unit(GL_TEXTURE0)
-            , _texture_buffer()
-
-            , _ambient(1.0f, 1.0f, 1.0f, 1.0f)
-            , _diffuse(1.0f, 1.0f, 1.0f, 1.0f)
-            , _specular(1.0f, 1.0f, 1.0f, 1.0f)
+            : _texture_buffer(MAP_SIZE)
 
             , _shininess(shininess)
         {
-            generateDefaultTexture();
+            SetDiffuse(glm::vec4(1.0f));
+            SetSpecular(glm::vec4(1.0f));
         }
 
-        Material::Material(const glm::vec4& ambient, GLfloat shininess)
-            : _texture_unit(GL_TEXTURE0)
-            , _texture_buffer()
-
-            , _ambient(ambient)
-            , _diffuse(1.0f, 1.0f, 1.0f, 1.0f)
-            , _specular(1.0f, 1.0f, 1.0f, 1.0f)
+        Material::Material(const glm::vec4&, const glm::vec4& diffuse, const glm::vec4& specular, GLfloat shininess)
+            : _texture_buffer(MAP_SIZE)
 
             , _shininess(shininess)
         {
-            generateDefaultTexture();
+            SetDiffuse(diffuse);
+            SetSpecular(specular);
         }
 
-        Material::Material(const glm::vec4& ambient, const glm::vec4& diffuse, GLfloat shininess)
-            : _texture_unit(GL_TEXTURE0)
-            , _texture_buffer()
-
-            , _ambient(ambient)
-            , _diffuse(diffuse)
-            , _specular(1.0f, 1.0f, 1.0f, 1.0f)
+        Material::Material(const std::string& diffuse_map_path, const std::string& specular_map_path, GLfloat shininess)
+            : _texture_buffer(MAP_SIZE)
 
             , _shininess(shininess)
         {
-            generateDefaultTexture();
-        }
+            // diffuse map
+            SetDiffuseMap(diffuse_map_path);
 
-        Material::Material(const glm::vec4& ambient, const glm::vec4& diffuse, const glm::vec4& specular, GLfloat shininess)
-            : _texture_unit(GL_TEXTURE0)
-            , _texture_buffer()
-
-            , _ambient(ambient)
-            , _diffuse(diffuse)
-            , _specular(specular)
-
-            , _shininess(shininess)
-        {
-            generateDefaultTexture();
-        }
-
-        Material::Material(const std::string& path, GLuint texture_unit)
-            : _texture_unit(texture_unit)
-            , _texture_buffer()
-
-            , _ambient(1.0f, 1.0f, 1.0f, 1.0f)
-            , _diffuse(1.0f, 1.0f, 1.0f, 1.0f)
-            , _specular(1.0f, 1.0f, 1.0f, 1.0f)
-
-            , _shininess(32.0f)
-        {
-            SetTexture(path);
+            // specular map
+            SetSpecularMap(specular_map_path);
         }
 
         Material::~Material()
         {
         }
 
-        void Material::SetTexture(const std::string &path)
+        void Material::SetDiffuseMap(const std::string &path)
         {
-            _texture_buffer.GetTexture().Bind(_texture_unit);
+            core::TextureBuffer::Texture& texture = _texture_buffer.GetTexture(DIFFUSE_MAP_INDEX);
             
-            _texture_buffer.GetTexture()
+            texture.Bind(DIFFUSE_MAP_UNIT);
+            
+            texture.UploadImage(path)
                 .SetParameter(GL_TEXTURE_WRAP_S, GL_REPEAT)
                 .SetParameter(GL_TEXTURE_WRAP_T, GL_REPEAT)
                 .SetParameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR)
-                .SetParameter(GL_TEXTURE_MAG_FILTER, GL_LINEAR).UploadImage(path);
+                .SetParameter(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
                 
-            _texture_buffer.GetTexture().Unbind();
+            texture.Unbind();
+        }
+
+        void Material::SetSpecularMap(const std::string &path)
+        {
+            core::TextureBuffer::Texture& texture = _texture_buffer.GetTexture(SPECULAR_MAP_INDEX);
+            
+            texture.Bind(SPECULAR_MAP_UNIT);
+            
+            texture.UploadImage(path)
+                .SetParameter(GL_TEXTURE_WRAP_S, GL_REPEAT)
+                .SetParameter(GL_TEXTURE_WRAP_T, GL_REPEAT)
+                .SetParameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR)
+                .SetParameter(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+                
+            texture.Unbind();
         }
 
         void Material::BindTexture()
         {
-            _texture_buffer.GetTexture().Bind(_texture_unit);
+            _texture_buffer.GetTexture(DIFFUSE_MAP_INDEX).Bind(DIFFUSE_MAP_UNIT);
+            _texture_buffer.GetTexture(SPECULAR_MAP_INDEX).Bind(SPECULAR_MAP_UNIT);
         }
 
         void Material::UnbindTexture()
         {
-            _texture_buffer.GetTexture().Unbind();
-        }
-
-        void Material::SetAmbient(const glm::vec4& ambient)
-        {
-            _ambient = ambient;
-        }
-
-        const glm::vec4 &Material::GetAmbient()
-        {
-            return _ambient;
+            _texture_buffer.GetTexture(DIFFUSE_MAP_INDEX).Unbind();
+            _texture_buffer.GetTexture(SPECULAR_MAP_INDEX).Unbind();
         }
 
         void Material::SetDiffuse(const glm::vec4& diffuse)
         {
-            _diffuse = diffuse;
+            core::TextureBuffer::Texture& texture = _texture_buffer.GetTexture(DIFFUSE_MAP_INDEX);
+            
+            // diffuse map
+            texture.Bind(DIFFUSE_MAP_UNIT);
+            
+            texture.UploadColor(diffuse)
+                .SetParameter(GL_TEXTURE_WRAP_S, GL_REPEAT)
+                .SetParameter(GL_TEXTURE_WRAP_T, GL_REPEAT)
+                .SetParameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR)
+                .SetParameter(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+                
+            texture.Unbind();
         }
 
-        const glm::vec4 &Material::GetDiffuse()
+        GLuint Material::GetDiffuse()
         {
-            return _diffuse;
+            return DIFFUSE_MAP_UNIT - GL_TEXTURE0;
         }
 
         void Material::SetSpecular(const glm::vec4& specular)
         {
-            _specular = specular;
+            core::TextureBuffer::Texture& texture = _texture_buffer.GetTexture(SPECULAR_MAP_INDEX);
+            
+            // specular map
+            texture.Bind(SPECULAR_MAP_UNIT);
+            
+            texture.UploadColor(specular)
+                .SetParameter(GL_TEXTURE_WRAP_S, GL_REPEAT)
+                .SetParameter(GL_TEXTURE_WRAP_T, GL_REPEAT)
+                .SetParameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR)
+                .SetParameter(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+                
+            texture.Unbind();
         }
 
-        const glm::vec4 &Material::GetSpecular()
+        GLuint Material::GetSpecular()
         {
-            return _specular;
+            return SPECULAR_MAP_UNIT - GL_TEXTURE0;
         }
 
         void Material::SetShininess(GLfloat shininess)
@@ -152,18 +143,6 @@ namespace gl_simplify {
         GLfloat Material::GetShininess()
         {
             return _shininess;
-        }
-
-        void Material::Copy(Material *other)
-        {
-            if (other)
-            {
-                _shininess = other->_shininess;
-
-                _ambient = other->_ambient;
-                _diffuse = other->_diffuse;
-                _specular = other->_specular;
-            }
         }
     }
 }

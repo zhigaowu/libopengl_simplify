@@ -23,6 +23,11 @@ namespace gl_simplify {
             return std::make_shared<Material>(ambient, diffuse, specular, shininess);
         }
 
+        SharedMaterial MaterialFactory::Create(const std::string &diffuse_map_path, const std::string &specular_map_path, GLfloat shininess)
+        {
+            return std::make_shared<Material>(diffuse_map_path, specular_map_path, shininess);
+        }
+
         SharedMaterial MaterialFactory::GetShared(const PredefinedMaterialType &material_type)
         {
             static std::vector<SharedMaterial> avaliable_materials{

@@ -8,7 +8,7 @@ namespace gl_simplify {
         Light::Light(const glm::vec3& position)
             : Entity(position)
 
-            , _ambient(1.0f, 1.0f, 1.0f, 1.0f)
+            , _ambient(0.6f, 0.6f, 0.6f, 1.0f)
             , _diffuse(1.0f, 1.0f, 1.0f, 1.0f)
             , _specular(1.0f, 1.0f, 1.0f, 1.0f)
         {

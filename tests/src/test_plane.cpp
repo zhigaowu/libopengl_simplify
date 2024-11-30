@@ -33,8 +33,7 @@ int test_plane(int argc, char **argv, int width, int height)
             break;
         }
 
-        gl_simplify::material::SharedMaterial rock = gl_simplify::material::MaterialFactory::GetShared(gl_simplify::material::MaterialFactory::PredefinedMaterialType::Chrome);
-        rock->SetTexture("../../resource/texture/plane_rock.jpg");
+        gl_simplify::material::SharedMaterial rock = gl_simplify::material::MaterialFactory::Create("resource/texture/diffuse_cube.png", "resource/texture/specular_cube.png");
 
         do
         {

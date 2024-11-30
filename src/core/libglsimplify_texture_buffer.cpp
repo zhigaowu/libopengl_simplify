@@ -65,11 +65,7 @@ namespace gl_simplify {
                                                                     ,
                                                                     GLint level /* = 0*/
                                                                     ,
-                                                                    GLint internalformat /* = GL_RGB*/
-                                                                    ,
                                                                     GLint border /* = 0*/
-                                                                    ,
-                                                                    GLenum format /* = GL_RGB*/
                                                                     ,
                                                                     GLenum data_type /* = GL_UNSIGNED_BYTE*/)
         {
@@ -78,9 +74,23 @@ namespace gl_simplify {
             int nrChannels;
             unsigned char *data = stbi_load(image_path.c_str(), &width, &height, &nrChannels, 0);
 
-            (void)nrChannels;
+            switch (nrChannels)
+            {
+            case 4:
+            {
+                glTexImage2D(type, level, GL_RGBA, width, height, border, GL_RGBA, GL_UNSIGNED_BYTE, data);
+                break;
+            }
+            case 1:
+            {
+                glTexImage2D(type, level, GL_RED, width, height, border, GL_RED, GL_UNSIGNED_BYTE, data);
+                break;
+            }
+            default:
+                glTexImage2D(type, level, GL_RGB, width, height, border, GL_RGB, GL_UNSIGNED_BYTE, data);
+                break;
+            }
 
-            glTexImage2D(type, level, internalformat, width, height, border, format, data_type, data);
             glGenerateMipmap(type);
 
             stbi_image_free(data);

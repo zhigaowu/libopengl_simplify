@@ -27,45 +27,30 @@ namespace gl_simplify {
 
         class Material : public std::enable_shared_from_this<Material> {
         protected:
-            GLuint _texture_unit;
             core::TextureBuffer _texture_buffer;
-
-        protected:
-            glm::vec4 _ambient;
-            glm::vec4 _diffuse;
-            glm::vec4 _specular;
 
         protected:
             GLfloat _shininess;
 
-        protected:
-            void generateDefaultTexture();
-
         public:
             explicit Material(GLfloat shininess = 32.0f);
-            explicit Material(const glm::vec4& ambient, GLfloat shininess = 32.0f);
-            Material(const glm::vec4& ambient, const glm::vec4& diffuse, GLfloat shininess = 32.0f);
             Material(const glm::vec4& ambient, const glm::vec4& diffuse, const glm::vec4& specular, GLfloat shininess = 32.0f);
-            explicit Material(const std::string& path, GLuint texture_unit = GL_TEXTURE0);
+            Material(const std::string& diffuse_map_path, const std::string& specular_map_path, GLfloat shininess = 32.0f);
             ~Material();
 
-            void SetTexture(const std::string& path);
+            void SetDiffuseMap(const std::string& path);
+            void SetSpecularMap(const std::string& path);
             void BindTexture();
             void UnbindTexture();
 
-            void SetAmbient(const glm::vec4& ambient);
-            const glm::vec4& GetAmbient();
-
             void SetDiffuse(const glm::vec4& diffuse);
-            const glm::vec4& GetDiffuse();
+            GLuint GetDiffuse();
 
             void SetSpecular(const glm::vec4& specular);
-            const glm::vec4& GetSpecular();
-
+            GLuint GetSpecular();
+            
             void SetShininess(GLfloat shininess);
             GLfloat GetShininess();
-
-            void Copy(Material* other);
         };
 
         using SharedMaterial = std::shared_ptr<Material>;

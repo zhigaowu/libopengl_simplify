@@ -107,7 +107,7 @@ namespace gl_simplify {
 
                 Texture& UploadColor(const glm::vec4& color, GLint level = 0, GLint border = 0);
 
-                Texture& UploadImage(const std::string &image_path, GLboolean flip_vertical = 0, GLint level = 0, GLint internalformat = GL_RGB, GLint border = 0, GLenum format = GL_RGB, GLenum data_type = GL_UNSIGNED_BYTE);
+                Texture& UploadImage(const std::string &image_path, GLboolean flip_vertical = 0, GLint level = 0, GLint border = 0, GLenum data_type = GL_UNSIGNED_BYTE);
 
                 void Unbind()
                 {
