@@ -44,10 +44,10 @@ namespace gl_simplify {
             void UnbindTexture();
 
             void SetDiffuse(const glm::vec4& diffuse);
-            GLuint GetDiffuse();
+            GLint GetDiffuse();
 
             void SetSpecular(const glm::vec4& specular);
-            GLuint GetSpecular();
+            GLint GetSpecular();
             
             void SetShininess(GLfloat shininess);
             GLfloat GetShininess();

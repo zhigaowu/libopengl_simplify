@@ -14,8 +14,8 @@ namespace gl_simplify {
         static const GLint DIFFUSE_MAP_INDEX = 0;
         static const GLint SPECULAR_MAP_INDEX = 1;
 
-        static const GLuint DIFFUSE_MAP_UNIT = GL_TEXTURE0;
-        static const GLuint SPECULAR_MAP_UNIT = GL_TEXTURE1;
+        static const GLint DIFFUSE_MAP_UNIT = GL_TEXTURE0;
+        static const GLint SPECULAR_MAP_UNIT = GL_TEXTURE1;
 
         Material::Material(GLfloat shininess)
             : _texture_buffer(MAP_SIZE)
@@ -109,9 +109,9 @@ namespace gl_simplify {
             texture.Unbind();
         }
 
-        GLuint Material::GetDiffuse()
+        GLint Material::GetDiffuse()
         {
-            return DIFFUSE_MAP_UNIT - GL_TEXTURE0;
+            return DIFFUSE_MAP_INDEX;
         }
 
         void Material::SetSpecular(const glm::vec4& specular)
@@ -130,9 +130,9 @@ namespace gl_simplify {
             texture.Unbind();
         }
 
-        GLuint Material::GetSpecular()
+        GLint Material::GetSpecular()
         {
-            return SPECULAR_MAP_UNIT - GL_TEXTURE0;
+            return SPECULAR_MAP_INDEX;
         }
 
         void Material::SetShininess(GLfloat shininess)

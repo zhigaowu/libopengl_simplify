@@ -103,10 +103,18 @@ int test_all(int argc, char **argv, int width, int height)
             scene.AddEntity(cone);
         } while (false);
 
-        window.Show([&scene] (GLFWwindow*, gl_simplify::entity::Camera* camera) {
+        double ts_pre = glfwGetTime();
+        double r_interval = 0.002;
+
+        window.Show([&scene, ts_pre, r_interval] (GLFWwindow*, gl_simplify::entity::Camera* camera) mutable {
                 scene.Render(camera);
 
-                scene.GetLight()->RotateAround(0.01f, glm::vec3(0.0f, 1.0f, 0.0f));
+                double ts_curr = glfwGetTime();
+                if (ts_pre + r_interval <= ts_curr)
+                {
+                    scene.GetLight()->RotateAround(0.001f, glm::vec3(0.0f, 1.0f, 0.0f));
+                    ts_pre = ts_curr;
+                }
             });
 
         res = 0;

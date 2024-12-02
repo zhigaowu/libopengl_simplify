@@ -46,19 +46,19 @@ namespace gl_simplify {
 
             // light definition
             _fragment_shader.source << "struct Light {";
-            _fragment_shader.source << "    vec3 position;";
-
             _fragment_shader.source << "    vec4 ambient;";
             _fragment_shader.source << "    vec4 diffuse;";
             _fragment_shader.source << "    vec4 specular;";
+
+            _fragment_shader.source << "    vec3 position;";
             _fragment_shader.source << "};";
 
             // material definition
             _fragment_shader.source << "struct Material {";
-            _fragment_shader.source << "    float shininess;";
-
             _fragment_shader.source << "    sampler2D diffuse;";
             _fragment_shader.source << "    sampler2D specular;";
+
+            _fragment_shader.source << "    float shininess;";
             _fragment_shader.source << "};";
             
             _fragment_shader.source << "in vec3 NormalDirection;";
@@ -75,11 +75,11 @@ namespace gl_simplify {
             _fragment_shader.source << "{";
 
             // get diffuse/specular map color
-            _fragment_shader.source << "   vec4 diffuse_map_color = texture(material.diffuse, TexturePosition);"; // texture(material.diffuse, TexturePosition); vec4(0.0, 0.0, 0.0, 1.0)
-            _fragment_shader.source << "   vec4 specular_map_color = texture(material.specular, TexturePosition);"; // texture(material.specular, TexturePosition)
+            _fragment_shader.source << "   vec4 diffuse_map_color = texture(material.diffuse, TexturePosition);";
+            _fragment_shader.source << "   vec4 specular_map_color = texture(material.specular, TexturePosition);";
 
             // calculate ambient color
-            _fragment_shader.source << "   vec4 ambient_color = light.ambient * specular_map_color;";
+            _fragment_shader.source << "   vec4 ambient_color = light.ambient * diffuse_map_color;";
 
             // calculate diffuse color
             _fragment_shader.source << "   vec3 normalized_normal_direction = normalize(NormalDirection);";
@@ -125,10 +125,8 @@ namespace gl_simplify {
         {
             _program.GetVariable("material.shininess").SetValue(material->GetShininess());
 
-            GLint diffuse_unit = material->GetDiffuse();
-            GLint specular_unit = material->GetSpecular();
-            _program.GetVariable("material.diffuse").SetValue(diffuse_unit);
-            _program.GetVariable("material.specular").SetValue(specular_unit);
+            _program.GetVariable("material.diffuse").SetValue(material->GetDiffuse());
+            _program.GetVariable("material.specular").SetValue(material->GetSpecular());
         }
 
         void PhongModel::Render(entity::Entity* entity)
