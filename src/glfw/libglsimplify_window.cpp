@@ -37,17 +37,34 @@ namespace gl_simplify {
 
             , _camera(nullptr)
 
+            , _default_callback_window_size_changed()
             , _callback_window_size_changed()
 
+            , _default_callback_key_event_occurred()
             , _callback_key_event_occurred()
 
+            , _default_callback_mouse_entered()
             , _callback_mouse_entered()
+
+            , _default_callback_mouse_clicked()
             , _callback_mouse_clicked()
+
+            , _default_callback_mouse_moved()
             , _callback_mouse_moved()
 
+            , _default_callback_wheel_scrolled()
             , _callback_wheel_scrolled()
         {
-            _callback_key_event_occurred = [this](GLFWwindow* window, int key, int scancode, int action, int mods) {
+            _default_callback_window_size_changed = [this] (GLFWwindow* window, int width, int height) {
+                // change viewport
+                glViewport(0, 0, width, height);
+                
+                // change camera perspective
+                _camera->SetPerspectiveAspect((float)width / (float)height);
+            };
+            _callback_window_size_changed = _default_callback_window_size_changed; 
+
+            _default_callback_key_event_occurred = [this](GLFWwindow* window, int key, int scancode, int action, int mods) {
                 switch (key)
                 {
                 case GLFW_KEY_ESCAPE:
@@ -83,12 +100,14 @@ namespace gl_simplify {
                     break;
                 }
             };
+            _callback_key_event_occurred = _default_callback_key_event_occurred; 
 
-            _callback_mouse_entered = [this] (GLFWwindow*, int entered) {
+            _default_callback_mouse_entered = [this] (GLFWwindow*, int entered) {
                 ;
             };
+            _callback_mouse_entered = _default_callback_mouse_entered;
 
-            _callback_mouse_clicked = [this] (GLFWwindow*, int key, int action, int mods) {
+            _default_callback_mouse_clicked = [this] (GLFWwindow*, int key, int action, int mods) {
                 if (GLFW_MOUSE_BUTTON_LEFT == key)
                 {
                     _mouse.left_button_down = 1 == action;
@@ -104,8 +123,9 @@ namespace gl_simplify {
                     _mouse.middle_button_down = 1 == action;
                 }
             };
+            _callback_mouse_clicked = _default_callback_mouse_clicked;
 
-            _callback_mouse_moved = [this] (GLFWwindow*, double xpos, double ypos) {
+            _default_callback_mouse_moved = [this] (GLFWwindow*, double xpos, double ypos) {
                 if (_mouse.middle_button_down)
                 {
                     _camera->Move(glm::vec3(xpos - _mouse.x, ypos - _mouse.y, 0.0f));
@@ -119,8 +139,11 @@ namespace gl_simplify {
                 _mouse.x = xpos;
                 _mouse.y = ypos;
             };
+            _callback_mouse_moved = _default_callback_mouse_moved;
 
-            _callback_wheel_scrolled = [this](GLFWwindow*, double xpos, double ypos) {
+            _default_callback_wheel_scrolled = [this](GLFWwindow*, double xpos, double ypos) {
+                _camera->AdjustPerspectiveFovyDegree(-ypos);
+
                 if (ypos > 0)
                 {
                     _camera->Forward();
@@ -130,6 +153,7 @@ namespace gl_simplify {
                     _camera->Backward();
                 }
             };
+            _callback_wheel_scrolled = _default_callback_wheel_scrolled;
         }
 
         Window::~Window()
@@ -147,13 +171,6 @@ namespace gl_simplify {
 
                 glfwMakeContextCurrent(_window);
 
-                // make glfwMakeContextCurrent invoke first;
-                std::atomic_thread_fence(std::memory_order_acq_rel);
-
-                gladLoadGL();
-
-                _camera = new entity::Camera((float)width / (float)height);
-
                 glfwSetFramebufferSizeCallback(_window, Window::glfw_callback_framebuffer_size_changed);
 
                 glfwSetKeyCallback(_window, Window::glfw_callback_key_event_changed);
@@ -163,6 +180,13 @@ namespace gl_simplify {
                 glfwSetCursorPosCallback(_window, Window::glfw_callback_mouse_moved);
 
                 glfwSetScrollCallback(_window, Window::glfw_callback_wheel_scrolled);
+
+                // make glfwMakeContextCurrent invoke first;
+                std::atomic_thread_fence(std::memory_order_acq_rel);
+
+                gladLoadGL();
+
+                _camera = new entity::Camera((float)width / (float)height);
             }
 
             return _window;

@@ -63,11 +63,7 @@ namespace gl_simplify {
             void SetWindowSizeChangedCallback(const CallbackWindowSizeChanged& callback_window_size_changed)
             {
                 _callback_window_size_changed = [this, callback_window_size_changed] (GLFWwindow* window, int width, int height) {
-                    // change viewport
-                    glViewport(0, 0, width, height);
-                    
-                    // change camera perspective
-                    _camera->SetPerspectiveAspect((float)width / (float)height);
+                    _default_callback_window_size_changed(window, width, height);
                     
                     callback_window_size_changed(window, width, height);
                 };
@@ -75,28 +71,29 @@ namespace gl_simplify {
 
             void SetKeyEventCallback(const CallbackKeyEventOcurred& callback_key_event_occurred)
             {
-                _callback_key_event_occurred = callback_key_event_occurred;
+                _callback_key_event_occurred = [this, callback_key_event_occurred] (GLFWwindow* window, int key, int scancode, int action, int mods) {
+                    _default_callback_key_event_occurred(window, key, scancode, action, mods);
+
+                    callback_key_event_occurred(window, key, scancode, action, mods);
+                };
             }
 
             void SetMouseCallback(const CallbackMouseEntered& callback_mouse_entered,
                 const CallbackMouseClicked& callback_mouse_clicked, 
                 const CallbackMouseMoved& callback_mouse_moved)
             {
-                CallbackMouseEntered default_callback_mouse_entered = _callback_mouse_entered;
-                _callback_mouse_entered = [default_callback_mouse_entered, callback_mouse_entered](GLFWwindow* window, int entered) {
-                    default_callback_mouse_entered(window, entered);
+                _callback_mouse_entered = [this, callback_mouse_entered](GLFWwindow* window, int entered) {
+                    _default_callback_mouse_entered(window, entered);
                     callback_mouse_entered(window, entered);
                 };
 
-                CallbackMouseClicked default_callback_mouse_clicked = _callback_mouse_clicked;
-                _callback_mouse_clicked = [default_callback_mouse_clicked, callback_mouse_clicked](GLFWwindow* window, int key, int action, int mods) {
-                    default_callback_mouse_clicked(window, key, action, mods);
+                _callback_mouse_clicked = [this, callback_mouse_clicked](GLFWwindow* window, int key, int action, int mods) {
+                    _default_callback_mouse_clicked(window, key, action, mods);
                     callback_mouse_clicked(window, key, action, mods);
                 };
 
-                CallbackMouseMoved default_callback_mouse_moved = _callback_mouse_moved;
-                _callback_mouse_moved = [default_callback_mouse_moved, callback_mouse_moved](GLFWwindow* window, double xpos, double ypos) {
-                    default_callback_mouse_moved(window, xpos, ypos);
+                _callback_mouse_moved = [this, callback_mouse_moved](GLFWwindow* window, double xpos, double ypos) {
+                    _default_callback_mouse_moved(window, xpos, ypos);
                     callback_mouse_moved(window, xpos, ypos);
                 };
             }
@@ -104,7 +101,7 @@ namespace gl_simplify {
             void SetWheelScrollCallback(const CallbackWheelScrolled& callback_wheel_scrolled)
             {
                 _callback_wheel_scrolled = [this, callback_wheel_scrolled] (GLFWwindow* window, double xoffset, double yoffset) {
-                    _camera->AdjustPerspectiveFovyDegree(-yoffset);
+                    _default_callback_wheel_scrolled(window, xoffset, yoffset);
 
                     callback_wheel_scrolled(window, xoffset, yoffset);
                 };
@@ -137,17 +134,27 @@ namespace gl_simplify {
             entity::Camera* _camera;
 
         private:
+            CallbackWindowSizeChanged _default_callback_window_size_changed;
             CallbackWindowSizeChanged _callback_window_size_changed;
 
         private:
+            CallbackKeyEventOcurred _default_callback_key_event_occurred;
             CallbackKeyEventOcurred _callback_key_event_occurred;
 
         private:
+            CallbackMouseEntered _default_callback_mouse_entered;
             CallbackMouseEntered _callback_mouse_entered;
+
+        private:
+            CallbackMouseClicked _default_callback_mouse_clicked;
             CallbackMouseClicked _callback_mouse_clicked;
+
+        private:
+            CallbackMouseMoved _default_callback_mouse_moved;
             CallbackMouseMoved _callback_mouse_moved;
 
         private:
+            CallbackWheelScrolled _default_callback_wheel_scrolled;
             CallbackWheelScrolled _callback_wheel_scrolled;
         };
     }
