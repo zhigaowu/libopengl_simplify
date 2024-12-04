@@ -1,0 +1,9 @@
+libdir=D:/Workbench/test.projects/libopengl_simplify_local/3rd/assimp-5.4.3/INSTALL/lib
+includedir=D:/Workbench/test.projects/libopengl_simplify_local/3rd/assimp-5.4.3/INSTALL/include
+
+Name: Assimp
+Description: Import various well-known 3D model formats in an uniform manner.
+Version: 5.4.3
+Libs: -L${libdir} -lassimp
+Libs.private:  
+Cflags: -I${includedir}
