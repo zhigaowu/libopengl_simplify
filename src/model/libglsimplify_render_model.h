@@ -20,8 +20,10 @@
 #include "core/libglsimplify_program.h"
 
 #include "entity/libglsimplify_camera.h"
-#include "light/libglsimplify_light.h"
 #include "material/libglsimplify_material.h"
+
+#include "light/libglsimplify_directional_light.h"
+#include "light/libglsimplify_spot_light.h"
 
 namespace gl_simplify {
 
@@ -45,8 +47,15 @@ namespace gl_simplify {
 
             virtual void UpdateCameraView(entity::Camera* camera) = 0;
 
-            virtual void UpdateLight(light::Light* light) = 0;
             virtual void UpdateMaterial(material::SharedMaterial material) = 0;
+
+            virtual void UpdateDirectionalLight(light::DirectionalLight* light) = 0;
+
+            virtual void UpdatePointLightCount(GLint count) = 0;
+            virtual void UpdatePointLight(light::PointLight* light, GLint index) = 0;
+
+            virtual void UpdateSpotLightCount(GLint count) = 0;
+            virtual void UpdateSpotLight(light::SpotLight* light, GLint index) = 0;
 
             virtual void Render(entity::Entity* entity) = 0;
         };

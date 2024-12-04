@@ -39,7 +39,7 @@ int test_cone(int argc, char **argv, int width, int height)
             segments = atoi(argv[4]);
         }
 
-        scene.GetLight()->TranslateTo(glm::vec3(2.0, 4.0, 4.0));
+        scene.GetDirectionalLight()->TranslateTo(glm::vec3(2.0, 4.0, 4.0));
 
         gl_simplify::material::SharedMaterial wood = gl_simplify::material::MaterialFactory::GetShared(gl_simplify::material::MaterialFactory::PredefinedMaterialType::Chrome);
         //wood->SetTexture("resource/texture/wood.jpg");

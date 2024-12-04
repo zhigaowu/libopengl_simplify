@@ -30,8 +30,15 @@ namespace gl_simplify {
 
             void UpdateCameraView(entity::Camera* camera) override;
 
-            void UpdateLight(light::Light* light) override;
             void UpdateMaterial(material::SharedMaterial material) override;
+
+            void UpdateDirectionalLight(light::DirectionalLight* light) override;
+
+            void UpdatePointLightCount(GLint count) override;
+            void UpdatePointLight(light::PointLight* light, GLint index) override;
+
+            void UpdateSpotLightCount(GLint count) override;
+            void UpdateSpotLight(light::SpotLight* light, GLint index) override;
 
             void Render(entity::Entity* entity) override;
         };

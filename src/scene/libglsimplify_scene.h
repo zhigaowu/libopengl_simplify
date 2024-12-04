@@ -22,7 +22,8 @@
 #include "entity/libglsimplify_camera.h"
 #include "model/libglsimplify_render_model.h"
 
-#include "light/libglsimplify_light.h"
+#include "light/libglsimplify_directional_light.h"
+#include "light/libglsimplify_spot_light.h"
 
 #include <map>
 
@@ -45,12 +46,29 @@ namespace gl_simplify {
             model::RenderModel* _render_model;
 
         private:
-            light::Light* _light;
+            light::DirectionalLight* _directional_light;
+
+        private:
+            using PointLightArray = std::vector<light::PointLight*>;
+            using SpotLightArray = std::vector<light::SpotLight*>;
+
+            PointLightArray _point_light_array;
+            SpotLightArray _spot_light_array;
 
         private:
             // eneities
             using Entities = std::map<entity::Entity*, entity::Entity*>;
             Entities _entities;
+
+        private:
+            void updateDirectionalLights();
+            void destroyDirectionalLights();
+
+            void updatePointLights();
+            void destroyPointLights();
+
+            void updateSpotLights();
+            void destroySpotLights();
 
         public:
             Scene();
@@ -58,7 +76,13 @@ namespace gl_simplify {
 
             Background& GetBackground() { return _background; }
 
-            light::Light* GetLight() { return _light; }
+            light::DirectionalLight* GetDirectionalLight();
+
+            light::PointLight* AddPointLight(const glm::vec3& position);
+            light::PointLight* GetPointLight(GLint index);
+
+            light::SpotLight* AddSpotLight(const glm::vec3& position, const glm::vec3& direction = glm::vec3(0.0f, -1.0f, 0.0f));
+            light::SpotLight* GetSpotLight(GLint index);
 
             virtual bool Create(GLchar* error, GLsizei error_length);
             virtual void Render(entity::Camera* camera);

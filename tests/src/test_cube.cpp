@@ -40,8 +40,8 @@ int test_cube(int argc, char **argv, int width, int height)
         camera->LookAt(glm::vec3(0.0f, 0.0f, 0.0f));
         //camera->LookFront(glm::vec3(0.0f, 0.0f, -1.0f));
 
-        scene.GetLight()->TranslateTo(glm::vec3(2.0, 4.0, 4.0));
-        scene.GetLight()->SetSpecular(glm::vec4(0.0, 0.0, 0.0, 0.0));
+        scene.GetDirectionalLight()->TranslateTo(glm::vec3(2.0, 4.0, 4.0));
+        scene.GetDirectionalLight()->SetSpecular(glm::vec4(0.0, 0.0, 0.0, 0.0));
 
         gl_simplify::material::SharedMaterial wood = gl_simplify::material::MaterialFactory::Create("resource/texture/diffuse_cube.png", "resource/texture/specular_cube.png");
         
