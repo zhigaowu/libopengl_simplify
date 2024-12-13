@@ -28,7 +28,7 @@ namespace gl_simplify {
         class BufferArray : private NonCopyable {
         public:
             explicit BufferArray(GLenum buffer_type = GL_ARRAY_BUFFER, GLsizei buffer_size = 1);
-            ~BufferArray();
+            virtual ~BufferArray();
 
             BufferArray& Bind(GLsizei buffer_index = 0)
             {
@@ -42,6 +42,11 @@ namespace gl_simplify {
                 glBufferData(_buffer_type, size, data, usage);
             }
 
+            void Upload(GLsizeiptr offset, GLsizeiptr size, const void *data, GLenum usage)
+            {
+                glBufferSubData(_buffer_type, offset, size, data);
+            }
+
             void SetAttribute(GLuint attribute_index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void* offset)
             {
                 glVertexAttribPointer(attribute_index, size, type, normalized, stride, offset);
@@ -53,7 +58,7 @@ namespace gl_simplify {
                 glBindBuffer(_buffer_type, 0);  
             }
         
-        private:
+        protected:
             GLenum _buffer_type;
             std::vector<GLuint> _buffer_ids;
         };
