@@ -57,7 +57,11 @@ namespace gl_simplify {
 
             void Create() override;
         };
+
+        using ConePtr = std::shared_ptr<Cone>;
     }
 }
+
+#define CreateCone() CreateDefaultEntity(gl_simplify::entity::Cone)
 
 #endif // GL_SIMPLIFY_ENTITY_CONE_H

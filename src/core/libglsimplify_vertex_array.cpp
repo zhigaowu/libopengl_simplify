@@ -15,15 +15,6 @@ namespace gl_simplify {
         {
             glDeleteVertexArrays(static_cast<GLsizei>(_buffer_ids.size()), _buffer_ids.data());
         }
-
-        VertexArray& VertexArray::Bind(const VertexArrayConfigurer& vertexarray_configurer, GLsizei buffer_index/* = 0*/)
-        {
-            glBindVertexArray(_buffer_ids[buffer_index]);
-
-            vertexarray_configurer(*this);
-
-            return *this;
-        }
     }
 }
 

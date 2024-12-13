@@ -81,6 +81,11 @@ namespace gl_simplify {
 
             virtual void Render();
         };
+
+        using EntityPtr = std::shared_ptr<Entity>;
+
+#define CreateDefaultEntity(Name) std::make_shared<Name>()
+
     }
 }
 

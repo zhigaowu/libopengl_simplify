@@ -108,7 +108,7 @@ namespace gl_simplify {
              */
 
             // initialize vertext shader source
-            _vertex_shader.source << "layout (location = 0) in vec3 model_position;";
+            _vertex_shader.source << "layout (location = 0) in vec3 fragment_local_position;";
             _vertex_shader.source << "layout (location = 1) in vec3 normal_direction;";
             _vertex_shader.source << "layout (location = 2) in vec2 uv_position;";
 
@@ -128,7 +128,7 @@ namespace gl_simplify {
             _vertex_shader.source << "    NormalDirection = normal_model * normal_direction;";
             _vertex_shader.source << "    TexturePosition = vec2(uv_position.x, uv_position.y);";
 
-            _vertex_shader.source << "    vec4 fragment_position = model * vec4(model_position, 1.0);";
+            _vertex_shader.source << "    vec4 fragment_position = model * vec4(fragment_local_position, 1.0);";
             _vertex_shader.source << "    FragmentPosition = fragment_position.xyz;";
             _vertex_shader.source << "    gl_Position = projection * view * fragment_position;";
             _vertex_shader.source << "}";
@@ -301,7 +301,7 @@ namespace gl_simplify {
         {
         }
 
-        void PhongModel::UpdateCameraView(entity::Camera* camera)
+        void PhongModel::UpdateCameraView(const entity::CameraPtr& camera)
         {
             _program.GetVariable("view").SetMat(camera->GetView());
             _program.GetVariable("projection").SetMat(camera->GetProjection());
@@ -309,15 +309,7 @@ namespace gl_simplify {
             _program.GetVariable("camera_position").SetVec(camera->GetPosition());
         }
 
-        void PhongModel::UpdateMaterial(material::SharedMaterial material)
-        {
-            _program.GetVariable("material.shininess").SetValue(material->GetShininess());
-
-            _program.GetVariable("material.diffuse").SetValue(material->GetDiffuse());
-            _program.GetVariable("material.specular").SetValue(material->GetSpecular());
-        }
-
-        void PhongModel::UpdateDirectionalLight(light::DirectionalLight *light)
+        void PhongModel::UpdateDirectionalLight(const light::DirectionalLightPtr& light)
         {
             _program.GetVariable("directional_light.direction").SetVec(light->GetDirection());
 
@@ -326,15 +318,16 @@ namespace gl_simplify {
             _program.GetVariable("directional_light.specular").SetVec(light->GetSpecular());
         }
 
-        void PhongModel::UpdatePointLightCount(GLint count)
+        void PhongModel::UpdatePointLights(const light::PointLights& lights)
         {
-            _program.GetVariable("point_light_count").SetValue(count);
-        }
+            GLint count = static_cast<GLint>(lights.size());
 
-        void PhongModel::UpdatePointLight(light::PointLight *light, GLint index)
-        {
-            if (index < Max_Point_Light_Size)
+            _program.GetVariable("point_light_count").SetValue(count);
+
+            for (GLint index = 0; index < Max_Point_Light_Size && index < count; ++index)
             {
+                const light::PointLightPtr light = lights[index];
+                
                 const LightNameManager::PointLightPropertyName& property_name = lightNameManager.GetPointLightPropertyName(index);
 
                 _program.GetVariable(property_name.position).SetVec(light->GetPosition());
@@ -349,15 +342,16 @@ namespace gl_simplify {
             }
         }
 
-        void PhongModel::UpdateSpotLightCount(GLint count)
+        void PhongModel::UpdateSpotLights(const light::SpotLights& lights)
         {
-            _program.GetVariable("spot_light_count").SetValue(count);
-        }
+            GLint count = static_cast<GLint>(lights.size());
 
-        void PhongModel::UpdateSpotLight(light::SpotLight *light, GLint index)
-        {
-            if (index < Max_Spot_Light_Size)
+            _program.GetVariable("spot_light_count").SetValue(count);
+
+            for (GLint index = 0; index < Max_Point_Light_Size && index < count; ++index)
             {
+                const light::SpotLightPtr light = lights[index];
+                
                 const LightNameManager::SpotLightPropertyName& property_name = lightNameManager.GetSpotLightPropertyName(index);
 
                 _program.GetVariable(property_name.position).SetVec(light->GetPosition());
@@ -376,12 +370,16 @@ namespace gl_simplify {
             }
         }
 
-        void PhongModel::Render(entity::Entity* entity)
+        void PhongModel::UpdateEntity(const entity::EntityPtr& entity)
         {
+            const material::MaterialPtr& material = entity->GetMaterial();
+
+            _program.GetVariable("material.shininess").SetValue(material->GetShininess());
+            _program.GetVariable("material.diffuse").SetValue(material->GetDiffuse());
+            _program.GetVariable("material.specular").SetValue(material->GetSpecular());
+
             _program.GetVariable("model").SetMat(entity->GetModel());
             _program.GetVariable("normal_model").SetMat(entity->GetNormalModel());
-
-            entity->Render();
         }
     }
 }

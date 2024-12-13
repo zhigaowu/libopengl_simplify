@@ -27,7 +27,7 @@ int test_all(int argc, char **argv, int width, int height)
             break;
         }
 
-        gl_simplify::entity::Camera* camera = window.Camera();
+        gl_simplify::entity::CameraPtr camera = window.Camera();
         camera->Translate(glm::vec3(16.0f, 16.0f, 16.0f));
         camera->LookAt(glm::vec3(0.0f, 0.0f, 0.0f));
         //camera->LookFront(glm::vec3(0.0f, 0.0f, -1.0f));
@@ -42,7 +42,13 @@ int test_all(int argc, char **argv, int width, int height)
             break;
         }
 
-        scene.GetBackground().SetColor(glm::vec4(0.2f, 0.3f, 0.3f, 1.0f));
+        gl_simplify::scene::Background& background = scene.GetBackground();
+        //background.SetColor(glm::vec4(0.2f, 0.3f, 0.3f, 1.0f));
+        if (!background.LoadSkyBox("resource/texture/skybox", error, sizeof(error)))
+        {
+            std::cerr << "load sky box for scene error: " << error << std::endl;
+            break;
+        }
 
         {
             scene.GetDirectionalLight()->TranslateTo(glm::vec3(0.0, 32.0, 0.0));
@@ -63,21 +69,21 @@ int test_all(int argc, char **argv, int width, int height)
 #if true
         if (true)
         {
-            gl_simplify::light::PointLight* point_light = scene.AddPointLight(glm::vec3(0.0, 8.0, 8.0));
+            gl_simplify::light::PointLightPtr point_light = scene.AddPointLight(glm::vec3(0.0, 8.0, 8.0));
             point_light->SetAmbient(glm::vec4(0.2, 0.8, 0.2, 1.0));
             point_light->SetDiffuse(glm::vec4(0.5, 0.8, 0.5, 1.0));
         }
 
         if (true)
         {
-            gl_simplify::light::PointLight* point_light = scene.AddPointLight(glm::vec3(8.0, 8.0, 0.0));
+            gl_simplify::light::PointLightPtr point_light = scene.AddPointLight(glm::vec3(8.0, 8.0, 0.0));
             point_light->SetAmbient(glm::vec4(0.2, 0.2, 0.8, 1.0));
             point_light->SetDiffuse(glm::vec4(0.5, 0.5, 0.8, 1.0));
         }
 
         if (true)
         {
-            gl_simplify::light::PointLight* point_light = scene.AddPointLight(glm::vec3(-8.0, 8.0, 0.0));
+            gl_simplify::light::PointLightPtr point_light = scene.AddPointLight(glm::vec3(-8.0, 8.0, 0.0));
             point_light->SetAmbient(glm::vec4(0.8, 0.2, 0.2, 1.0));
             point_light->SetDiffuse(glm::vec4(0.8, 0.5, 0.5, 1.0));
         }
@@ -87,28 +93,28 @@ int test_all(int argc, char **argv, int width, int height)
 
         if (true)
         {
-            gl_simplify::light::SpotLight* spot_light = scene.AddSpotLight(glm::vec3(3.0, 16.0, 3.0));
+            gl_simplify::light::SpotLightPtr spot_light = scene.AddSpotLight(glm::vec3(3.0, 16.0, 3.0));
             spot_light->SetAmbient(glm::vec4(1.0, 0.2, 0.2, 1.0));
             spot_light->SetDiffuse(glm::vec4(1.0, 0.5, 0.5, 1.0));
         }
 
         if (true)
         {
-            gl_simplify::light::SpotLight* spot_light = scene.AddSpotLight(glm::vec3(-3.0, 16.0, 3.0));
+            gl_simplify::light::SpotLightPtr spot_light = scene.AddSpotLight(glm::vec3(-3.0, 16.0, 3.0));
             spot_light->SetAmbient(glm::vec4(0.2, 1.0, 0.2, 1.0));
             spot_light->SetDiffuse(glm::vec4(0.5, 1.0, 0.5, 1.0));
         }
 
         if (true)
         {
-            gl_simplify::light::SpotLight* spot_light = scene.AddSpotLight(glm::vec3(3.0, 16.0, -3.0));
+            gl_simplify::light::SpotLightPtr spot_light = scene.AddSpotLight(glm::vec3(3.0, 16.0, -3.0));
             spot_light->SetAmbient(glm::vec4(0.2, 0.2, 1.0, 1.0));
             spot_light->SetDiffuse(glm::vec4(0.5, 0.5, 1.0, 1.0));
         }
 
         if (true)
         {
-            gl_simplify::light::SpotLight* spot_light = scene.AddSpotLight(glm::vec3(-3.0, 16.0, -3.0));
+            gl_simplify::light::SpotLightPtr spot_light = scene.AddSpotLight(glm::vec3(-3.0, 16.0, -3.0));
             spot_light->SetAmbient(glm::vec4(0.2, 0.2, 1.0, 1.0));
             spot_light->SetDiffuse(glm::vec4(1.0, 0.5, 5.0, 1.0));
         }
@@ -119,9 +125,10 @@ int test_all(int argc, char **argv, int width, int height)
 
         gl_simplify::material::SharedMaterial wood = gl_simplify::material::MaterialFactory::GetShared(gl_simplify::material::MaterialFactory::PredefinedMaterialType::Ruby);
 
+#if false
         do
         {
-            gl_simplify::entity::Plane* plane = new gl_simplify::entity::Plane();
+            gl_simplify::entity::PlanePtr plane = CreatePlane();
 
             plane->Create();
 
@@ -131,11 +138,12 @@ int test_all(int argc, char **argv, int width, int height)
             
             scene.AddEntity(plane);
         } while (false);
+#endif
 
         do
         {
             gl_simplify::material::SharedMaterial box_material = gl_simplify::material::MaterialFactory::Create("resource/texture/diffuse_cube.png", "resource/texture/specular_cube.png", 64.0f);
-            gl_simplify::entity::Cube* cube = new gl_simplify::entity::Cube();
+            gl_simplify::entity::CubePtr cube = CreateCube();
 
             cube->Create();
 
@@ -147,7 +155,7 @@ int test_all(int argc, char **argv, int width, int height)
 
         do
         {
-            gl_simplify::entity::Cylinder* cylinder = new gl_simplify::entity::Cylinder();
+            gl_simplify::entity::CylinderPtr cylinder = CreateCylinder();
 
             cylinder->Create();
 
@@ -159,7 +167,7 @@ int test_all(int argc, char **argv, int width, int height)
 
         do
         {
-            gl_simplify::entity::Cone* cone = new gl_simplify::entity::Cone();
+            gl_simplify::entity::ConePtr cone = CreateCone();
 
             cone->Create();
 
@@ -172,7 +180,7 @@ int test_all(int argc, char **argv, int width, int height)
         double ts_pre = glfwGetTime();
         double r_interval = 0.02;
 
-        window.Show([&scene, ts_pre, r_interval] (GLFWwindow*, gl_simplify::entity::Camera* camera) mutable {
+        window.Show([&scene, ts_pre, r_interval] (GLFWwindow*, gl_simplify::entity::CameraPtr camera) mutable {
                 scene.Render(camera);
 
                 double ts_curr = glfwGetTime();

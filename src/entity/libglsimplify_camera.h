@@ -177,7 +177,11 @@ namespace gl_simplify {
 
             glm::mat4 GetView() const;
         };
+
+        using CameraPtr = std::shared_ptr<Camera>;
     }
 }
+
+#define CreateCamera() CreateDefaultEntity(gl_simplify::entity::Camera)
 
 #endif // GL_SIMPLIFY_ENTITY_CAMERA_DEFAULT_CAMERA_H

@@ -80,6 +80,7 @@ namespace gl_simplify {
 
         Entity::~Entity()
         {
+            Destroy();
         }
 
         void Entity::Destroy()

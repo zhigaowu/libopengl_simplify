@@ -57,7 +57,11 @@ namespace gl_simplify {
 
             void Create() override;
         };
+
+        using CylinderPtr = std::shared_ptr<Cylinder>;
     }
 }
+
+#define CreateCylinder() CreateDefaultEntity(gl_simplify::entity::Cylinder)
 
 #endif // GL_SIMPLIFY_ENTITY_CYLINDER_H

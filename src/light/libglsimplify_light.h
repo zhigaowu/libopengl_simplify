@@ -44,6 +44,9 @@ namespace gl_simplify {
 
             void Create() override;
         };
+
+        using LightPtr = std::shared_ptr<Light>;
+        using Lights = std::vector<LightPtr>;
     }
 }
 

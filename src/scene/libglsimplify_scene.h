@@ -43,32 +43,19 @@ namespace gl_simplify {
             Background _background;
 
         private:
-            model::RenderModel* _render_model;
+            model::RenderModelPtr _render_model;
 
         private:
-            light::DirectionalLight* _directional_light;
+            light::DirectionalLightPtr _directional_light;
 
         private:
-            using PointLightArray = std::vector<light::PointLight*>;
-            using SpotLightArray = std::vector<light::SpotLight*>;
-
-            PointLightArray _point_light_array;
-            SpotLightArray _spot_light_array;
+            light::PointLights _point_lights;
+            light::SpotLights _spot_lights;
 
         private:
             // eneities
-            using Entities = std::map<entity::Entity*, entity::Entity*>;
+            using Entities = std::map<entity::Entity*, entity::EntityPtr>;
             Entities _entities;
-
-        private:
-            void updateDirectionalLights();
-            void destroyDirectionalLights();
-
-            void updatePointLights();
-            void destroyPointLights();
-
-            void updateSpotLights();
-            void destroySpotLights();
 
         public:
             Scene();
@@ -76,23 +63,23 @@ namespace gl_simplify {
 
             Background& GetBackground() { return _background; }
 
-            light::DirectionalLight* GetDirectionalLight();
+            light::DirectionalLightPtr GetDirectionalLight();
 
-            light::PointLight* AddPointLight(const glm::vec3& position);
-            light::PointLight* GetPointLight(GLint index);
+            light::PointLightPtr AddPointLight(const glm::vec3& position);
+            light::PointLightPtr GetPointLight(GLint index);
 
-            light::SpotLight* AddSpotLight(const glm::vec3& position, const glm::vec3& direction = glm::vec3(0.0f, -1.0f, 0.0f));
-            light::SpotLight* GetSpotLight(GLint index);
+            light::SpotLightPtr AddSpotLight(const glm::vec3& position, const glm::vec3& direction = glm::vec3(0.0f, -1.0f, 0.0f));
+            light::SpotLightPtr GetSpotLight(GLint index);
 
             virtual bool Create(GLchar* error, GLsizei error_length);
-            virtual void Render(entity::Camera* camera);
+            virtual void Render(const entity::CameraPtr& camera);
             virtual void Destroy();
 
             void SetRenderMode(RenderMode render_mode);
-            void SetRenderModel(model::RenderModel* render_model);
+            void SetRenderModel(const model::RenderModelPtr& render_model);
 
-            void AddEntity(entity::Entity* entity);
-            void DeleteEntity(entity::Entity* entity);
+            void AddEntity(const entity::EntityPtr& entity);
+            void DeleteEntity(const entity::EntityPtr& entity);
         };
     }
 }

@@ -37,6 +37,9 @@ namespace gl_simplify {
             void SetDirection(const glm::vec3& direction);
             const glm::vec3& GetDirection();
         };
+
+        using DirectionalLightPtr = std::shared_ptr<DirectionalLight>;
+        using DirectionalLights = std::vector<DirectionalLightPtr>;
     }
 }
 

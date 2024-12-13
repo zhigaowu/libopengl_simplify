@@ -17,15 +17,20 @@
 #ifndef GL_SIMPLIFY_SCENE_BACKGROUND_H
 #define GL_SIMPLIFY_SCENE_BACKGROUND_H
 
-#include "core/libglsimplify_types.h"
+#include "libglsimplify_skybox.h"
+
+#include "model/libglsimplify_render_model.h"
 
 namespace gl_simplify {
 
     namespace scene {
 
-        class Background : private core::NonCopyable {
+        class Background : public model::RenderModel {
         private:
             glm::vec4 _color;
+
+        private:
+            SkyBoxPtr _sky_box;
 
         public:
             Background();
@@ -33,7 +38,21 @@ namespace gl_simplify {
 
             void SetColor(const glm::vec4& color);
 
-            void Update();
+            void Clear();
+
+            bool LoadSkyBox(const std::string& path, GLchar* error, GLsizei error_length);
+
+            void Render();
+
+            void UpdateCameraView(const entity::CameraPtr& camera) override;
+
+            void UpdateDirectionalLight(const light::DirectionalLightPtr& light) override;
+
+            void UpdatePointLights(const light::PointLights& lights) override;
+
+            void UpdateSpotLights(const light::SpotLights& lights) override;
+
+            void UpdateEntity(const entity::EntityPtr& entity) override;
         };
     }
 }

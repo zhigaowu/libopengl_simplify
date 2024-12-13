@@ -30,7 +30,11 @@ namespace gl_simplify {
 
             void Create() override;
         };
+
+        using CubePtr = std::shared_ptr<Cube>;
     }
 }
+
+#define CreateCube() CreateDefaultEntity(gl_simplify::entity::Cube)
 
 #endif // GL_SIMPLIFY_ENTITY_CUBE_H

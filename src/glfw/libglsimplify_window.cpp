@@ -14,6 +14,8 @@ namespace gl_simplify {
             glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, glMinorVersion);
             glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
+            glfwWindowHint(GLFW_STENCIL_BITS, 8);
+
 #ifdef __APPLE__
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
@@ -186,7 +188,7 @@ namespace gl_simplify {
 
                 gladLoadGL();
 
-                _camera = new entity::Camera((float)width / (float)height);
+                _camera = std::make_shared<entity::Camera>((float)width / (float)height);
             }
 
             return _window;
@@ -226,11 +228,7 @@ namespace gl_simplify {
                 _window = nullptr;
             }
 
-            if (_camera)
-            {
-                delete _camera;
-                _camera = nullptr;
-            }
+            _camera.reset();
         }
 
         void Window::glfw_callback_framebuffer_size_changed(GLFWwindow *window, int width, int height)

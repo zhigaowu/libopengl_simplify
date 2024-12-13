@@ -45,8 +45,9 @@ int test_cylinder(int argc, char **argv, int width, int height)
 
         do
         {
-            gl_simplify::entity::Cylinder* cylinder = new gl_simplify::entity::Cylinder(segments);
+            gl_simplify::entity::CylinderPtr cylinder = CreateCylinder();
 
+            cylinder->SetSegments(segments);
             cylinder->Create();
             cylinder->Attatch(wood);
             
@@ -55,12 +56,12 @@ int test_cylinder(int argc, char **argv, int width, int height)
 
         scene.GetBackground().SetColor(glm::vec4(0.2f, 0.3f, 0.3f, 1.0f));
 
-        gl_simplify::entity::Camera* camera = window.Camera();
+        gl_simplify::entity::CameraPtr camera = window.Camera();
         camera->Translate(glm::vec3(0.0f, 2.0f, 8.0f));
         camera->LookAt(glm::vec3(0.0f, 0.0f, 0.0f));
         //camera->LookFront(glm::vec3(0.0f, 0.0f, -1.0f));
 
-        window.Show([&scene] (GLFWwindow*, gl_simplify::entity::Camera* camera) {
+        window.Show([&scene] (GLFWwindow*, gl_simplify::entity::CameraPtr camera) {
                 scene.Render(camera);
             });
 

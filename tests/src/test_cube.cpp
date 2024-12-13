@@ -35,7 +35,7 @@ int test_cube(int argc, char **argv, int width, int height)
 
         scene.GetBackground().SetColor(glm::vec4(0.2f, 0.3f, 0.3f, 1.0f));
 
-        gl_simplify::entity::Camera* camera = window.Camera();
+        gl_simplify::entity::CameraPtr camera = window.Camera();
         camera->Translate(glm::vec3(0.0f, 3.0f, 3.0f));
         camera->LookAt(glm::vec3(0.0f, 0.0f, 0.0f));
         //camera->LookFront(glm::vec3(0.0f, 0.0f, -1.0f));
@@ -47,7 +47,7 @@ int test_cube(int argc, char **argv, int width, int height)
         
         do
         {
-            gl_simplify::entity::Cube* cube = new gl_simplify::entity::Cube();
+            gl_simplify::entity::CubePtr cube = CreateCube();
 
             cube->Create();
 
@@ -56,7 +56,7 @@ int test_cube(int argc, char **argv, int width, int height)
             scene.AddEntity(cube);
         } while (false);
 
-        window.Show([&scene] (GLFWwindow*, gl_simplify::entity::Camera* camera) {
+        window.Show([&scene] (GLFWwindow*, gl_simplify::entity::CameraPtr camera) {
                 scene.Render(camera);
             });
 

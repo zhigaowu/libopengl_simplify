@@ -69,7 +69,7 @@ namespace gl_simplify {
                                                                     ,
                                                                     GLenum data_type /* = GL_UNSIGNED_BYTE*/)
         {
-            stbi_set_flip_vertically_on_load(flip_vertical == 0);
+            stbi_set_flip_vertically_on_load(flip_vertical);
             
             int nrChannels;
             unsigned char *data = stbi_load(image_path.c_str(), &width, &height, &nrChannels, 0);
@@ -92,6 +92,45 @@ namespace gl_simplify {
             }
 
             glGenerateMipmap(type);
+
+            stbi_image_free(data);
+
+            return *this;
+        }
+
+        TextureBuffer::Texture &TextureBuffer::Texture::UploadImage(GLenum target_type
+                                                                    , 
+                                                                    const std::string &image_path
+                                                                    , 
+                                                                    GLboolean flip_vertical /* = 0*/
+                                                                    ,
+                                                                    GLint level /* = 0*/
+                                                                    ,
+                                                                    GLint border /* = 0*/
+                                                                    ,
+                                                                    GLenum data_type /* = GL_UNSIGNED_BYTE*/)
+        {
+            stbi_set_flip_vertically_on_load(flip_vertical);
+            
+            int nrChannels;
+            unsigned char *data = stbi_load(image_path.c_str(), &width, &height, &nrChannels, 0);
+
+            switch (nrChannels)
+            {
+            case 4:
+            {
+                glTexImage2D(target_type, level, GL_RGBA, width, height, border, GL_RGBA, GL_UNSIGNED_BYTE, data);
+                break;
+            }
+            case 1:
+            {
+                glTexImage2D(target_type, level, GL_RED, width, height, border, GL_RED, GL_UNSIGNED_BYTE, data);
+                break;
+            }
+            default:
+                glTexImage2D(target_type, level, GL_RGB, width, height, border, GL_RGB, GL_UNSIGNED_BYTE, data);
+                break;
+            }
 
             stbi_image_free(data);
 

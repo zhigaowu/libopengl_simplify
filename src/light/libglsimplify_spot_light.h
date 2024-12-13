@@ -50,6 +50,9 @@ namespace gl_simplify {
             void SetRangeOuter(float range_angle);
             float GetRangeOuter();
         };
+
+        using SpotLightPtr = std::shared_ptr<SpotLight>;
+        using SpotLights = std::vector<SpotLightPtr>;
     }
 }
 

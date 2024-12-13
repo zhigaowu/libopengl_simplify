@@ -20,7 +20,6 @@
 #include "core/libglsimplify_program.h"
 
 #include "entity/libglsimplify_camera.h"
-#include "material/libglsimplify_material.h"
 
 #include "light/libglsimplify_directional_light.h"
 #include "light/libglsimplify_spot_light.h"
@@ -45,20 +44,19 @@ namespace gl_simplify {
 
             void Use();
 
-            virtual void UpdateCameraView(entity::Camera* camera) = 0;
+            virtual void UpdateCameraView(const entity::CameraPtr& camera) = 0;
 
-            virtual void UpdateMaterial(material::SharedMaterial material) = 0;
+            virtual void UpdateDirectionalLight(const light::DirectionalLightPtr& light) = 0;
 
-            virtual void UpdateDirectionalLight(light::DirectionalLight* light) = 0;
+            virtual void UpdatePointLights(const light::PointLights& lights) = 0;
 
-            virtual void UpdatePointLightCount(GLint count) = 0;
-            virtual void UpdatePointLight(light::PointLight* light, GLint index) = 0;
+            virtual void UpdateSpotLights(const light::SpotLights& lights) = 0;
 
-            virtual void UpdateSpotLightCount(GLint count) = 0;
-            virtual void UpdateSpotLight(light::SpotLight* light, GLint index) = 0;
-
-            virtual void Render(entity::Entity* entity) = 0;
+            virtual void UpdateEntity(const entity::EntityPtr& entity) = 0;
         };
+
+        using RenderModelPtr = std::shared_ptr<RenderModel>;
+        using SharedRenderModel = std::shared_ptr<RenderModel>;
     }
 }
 

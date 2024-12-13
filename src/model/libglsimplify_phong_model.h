@@ -28,19 +28,15 @@ namespace gl_simplify {
             PhongModel();
             ~PhongModel();
 
-            void UpdateCameraView(entity::Camera* camera) override;
+            void UpdateCameraView(const entity::CameraPtr& camera) override;
 
-            void UpdateMaterial(material::SharedMaterial material) override;
+            void UpdateDirectionalLight(const light::DirectionalLightPtr& light) override;
 
-            void UpdateDirectionalLight(light::DirectionalLight* light) override;
+            void UpdatePointLights(const light::PointLights& lights) override;
 
-            void UpdatePointLightCount(GLint count) override;
-            void UpdatePointLight(light::PointLight* light, GLint index) override;
+            void UpdateSpotLights(const light::SpotLights& lights) override;
 
-            void UpdateSpotLightCount(GLint count) override;
-            void UpdateSpotLight(light::SpotLight* light, GLint index) override;
-
-            void Render(entity::Entity* entity) override;
+            void UpdateEntity(const entity::EntityPtr& entity) override;
         };
     }
 }

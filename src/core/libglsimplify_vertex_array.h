@@ -25,9 +25,6 @@ namespace gl_simplify {
 
         class VertexArray : private NonCopyable {
         public:
-            using VertexArrayConfigurer = std::function<void(VertexArray&)>;
-
-        public:
             explicit VertexArray(GLsizei buffer_size = 1);
             ~VertexArray();
 
@@ -37,8 +34,6 @@ namespace gl_simplify {
 
                 return *this;
             }
-
-            VertexArray& Bind(const VertexArrayConfigurer& vertexarray_configurer, GLsizei buffer_index = 0);
 
             void Unbind()
             {

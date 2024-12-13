@@ -19,7 +19,6 @@
 
 #include "libglsimplify_types.h"
 
-#include <functional>
 #include <vector>
 
 namespace gl_simplify {
@@ -27,9 +26,6 @@ namespace gl_simplify {
     namespace core {
 
         class BufferArray : private NonCopyable {
-        public:
-            using BufferArrayConfigurer = std::function<void(BufferArray&)>;
-
         public:
             explicit BufferArray(GLenum buffer_type = GL_ARRAY_BUFFER, GLsizei buffer_size = 1);
             ~BufferArray();
@@ -40,8 +36,6 @@ namespace gl_simplify {
 
                 return *this;
             }
-
-            BufferArray& Bind(const BufferArrayConfigurer& buffer_array_configurer, GLsizei buffer_index = 0);
 
             void Upload(GLsizeiptr size, const void *data, GLenum usage)
             {

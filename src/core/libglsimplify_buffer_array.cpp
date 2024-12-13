@@ -16,15 +16,6 @@ namespace gl_simplify {
         {
             glDeleteBuffers(static_cast<GLsizei>(_buffer_ids.size()), _buffer_ids.data());
         }
-
-        BufferArray& BufferArray::Bind(const BufferArrayConfigurer& buffer_array_configurer, GLsizei buffer_index/* = 0*/)
-        {
-            glBindBuffer(_buffer_type, _buffer_ids[buffer_index]);
-
-            buffer_array_configurer(*this);
-
-            return *this;
-        }
     }
 }
 

@@ -41,7 +41,7 @@ namespace gl_simplify {
 
         using CallbackWheelScrolled = std::function<void(GLFWwindow*, double, double)>; // double xoffset, double yoffset
 
-        using CallbackRenderWindow = std::function<void(GLFWwindow*, entity::Camera*)>;
+        using CallbackRenderWindow = std::function<void(GLFWwindow*, entity::CameraPtr)>;
 
         void Initialize(int glMajorVersion = 4, int glMinorVersion = 6);
 
@@ -54,7 +54,7 @@ namespace gl_simplify {
             Window();
             ~Window();
 
-            entity::Camera* Camera() { return _camera; }
+            entity::CameraPtr Camera() { return _camera; }
 
             GLFWwindow* Create(int width, int height, const char* title, GLFWmonitor* monitor = nullptr, GLFWwindow* share = nullptr);
 
@@ -107,7 +107,7 @@ namespace gl_simplify {
                 };
             }
             
-            void Show(const CallbackRenderWindow& callback_render_window = [] (GLFWwindow*, entity::Camera*) {});
+            void Show(const CallbackRenderWindow& callback_render_window = [] (GLFWwindow*, entity::CameraPtr) {});
 
             void Destroy();
 
@@ -131,7 +131,7 @@ namespace gl_simplify {
 
         private:
             Mouse _mouse;
-            entity::Camera* _camera;
+            entity::CameraPtr _camera;
 
         private:
             CallbackWindowSizeChanged _default_callback_window_size_changed;

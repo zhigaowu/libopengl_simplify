@@ -30,7 +30,11 @@ namespace gl_simplify {
 
             void Create() override;
         };
+
+        using PlanePtr = std::shared_ptr<Plane>;
     }
 }
+
+#define CreatePlane() CreateDefaultEntity(gl_simplify::entity::Plane)
 
 #endif // GL_SIMPLIFY_ENTITY_PLANE_H

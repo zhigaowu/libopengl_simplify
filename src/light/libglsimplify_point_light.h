@@ -45,6 +45,9 @@ namespace gl_simplify {
             void SetAttenuationKq(float kq);
             float GetAttenuationKq();
         };
+
+        using PointLightPtr = std::shared_ptr<PointLight>;
+        using PointLights = std::vector<PointLightPtr>;
     }
 }
 
