@@ -1,9 +1,9 @@
 /*
  * ==========================================================================
  *
- *       Filename:  libglsimplify_render_model.h
+ *       Filename:  libglsimplify_render_shader.h
  *
- *    Description:  render model logic
+ *    Description:  render shader logic
  *
  *        Version:  1.0
  *        Created:  2024-11-28 11:15:00
@@ -14,8 +14,8 @@
  * ==========================================================================
  */
 
-#ifndef GL_SIMPLIFY_MODEL_RENDER_MODEL_H
-#define GL_SIMPLIFY_MODEL_RENDER_MODEL_H
+#ifndef GL_SIMPLIFY_RENDER_RENDER_SHADER_H
+#define GL_SIMPLIFY_RENDER_RENDER_SHADER_H
 
 #include "core/libglsimplify_program.h"
 
@@ -26,9 +26,9 @@
 
 namespace gl_simplify {
 
-    namespace model {
+    namespace render {
 
-        class RenderModel : public core::NonCopyable {
+        class RenderShader : public core::NonCopyable {
         protected:
             core::Program _program;
 
@@ -37,8 +37,8 @@ namespace gl_simplify {
             core::Shader _fragment_shader;
 
         public:
-            RenderModel();
-            virtual ~RenderModel();
+            RenderShader();
+            virtual ~RenderShader();
 
             bool Build(GLchar* error, GLsizei error_length);
 
@@ -55,9 +55,9 @@ namespace gl_simplify {
             virtual void UpdateEntity(const entity::EntityPtr& entity) = 0;
         };
 
-        using RenderModelPtr = std::shared_ptr<RenderModel>;
-        using SharedRenderModel = std::shared_ptr<RenderModel>;
+        using RenderShaderPtr = std::shared_ptr<RenderShader>;
+        using SharedRenderShader = std::shared_ptr<RenderShader>;
     }
 }
 
-#endif // GL_SIMPLIFY_MODEL_RENDER_MODEL_H
+#endif // GL_SIMPLIFY_RENDER_RENDER_SHADER_H

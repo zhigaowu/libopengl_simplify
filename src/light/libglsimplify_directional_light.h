@@ -43,4 +43,6 @@ namespace gl_simplify {
     }
 }
 
+#define CreateDirectionalLight() CreateDefaultEntity(gl_simplify::light::DirectionalLight)
+
 #endif // GL_SIMPLIFY_LIGHT_DIRECTIONAL_LIGHT_H

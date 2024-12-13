@@ -1,11 +1,11 @@
 
-#include "libglsimplify_render_model.h"
+#include "libglsimplify_render_shader.h"
 
 namespace gl_simplify {
 
-    namespace model {
+    namespace render {
 
-        RenderModel::RenderModel()
+        RenderShader::RenderShader()
             : core::NonCopyable()
 
             , _program()
@@ -15,18 +15,18 @@ namespace gl_simplify {
         {
         }
 
-        RenderModel::~RenderModel()
+        RenderShader::~RenderShader()
         {
         }
 
-        bool RenderModel::Build(GLchar *error, GLsizei error_length)
+        bool RenderShader::Build(GLchar *error, GLsizei error_length)
         {
             return _vertex_shader.Compile(error, error_length) 
                     && _fragment_shader.Compile(error, error_length) 
                     && _program.Attach(_vertex_shader).Attach(_fragment_shader).Link(error, error_length);
         }
 
-        void RenderModel::Use()
+        void RenderShader::Use()
         {
             _program.Use();
         }

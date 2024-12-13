@@ -19,13 +19,13 @@
 
 #include "libglsimplify_skybox.h"
 
-#include "model/libglsimplify_render_model.h"
+#include "render/libglsimplify_render_shader.h"
 
 namespace gl_simplify {
 
     namespace scene {
 
-        class Background : public model::RenderModel {
+        class Background : public render::RenderShader {
         private:
             glm::vec4 _color;
 

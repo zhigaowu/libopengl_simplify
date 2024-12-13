@@ -1,9 +1,9 @@
 
-#include "libglsimplify_phong_model.h"
+#include "libglsimplify_phong_shader.h"
 
 namespace gl_simplify {
 
-    namespace model {
+    namespace render {
 
         static constexpr const GLint Max_Point_Light_Size = 16;
         static constexpr const GLint Max_Spot_Light_Size = 16;
@@ -96,8 +96,8 @@ namespace gl_simplify {
             }
         } lightNameManager;
 
-        PhongModel::PhongModel()
-            : RenderModel()
+        PhongShader::PhongShader()
+            : RenderShader()
         {
             /*
              * shader reference:
@@ -297,11 +297,11 @@ namespace gl_simplify {
             _fragment_shader.source << "}";
         }
 
-        PhongModel::~PhongModel()
+        PhongShader::~PhongShader()
         {
         }
 
-        void PhongModel::UpdateCameraView(const entity::CameraPtr& camera)
+        void PhongShader::UpdateCameraView(const entity::CameraPtr& camera)
         {
             _program.GetVariable("view").SetMat(camera->GetView());
             _program.GetVariable("projection").SetMat(camera->GetProjection());
@@ -309,7 +309,7 @@ namespace gl_simplify {
             _program.GetVariable("camera_position").SetVec(camera->GetPosition());
         }
 
-        void PhongModel::UpdateDirectionalLight(const light::DirectionalLightPtr& light)
+        void PhongShader::UpdateDirectionalLight(const light::DirectionalLightPtr& light)
         {
             _program.GetVariable("directional_light.direction").SetVec(light->GetDirection());
 
@@ -318,7 +318,7 @@ namespace gl_simplify {
             _program.GetVariable("directional_light.specular").SetVec(light->GetSpecular());
         }
 
-        void PhongModel::UpdatePointLights(const light::PointLights& lights)
+        void PhongShader::UpdatePointLights(const light::PointLights& lights)
         {
             GLint count = static_cast<GLint>(lights.size());
 
@@ -342,7 +342,7 @@ namespace gl_simplify {
             }
         }
 
-        void PhongModel::UpdateSpotLights(const light::SpotLights& lights)
+        void PhongShader::UpdateSpotLights(const light::SpotLights& lights)
         {
             GLint count = static_cast<GLint>(lights.size());
 
@@ -370,7 +370,7 @@ namespace gl_simplify {
             }
         }
 
-        void PhongModel::UpdateEntity(const entity::EntityPtr& entity)
+        void PhongShader::UpdateEntity(const entity::EntityPtr& entity)
         {
             const material::MaterialPtr& material = entity->GetMaterial();
 

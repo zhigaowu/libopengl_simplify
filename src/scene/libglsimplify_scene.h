@@ -20,7 +20,6 @@
 #include "libglsimplify_background.h"
 
 #include "entity/libglsimplify_camera.h"
-#include "model/libglsimplify_render_model.h"
 
 #include "light/libglsimplify_directional_light.h"
 #include "light/libglsimplify_spot_light.h"
@@ -43,7 +42,7 @@ namespace gl_simplify {
             Background _background;
 
         private:
-            model::RenderModelPtr _render_model;
+            render::RenderShaderPtr _render_shader;
 
         private:
             light::DirectionalLightPtr _directional_light;
@@ -76,7 +75,7 @@ namespace gl_simplify {
             virtual void Destroy();
 
             void SetRenderMode(RenderMode render_mode);
-            void SetRenderModel(const model::RenderModelPtr& render_model);
+            void SetRenderModel(const render::RenderShaderPtr& render_model);
 
             void AddEntity(const entity::EntityPtr& entity);
             void DeleteEntity(const entity::EntityPtr& entity);

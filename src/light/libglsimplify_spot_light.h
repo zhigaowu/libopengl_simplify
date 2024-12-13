@@ -56,4 +56,6 @@ namespace gl_simplify {
     }
 }
 
+#define CreateSpotLight() CreateDefaultEntity(gl_simplify::light::SpotLight)
+
 #endif // GL_SIMPLIFY_LIGHT_SPOT_LIGHT_H
