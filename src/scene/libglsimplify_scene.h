@@ -77,6 +77,8 @@ namespace gl_simplify {
             void SetRenderMode(RenderMode render_mode);
             void SetRenderModel(const render::RenderShaderPtr& render_model);
 
+            void SetMultipleSampling(bool enabled);
+
             void AddEntity(const entity::EntityPtr& entity);
             void DeleteEntity(const entity::EntityPtr& entity);
         };

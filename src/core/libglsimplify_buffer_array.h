@@ -52,6 +52,11 @@ namespace gl_simplify {
                 glVertexAttribPointer(attribute_index, size, type, normalized, stride, offset);
                 glEnableVertexAttribArray(attribute_index);
             }
+
+            void SetAttributeDivisor(GLuint attribute_index, GLuint divisor)
+            {
+                glVertexAttribDivisor(attribute_index, divisor);
+            }
             
             void Unbind()
             {

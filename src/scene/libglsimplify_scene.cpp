@@ -78,6 +78,7 @@ namespace gl_simplify {
             glCullFace(GL_BACK);
 
             SetRenderMode(RenderMode::Fill);
+            SetMultipleSampling(true);
 
             return _render_shader->Build(error, error_length);
         }
@@ -130,6 +131,18 @@ namespace gl_simplify {
             if (render_model)
             {
                 _render_shader = render_model;
+            }
+        }
+
+        void Scene::SetMultipleSampling(bool enabled)
+        {
+            if (enabled)
+            {
+                glEnable(GL_MULTISAMPLE);
+            }
+            else
+            {
+                glDisable(GL_MULTISAMPLE);
             }
         }
 

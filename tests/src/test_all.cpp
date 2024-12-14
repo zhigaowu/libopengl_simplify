@@ -125,7 +125,7 @@ int test_all(int argc, char **argv, int width, int height)
 
         gl_simplify::material::SharedMaterial wood = gl_simplify::material::MaterialFactory::GetShared(gl_simplify::material::MaterialFactory::PredefinedMaterialType::Ruby);
 
-#if false
+#if true
         do
         {
             gl_simplify::entity::PlanePtr plane = CreatePlane();
@@ -157,6 +157,7 @@ int test_all(int argc, char **argv, int width, int height)
         {
             gl_simplify::entity::CylinderPtr cylinder = CreateCylinder();
 
+            cylinder->SetSegments(256);
             cylinder->Create();
 
             cylinder->Attatch(wood);
@@ -169,6 +170,7 @@ int test_all(int argc, char **argv, int width, int height)
         {
             gl_simplify::entity::ConePtr cone = CreateCone();
 
+            cone->SetSegments(256);
             cone->Create();
 
             cone->Attatch(wood);
