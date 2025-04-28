@@ -43,7 +43,7 @@ int test_cube(int argc, char **argv, int width, int height)
         scene.GetDirectionalLight()->TranslateTo(glm::vec3(2.0, 4.0, 4.0));
         scene.GetDirectionalLight()->SetSpecular(glm::vec4(0.0, 0.0, 0.0, 0.0));
 
-        gl_simplify::material::SharedMaterial wood = gl_simplify::material::MaterialFactory::Create("resource/texture/diffuse_cube.png", "resource/texture/specular_cube.png");
+        gl_simplify::material::MaterialPtr wood = gl_simplify::material::MaterialFactory::Create("resource/texture/diffuse_cube.png", "resource/texture/specular_cube.png");
         
         do
         {

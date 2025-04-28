@@ -66,13 +66,13 @@ namespace gl_simplify {
             };
 
         public:
-            static SharedMaterial Create();
+            static MaterialPtr Create();
 
-            static SharedMaterial Create(const glm::vec4& ambient, const glm::vec4& diffuse, const glm::vec4& specular, GLfloat shininess = 32.0f);
+            static MaterialPtr Create(const glm::vec4& ambient, const glm::vec4& diffuse, const glm::vec4& specular, GLfloat shininess = 32.0f);
 
-            static SharedMaterial Create(const std::string& diffuse_map_path, const std::string& specular_map_path, GLfloat shininess = 32.0f);
+            static MaterialPtr Create(const std::string& diffuse_map_path, const std::string& specular_map_path, GLfloat shininess = 32.0f);
 
-            static SharedMaterial GetShared(const PredefinedMaterialType& material_type);
+            static MaterialPtr Get(const PredefinedMaterialType& material_type);
         };
     }
 }

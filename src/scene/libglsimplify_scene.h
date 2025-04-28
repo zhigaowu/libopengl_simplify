@@ -42,13 +42,15 @@ namespace gl_simplify {
             Background _background;
 
         private:
-            render::RenderShaderPtr _render_shader;
+            render::RenderModelPtr _render_model;
 
         private:
             light::DirectionalLightPtr _directional_light;
 
         private:
             light::PointLights _point_lights;
+
+        private:
             light::SpotLights _spot_lights;
 
         private:
@@ -75,7 +77,7 @@ namespace gl_simplify {
             virtual void Destroy();
 
             void SetRenderMode(RenderMode render_mode);
-            void SetRenderModel(const render::RenderShaderPtr& render_model);
+            void SetRenderModel(const render::RenderModelPtr& render_model);
 
             void SetMultipleSampling(bool enabled);
 

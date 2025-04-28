@@ -41,7 +41,7 @@ int test_cone(int argc, char **argv, int width, int height)
 
         scene.GetDirectionalLight()->TranslateTo(glm::vec3(2.0, 4.0, 4.0));
 
-        gl_simplify::material::SharedMaterial wood = gl_simplify::material::MaterialFactory::GetShared(gl_simplify::material::MaterialFactory::PredefinedMaterialType::Chrome);
+        gl_simplify::material::MaterialPtr wood = gl_simplify::material::MaterialFactory::Get(gl_simplify::material::MaterialFactory::PredefinedMaterialType::Chrome);
         //wood->SetTexture("resource/texture/wood.jpg");
 
         do

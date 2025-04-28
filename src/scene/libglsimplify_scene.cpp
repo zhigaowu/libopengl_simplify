@@ -1,7 +1,7 @@
 
 #include "libglsimplify_scene.h"
 
-#include "render/libglsimplify_phong_shader.h"
+#include "render/libglsimplify_phong_model.h"
 
 namespace gl_simplify {
 
@@ -10,7 +10,7 @@ namespace gl_simplify {
         Scene::Scene()
             : _background()
             
-            , _render_shader(CreatePhongShader())
+            , _render_model(CreatePhongModel())
 
             , _directional_light(CreateDirectionalLight())
 
@@ -80,7 +80,7 @@ namespace gl_simplify {
             SetRenderMode(RenderMode::Fill);
             SetMultipleSampling(true);
 
-            return _render_shader->Build(error, error_length);
+            return _render_model->Build(error, error_length);
         }
 
         void Scene::Render(const entity::CameraPtr& camera)
@@ -89,17 +89,17 @@ namespace gl_simplify {
             _background.Clear();
 
             // render entities in the scene
-            _render_shader->Use();
-            _render_shader->UpdateCameraView(camera);
-            _render_shader->UpdateDirectionalLight(_directional_light);
-            _render_shader->UpdatePointLights(_point_lights);
-            _render_shader->UpdateSpotLights(_spot_lights);
+            _render_model->Use();
+            _render_model->UpdateCameraView(camera);
+            _render_model->UpdateDirectionalLight(_directional_light);
+            _render_model->UpdatePointLights(_point_lights);
+            _render_model->UpdateSpotLights(_spot_lights);
 
             for (Entities::iterator it = _entities.begin(); it != _entities.end(); ++it)
             {
                 entity::EntityPtr& entity = it->second;
 
-                _render_shader->UpdateEntity(entity);
+                _render_model->UpdateEntity(entity);
                 
                 entity->Render();
             }
@@ -126,11 +126,11 @@ namespace gl_simplify {
             glPolygonMode(GL_FRONT_AND_BACK, static_cast<GLint>(render_mode));
         }
 
-        void Scene::SetRenderModel(const render::RenderShaderPtr& render_model)
+        void Scene::SetRenderModel(const render::RenderModelPtr& render_model)
         {
             if (render_model)
             {
-                _render_shader = render_model;
+                _render_model = render_model;
             }
         }
 

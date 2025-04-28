@@ -1,9 +1,9 @@
 /*
  * ==========================================================================
  *
- *       Filename:  libglsimplify_phong_shader.h
+ *       Filename:  libglsimplify_phong_model.h
  *
- *    Description:  phong render shader logic
+ *    Description:  phong render model logic
  *
  *        Version:  1.0
  *        Created:  2024-11-28 11:20:00
@@ -14,19 +14,19 @@
  * ==========================================================================
  */
 
-#ifndef GL_SIMPLIFY_RENDER_PHONG_SHADER_H
-#define GL_SIMPLIFY_RENDER_PHONG_SHADER_H
+#ifndef GL_SIMPLIFY_RENDER_PHONG_MODEL_H
+#define GL_SIMPLIFY_RENDER_PHONG_MODEL_H
 
-#include "libglsimplify_render_shader.h"
+#include "libglsimplify_render_model.h"
 
 namespace gl_simplify {
 
     namespace render {
 
-        class PhongShader : public RenderShader {
+        class PhongModel : public RenderModel {
         public:
-            PhongShader();
-            ~PhongShader();
+            PhongModel();
+            ~PhongModel();
 
             void UpdateCameraView(const entity::CameraPtr& camera) override;
 
@@ -39,11 +39,10 @@ namespace gl_simplify {
             void UpdateEntity(const entity::EntityPtr& entity) override;
         };
 
-        using PhongShaderPtr = std::shared_ptr<PhongShader>;
-        using SharedPhongShader = std::shared_ptr<PhongShader>;
+        using PhongModelPtr = std::shared_ptr<PhongModel>;
     }
 }
 
-#define CreatePhongShader() CreateDefaultEntity(gl_simplify::render::PhongShader)
+#define CreatePhongModel() CreateDefaultEntity(gl_simplify::render::PhongModel)
 
-#endif // GL_SIMPLIFY_RENDER_PHONG_SHADER_H
+#endif // GL_SIMPLIFY_RENDER_PHONG_MODEL_H

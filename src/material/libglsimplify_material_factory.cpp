@@ -13,24 +13,24 @@ namespace gl_simplify {
         {
         }
 
-        SharedMaterial MaterialFactory::Create()
+        MaterialPtr MaterialFactory::Create()
         {
             return std::make_shared<Material>();
         }
         
-        SharedMaterial MaterialFactory::Create(const glm::vec4 &ambient, const glm::vec4 &diffuse, const glm::vec4 &specular, GLfloat shininess)
+        MaterialPtr MaterialFactory::Create(const glm::vec4 &ambient, const glm::vec4 &diffuse, const glm::vec4 &specular, GLfloat shininess)
         {
             return std::make_shared<Material>(ambient, diffuse, specular, shininess);
         }
 
-        SharedMaterial MaterialFactory::Create(const std::string &diffuse_map_path, const std::string &specular_map_path, GLfloat shininess)
+        MaterialPtr MaterialFactory::Create(const std::string &diffuse_map_path, const std::string &specular_map_path, GLfloat shininess)
         {
             return std::make_shared<Material>(diffuse_map_path, specular_map_path, shininess);
         }
 
-        SharedMaterial MaterialFactory::GetShared(const PredefinedMaterialType &material_type)
+        MaterialPtr MaterialFactory::Get(const PredefinedMaterialType &material_type)
         {
-            static std::vector<SharedMaterial> avaliable_materials{
+            static std::vector<MaterialPtr> avaliable_materials{
                 //Brass
                 std::make_shared<Material>(glm::vec4(0.329412f, 0.223529f, 0.027451f,1.0f),
                 glm::vec4(0.780392f, 0.568627f, 0.113725f, 1.0f),

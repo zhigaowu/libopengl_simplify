@@ -121,9 +121,9 @@ int test_all(int argc, char **argv, int width, int height)
 
 #endif
 
-        gl_simplify::material::SharedMaterial rock = gl_simplify::material::MaterialFactory::Create("resource/texture/plane_rock.jpg", "resource/texture/plane_rock.jpg");
+        gl_simplify::material::MaterialPtr rock = gl_simplify::material::MaterialFactory::Create("resource/texture/plane_rock.jpg", "resource/texture/plane_rock.jpg");
 
-        gl_simplify::material::SharedMaterial wood = gl_simplify::material::MaterialFactory::GetShared(gl_simplify::material::MaterialFactory::PredefinedMaterialType::Ruby);
+        gl_simplify::material::MaterialPtr wood = gl_simplify::material::MaterialFactory::Get(gl_simplify::material::MaterialFactory::PredefinedMaterialType::Ruby);
 
 #if true
         do
@@ -142,7 +142,7 @@ int test_all(int argc, char **argv, int width, int height)
 
         do
         {
-            gl_simplify::material::SharedMaterial box_material = gl_simplify::material::MaterialFactory::Create("resource/texture/diffuse_cube.png", "resource/texture/specular_cube.png", 64.0f);
+            gl_simplify::material::MaterialPtr box_material = gl_simplify::material::MaterialFactory::Create("resource/texture/diffuse_cube.png", "resource/texture/specular_cube.png", 64.0f);
             gl_simplify::entity::CubePtr cube = CreateCube();
 
             cube->Create();

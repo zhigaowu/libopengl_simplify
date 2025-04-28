@@ -44,7 +44,7 @@ namespace gl_simplify {
             core::VertexArray* _vao;
 
         protected:
-            material::SharedMaterial _material;
+            material::MaterialPtr _material;
 
         protected:
             void updateNormalModel();
@@ -62,9 +62,9 @@ namespace gl_simplify {
             const glm::mat4& GetModel() { return _model; }
             const glm::mat3& GetNormalModel() { return _normal_model; }
 
-            material::SharedMaterial& GetMaterial() { return _material; }
+            material::MaterialPtr& GetMaterial() { return _material; }
 
-            void Attatch(material::SharedMaterial material);
+            void Attatch(material::MaterialPtr material);
 
             void Translate(const glm::vec3& position);
 

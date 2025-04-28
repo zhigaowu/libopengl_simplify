@@ -90,7 +90,7 @@ namespace gl_simplify {
             _material = nullptr;
         }
 
-        void Entity::Attatch(material::SharedMaterial material)
+        void Entity::Attatch(material::MaterialPtr material)
         {
             if (material)
             {

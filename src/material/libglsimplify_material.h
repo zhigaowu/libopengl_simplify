@@ -54,7 +54,6 @@ namespace gl_simplify {
         };
 
         using MaterialPtr = std::shared_ptr<Material>;
-        using SharedMaterial = std::shared_ptr<Material>;
     }
 }
 
