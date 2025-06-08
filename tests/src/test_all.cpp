@@ -26,23 +26,22 @@ int test_all(int argc, char **argv, int width, int height)
         {
             break;
         }
-
-        gl_simplify::entity::CameraPtr camera = window.Camera();
-        camera->Translate(glm::vec3(16.0f, 16.0f, 16.0f));
-        camera->LookAt(glm::vec3(0.0f, 0.0f, 0.0f));
-        //camera->LookFront(glm::vec3(0.0f, 0.0f, -1.0f));
-
         char error[128] = { 0 };
 
-        gl_simplify::scene::Scene scene;
+        gl_simplify::scene::ScenePtr scene = std::make_shared<gl_simplify::scene::Scene>();
 
-        if (!scene.Create(error, sizeof(error)))
+        if (!scene->Create(width, height, error, sizeof(error)))
         {
             std::cerr << "create scene error: " << error << std::endl;
             break;
         }
 
-        gl_simplify::scene::Background& background = scene.GetBackground();
+        gl_simplify::entity::CameraPtr camera = scene->GetCamera();
+        camera->Translate(glm::vec3(16.0f, 16.0f, 16.0f));
+        camera->LookAt(glm::vec3(0.0f, 0.0f, 0.0f));
+        //camera->LookFront(glm::vec3(0.0f, 0.0f, -1.0f));
+
+        gl_simplify::scene::Background& background = scene->GetBackground();
         //background.SetColor(glm::vec4(0.2f, 0.3f, 0.3f, 1.0f));
         if (!background.LoadSkyBox("resource/texture/skybox", error, sizeof(error)))
         {
@@ -51,39 +50,39 @@ int test_all(int argc, char **argv, int width, int height)
         }
 
         {
-            scene.GetDirectionalLight()->TranslateTo(glm::vec3(0.0, 32.0, 0.0));
+            scene->GetDirectionalLight()->TranslateTo(glm::vec3(0.0, 32.0, 0.0));
 
-            scene.GetDirectionalLight()->SetDirection(glm::vec3(0.0, -1.0, -1.0));
+            scene->GetDirectionalLight()->SetDirection(glm::vec3(0.0, -1.0, -1.0));
 
 #if true
-            scene.GetDirectionalLight()->SetAmbient(glm::vec4(0.05f, 0.05f, 0.05f, 1.0));
-            scene.GetDirectionalLight()->SetDiffuse(glm::vec4(0.4f, 0.4f, 0.4f, 1.0));
-            scene.GetDirectionalLight()->SetSpecular(glm::vec4(0.5f, 0.5f, 0.5f, 1.0));
+            scene->GetDirectionalLight()->SetAmbient(glm::vec4(0.05f, 0.05f, 0.05f, 1.0));
+            scene->GetDirectionalLight()->SetDiffuse(glm::vec4(0.4f, 0.4f, 0.4f, 1.0));
+            scene->GetDirectionalLight()->SetSpecular(glm::vec4(0.5f, 0.5f, 0.5f, 1.0));
 #else
-            scene.GetDirectionalLight()->SetAmbient(glm::vec4(0.0f, 0.0f, 0.0f, 1.0));
-            scene.GetDirectionalLight()->SetDiffuse(glm::vec4(0.0f, 0.0f, 0.0f, 1.0));
-            scene.GetDirectionalLight()->SetSpecular(glm::vec4(0.0f, 0.0f, 0.0f, 1.0));
+            scene->GetDirectionalLight()->SetAmbient(glm::vec4(0.0f, 0.0f, 0.0f, 1.0));
+            scene->GetDirectionalLight()->SetDiffuse(glm::vec4(0.0f, 0.0f, 0.0f, 1.0));
+            scene->GetDirectionalLight()->SetSpecular(glm::vec4(0.0f, 0.0f, 0.0f, 1.0));
 #endif
         }
 
 #if true
         if (true)
         {
-            gl_simplify::light::PointLightPtr point_light = scene.AddPointLight(glm::vec3(0.0, 8.0, 8.0));
+            gl_simplify::light::PointLightPtr point_light = scene->AddPointLight(glm::vec3(0.0, 8.0, 8.0));
             point_light->SetAmbient(glm::vec4(0.2, 0.8, 0.2, 1.0));
             point_light->SetDiffuse(glm::vec4(0.5, 0.8, 0.5, 1.0));
         }
 
         if (true)
         {
-            gl_simplify::light::PointLightPtr point_light = scene.AddPointLight(glm::vec3(8.0, 8.0, 0.0));
+            gl_simplify::light::PointLightPtr point_light = scene->AddPointLight(glm::vec3(8.0, 8.0, 0.0));
             point_light->SetAmbient(glm::vec4(0.2, 0.2, 0.8, 1.0));
             point_light->SetDiffuse(glm::vec4(0.5, 0.5, 0.8, 1.0));
         }
 
         if (true)
         {
-            gl_simplify::light::PointLightPtr point_light = scene.AddPointLight(glm::vec3(-8.0, 8.0, 0.0));
+            gl_simplify::light::PointLightPtr point_light = scene->AddPointLight(glm::vec3(-8.0, 8.0, 0.0));
             point_light->SetAmbient(glm::vec4(0.8, 0.2, 0.2, 1.0));
             point_light->SetDiffuse(glm::vec4(0.8, 0.5, 0.5, 1.0));
         }
@@ -93,28 +92,28 @@ int test_all(int argc, char **argv, int width, int height)
 
         if (true)
         {
-            gl_simplify::light::SpotLightPtr spot_light = scene.AddSpotLight(glm::vec3(3.0, 16.0, 3.0));
+            gl_simplify::light::SpotLightPtr spot_light = scene->AddSpotLight(glm::vec3(3.0, 16.0, 3.0));
             spot_light->SetAmbient(glm::vec4(1.0, 0.2, 0.2, 1.0));
             spot_light->SetDiffuse(glm::vec4(1.0, 0.5, 0.5, 1.0));
         }
 
         if (true)
         {
-            gl_simplify::light::SpotLightPtr spot_light = scene.AddSpotLight(glm::vec3(-3.0, 16.0, 3.0));
+            gl_simplify::light::SpotLightPtr spot_light = scene->AddSpotLight(glm::vec3(-3.0, 16.0, 3.0));
             spot_light->SetAmbient(glm::vec4(0.2, 1.0, 0.2, 1.0));
             spot_light->SetDiffuse(glm::vec4(0.5, 1.0, 0.5, 1.0));
         }
 
         if (true)
         {
-            gl_simplify::light::SpotLightPtr spot_light = scene.AddSpotLight(glm::vec3(3.0, 16.0, -3.0));
+            gl_simplify::light::SpotLightPtr spot_light = scene->AddSpotLight(glm::vec3(3.0, 16.0, -3.0));
             spot_light->SetAmbient(glm::vec4(0.2, 0.2, 1.0, 1.0));
             spot_light->SetDiffuse(glm::vec4(0.5, 0.5, 1.0, 1.0));
         }
 
         if (true)
         {
-            gl_simplify::light::SpotLightPtr spot_light = scene.AddSpotLight(glm::vec3(-3.0, 16.0, -3.0));
+            gl_simplify::light::SpotLightPtr spot_light = scene->AddSpotLight(glm::vec3(-3.0, 16.0, -3.0));
             spot_light->SetAmbient(glm::vec4(0.2, 0.2, 1.0, 1.0));
             spot_light->SetDiffuse(glm::vec4(1.0, 0.5, 5.0, 1.0));
         }
@@ -136,7 +135,7 @@ int test_all(int argc, char **argv, int width, int height)
             plane->Translate(glm::vec3(0.0, -1.01, 0.0));
             plane->Scale(glm::vec3(24.0, 1.0, 24.0));
             
-            scene.AddEntity(plane);
+            scene->AddEntity(plane);
         } while (false);
 #endif
 
@@ -150,7 +149,7 @@ int test_all(int argc, char **argv, int width, int height)
             cube->Attatch(box_material);
             cube->Translate(glm::vec3(-3.0, 0.0, 0.0));
             
-            scene.AddEntity(cube);
+            scene->AddEntity(cube);
         } while (false);
 
         do
@@ -163,7 +162,7 @@ int test_all(int argc, char **argv, int width, int height)
             cylinder->Attatch(wood);
             cylinder->Translate(glm::vec3(3.0, 0.0, 0.0));
             
-            scene.AddEntity(cylinder);
+            scene->AddEntity(cylinder);
         } while (false);
 
         do
@@ -176,22 +175,24 @@ int test_all(int argc, char **argv, int width, int height)
             cone->Attatch(wood);
             cone->Translate(glm::vec3(0.0, 0.0, -3.0));
             
-            scene.AddEntity(cone);
+            scene->AddEntity(cone);
         } while (false);
 
         double ts_pre = glfwGetTime();
         double r_interval = 0.02;
 
-        window.Show([&scene, ts_pre, r_interval] (GLFWwindow*, gl_simplify::entity::CameraPtr camera) mutable {
-                scene.Render(camera);
+        window.SetScene(scene);
+
+        window.Show([ts_pre, r_interval] (GLFWwindow*, gl_simplify::scene::ScenePtr scene) mutable {
+                scene->Render();
 
                 double ts_curr = glfwGetTime();
                 if (ts_pre + r_interval <= ts_curr)
                 {
-                    scene.GetSpotLight(0)->RotateAround(0.1f, glm::vec3(0.0f, 1.0f, 0.0f));
-                    scene.GetSpotLight(1)->RotateAround(0.1f, glm::vec3(0.0f, 1.0f, 0.0f));
-                    scene.GetSpotLight(2)->RotateAround(0.1f, glm::vec3(0.0f, 1.0f, 0.0f));
-                    scene.GetSpotLight(3)->RotateAround(0.1f, glm::vec3(0.0f, 1.0f, 0.0f));
+                    scene->GetSpotLight(0)->RotateAround(0.1f, glm::vec3(0.0f, 1.0f, 0.0f));
+                    scene->GetSpotLight(1)->RotateAround(0.1f, glm::vec3(0.0f, 1.0f, 0.0f));
+                    scene->GetSpotLight(2)->RotateAround(0.1f, glm::vec3(0.0f, 1.0f, 0.0f));
+                    scene->GetSpotLight(3)->RotateAround(0.1f, glm::vec3(0.0f, 1.0f, 0.0f));
                     ts_pre = ts_curr;
                 }
             });

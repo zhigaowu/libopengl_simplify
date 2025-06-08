@@ -25,23 +25,23 @@ int test_cube(int argc, char **argv, int width, int height)
 
         char error[128] = { 0 };
 
-        gl_simplify::scene::Scene scene;
+        gl_simplify::scene::ScenePtr scene = std::make_shared<gl_simplify::scene::Scene>();
 
-        if (!scene.Create(error, sizeof(error)))
+        if (!scene->Create(width, height, error, sizeof(error)))
         {
             std::cerr << "create scene error: " << error << std::endl;
             break;
         }
 
-        scene.GetBackground().SetColor(glm::vec4(0.2f, 0.3f, 0.3f, 1.0f));
+        scene->GetBackground().SetColor(glm::vec4(0.2f, 0.3f, 0.3f, 1.0f));
 
-        gl_simplify::entity::CameraPtr camera = window.Camera();
+        gl_simplify::entity::CameraPtr camera = scene->GetCamera();
         camera->Translate(glm::vec3(0.0f, 3.0f, 3.0f));
         camera->LookAt(glm::vec3(0.0f, 0.0f, 0.0f));
         //camera->LookFront(glm::vec3(0.0f, 0.0f, -1.0f));
 
-        scene.GetDirectionalLight()->TranslateTo(glm::vec3(2.0, 4.0, 4.0));
-        scene.GetDirectionalLight()->SetSpecular(glm::vec4(0.0, 0.0, 0.0, 0.0));
+        scene->GetDirectionalLight()->TranslateTo(glm::vec3(2.0, 4.0, 4.0));
+        scene->GetDirectionalLight()->SetSpecular(glm::vec4(0.0, 0.0, 0.0, 0.0));
 
         gl_simplify::material::MaterialPtr wood = gl_simplify::material::MaterialFactory::Create("resource/texture/diffuse_cube.png", "resource/texture/specular_cube.png");
         
@@ -53,11 +53,13 @@ int test_cube(int argc, char **argv, int width, int height)
 
             cube->Attatch(wood);
             
-            scene.AddEntity(cube);
+            scene->AddEntity(cube);
         } while (false);
 
-        window.Show([&scene] (GLFWwindow*, gl_simplify::entity::CameraPtr camera) {
-                scene.Render(camera);
+        window.SetScene(scene);
+
+        window.Show([] (GLFWwindow*, gl_simplify::scene::ScenePtr scene) {
+                scene->Render();
             });
 
         res = 0;

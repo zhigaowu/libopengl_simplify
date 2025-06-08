@@ -25,9 +25,9 @@ int test_plane(int argc, char **argv, int width, int height)
 
         char error[128] = { 0 };
 
-        gl_simplify::scene::Scene scene;
+        gl_simplify::scene::ScenePtr scene = std::make_shared<gl_simplify::scene::Scene>();
 
-        if (!scene.Create(error, sizeof(error)))
+        if (!scene->Create(width, height, error, sizeof(error)))
         {
             std::cerr << "create scene error: " << error << std::endl;
             break;
@@ -45,18 +45,20 @@ int test_plane(int argc, char **argv, int width, int height)
             plane->Scale(glm::vec3(4.0, 0.0, 4.0));
             plane->Translate(glm::vec3(0.0, -8.0, 0.0));
             
-            scene.AddEntity(plane);
+            scene->AddEntity(plane);
         } while (false);
 
-        scene.GetBackground().SetColor(glm::vec4(0.2f, 0.3f, 0.3f, 1.0f));
+        scene->GetBackground().SetColor(glm::vec4(0.2f, 0.3f, 0.3f, 1.0f));
 
-        gl_simplify::entity::CameraPtr camera = window.Camera();
+        gl_simplify::entity::CameraPtr camera = scene->GetCamera();
         camera->Translate(glm::vec3(0.0f, 8.0f, 8.0f));
         camera->LookAt(glm::vec3(0.0f, 2.0f, 0.0f));
         //camera->LookFront(glm::vec3(0.0f, 0.0f, -1.0f));
 
-        window.Show([&scene] (GLFWwindow*, gl_simplify::entity::CameraPtr camera) {
-                scene.Render(camera);
+        window.SetScene(scene);
+
+        window.Show([] (GLFWwindow*, gl_simplify::scene::ScenePtr scene) {
+                scene->Render();
             });
 
         res = 0;

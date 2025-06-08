@@ -13,6 +13,7 @@ DECLARE_TEST_CASE(all);
 DECLARE_TEST_CASE(plane);
 DECLARE_TEST_CASE(cube);
 DECLARE_TEST_CASE(cylinder);
+DECLARE_TEST_CASE(line);
 DECLARE_TEST_CASE(cone);
 
 int main(int argc, char **argv) 
@@ -27,6 +28,7 @@ int main(int argc, char **argv)
         DEFINE_TEST_CASE(avaliable_cases, plane);
         DEFINE_TEST_CASE(avaliable_cases, cube);
         DEFINE_TEST_CASE(avaliable_cases, cylinder);
+        DEFINE_TEST_CASE(avaliable_cases, line);
         DEFINE_TEST_CASE(avaliable_cases, cone);
     } while (false);
 

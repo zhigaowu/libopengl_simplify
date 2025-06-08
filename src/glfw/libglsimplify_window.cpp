@@ -18,7 +18,7 @@ namespace gl_simplify {
             glfwWindowHint(GLFW_SAMPLES, 4);
 
 #ifdef __APPLE__
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+            glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
         }
 
@@ -38,7 +38,7 @@ namespace gl_simplify {
             , _monitor(nullptr)
             , _share(nullptr)
 
-            , _camera(nullptr)
+            , _scene(nullptr)
 
             , _default_callback_window_size_changed()
             , _callback_window_size_changed()
@@ -63,7 +63,7 @@ namespace gl_simplify {
                 glViewport(0, 0, width, height);
                 
                 // change camera perspective
-                _camera->SetPerspectiveAspect((float)width / (float)height);
+                _scene->GetCamera()->SetPerspectiveAspect((float)width / (float)height);
             };
             _callback_window_size_changed = _default_callback_window_size_changed; 
 
@@ -78,25 +78,25 @@ namespace gl_simplify {
                 case GLFW_KEY_W:
                 case GLFW_KEY_UP:
                 {
-                    _camera->Forward();
+                    _scene->GetCamera()->Forward();
                     break;
                 }
                 case GLFW_KEY_S:
                 case GLFW_KEY_DOWN:
                 {
-                    _camera->Backward();
+                    _scene->GetCamera()->Backward();
                     break;
                 }
                 case GLFW_KEY_A:
                 case GLFW_KEY_LEFT:
                 {
-                    _camera->Left();
+                    _scene->GetCamera()->Left();
                     break;
                 }
                 case GLFW_KEY_D:
                 case GLFW_KEY_RIGHT:
                 {
-                    _camera->Right();
+                    _scene->GetCamera()->Right();
                     break;
                 }
                 default:
@@ -131,12 +131,12 @@ namespace gl_simplify {
             _default_callback_mouse_moved = [this] (GLFWwindow*, double xpos, double ypos) {
                 if (_mouse.middle_button_down)
                 {
-                    _camera->Move(glm::vec3(xpos - _mouse.x, ypos - _mouse.y, 0.0f));
+                    _scene->GetCamera()->Move(glm::vec3(xpos - _mouse.x, ypos - _mouse.y, 0.0f));
                 }
 
                 if (_mouse.right_button_down)
                 {
-                    _camera->Rotate(glm::vec3(0, xpos - _mouse.x, _mouse.y - ypos));
+                    _scene->GetCamera()->Rotate(glm::vec3(0, xpos - _mouse.x, _mouse.y - ypos));
                 }
 
                 _mouse.x = xpos;
@@ -145,15 +145,15 @@ namespace gl_simplify {
             _callback_mouse_moved = _default_callback_mouse_moved;
 
             _default_callback_wheel_scrolled = [this](GLFWwindow*, double xpos, double ypos) {
-                _camera->AdjustPerspectiveFovyDegree(-ypos);
+                _scene->GetCamera()->AdjustPerspectiveFovyDegree(-ypos);
 
                 if (ypos > 0)
                 {
-                    _camera->Forward();
+                    _scene->GetCamera()->Forward();
                 }
                 else
                 {
-                    _camera->Backward();
+                    _scene->GetCamera()->Backward();
                 }
             };
             _callback_wheel_scrolled = _default_callback_wheel_scrolled;
@@ -188,8 +188,6 @@ namespace gl_simplify {
                 std::atomic_thread_fence(std::memory_order_acq_rel);
 
                 gladLoadGL();
-
-                _camera = std::make_shared<entity::Camera>((float)width / (float)height);
             }
 
             return _window;
@@ -212,7 +210,7 @@ namespace gl_simplify {
             while (!glfwWindowShouldClose(_window))
             {
                 // render window
-                callback_render_window(_window, _camera);
+                callback_render_window(_window, _scene);
 
                 // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
                 // -------------------------------------------------------------------------------
@@ -228,8 +226,6 @@ namespace gl_simplify {
                 glfwDestroyWindow(_window);
                 _window = nullptr;
             }
-
-            _camera.reset();
         }
 
         void Window::glfw_callback_framebuffer_size_changed(GLFWwindow *window, int width, int height)

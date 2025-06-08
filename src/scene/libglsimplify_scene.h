@@ -39,6 +39,9 @@ namespace gl_simplify {
             };
 
         private:
+            entity::CameraPtr _camera;
+
+        private:
             Background _background;
 
         private:
@@ -62,6 +65,8 @@ namespace gl_simplify {
             Scene();
             virtual ~Scene();
 
+            entity::CameraPtr GetCamera() { return _camera; }
+
             Background& GetBackground() { return _background; }
 
             light::DirectionalLightPtr GetDirectionalLight();
@@ -72,8 +77,8 @@ namespace gl_simplify {
             light::SpotLightPtr AddSpotLight(const glm::vec3& position, const glm::vec3& direction = glm::vec3(0.0f, -1.0f, 0.0f));
             light::SpotLightPtr GetSpotLight(GLint index);
 
-            virtual bool Create(GLchar* error, GLsizei error_length);
-            virtual void Render(const entity::CameraPtr& camera);
+            virtual bool Create(int width, int height, GLchar* error, GLsizei error_length);
+            virtual void Render();
             virtual void Destroy();
 
             void SetRenderMode(RenderMode render_mode);
@@ -84,6 +89,8 @@ namespace gl_simplify {
             void AddEntity(const entity::EntityPtr& entity);
             void DeleteEntity(const entity::EntityPtr& entity);
         };
+
+        using ScenePtr = std::shared_ptr<Scene>;
     }
 }
 
