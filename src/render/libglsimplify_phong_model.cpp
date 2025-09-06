@@ -253,16 +253,20 @@ namespace gl_simplify {
                                         "    float light_distance = length(light_direction);"
                                         "    float light_attenuation = 1.0 / (light.kc + light.kl * light_distance + light.kq * (light_distance * light_distance));"
                                         ""
-                                        "    float theta = dot(normalized_light_direction, -light.direction);"
-                                        "    float epsilon = light.range_inner - light.range_outer;"
-                                        "    float intensity = clamp((theta - light.range_outer) / epsilon, 0.0, 1.0);"
+                                        // normalize spotlight direction and compute intensity robustly
+                                        "    vec3 spot_dir = normalize(light.direction);"
+                                        "    float theta = dot(normalized_light_direction, -spot_dir);"
+                                        "    float inner = light.range_inner;"
+                                        "    float outer = light.range_outer;"
+                                        "    float epsilon = max(inner - outer, 0.0001);" // 防止除以零或负数
+                                        "    float intensity = clamp((theta - outer) / epsilon, 0.0, 1.0);"
                                         ""
                                         "    vec4 ambient_color = light.ambient * diffuse_map_color;"
                                         "    vec4 diffuse_color = light.diffuse * diffuse_factor * diffuse_map_color;"
                                         "    vec4 specular_color = light.specular * specular_factor * specular_map_color;"
                                         "    return (ambient_color + diffuse_color + specular_color) * (light_attenuation * intensity);"
                                         "}";
-            
+
             _fragment_shader.source << "void main()";
             _fragment_shader.source << "{";
 
@@ -348,7 +352,7 @@ namespace gl_simplify {
 
             _program.GetVariable("spot_light_count").SetValue(count);
 
-            for (GLint index = 0; index < Max_Point_Light_Size && index < count; ++index)
+            for (GLint index = 0; index < Max_Spot_Light_Size && index < count; ++index)
             {
                 const light::SpotLightPtr light = lights[index];
                 
