@@ -30,6 +30,8 @@ namespace gl_simplify {
             explicit ShaderSource(const std::string& source = "");
             ~ShaderSource();
 
+            void Reset(const std::string& source = "");
+
             ShaderSource& operator << (const char* source);
             ShaderSource& operator << (const std::string& source);
 

@@ -5,15 +5,15 @@ namespace gl_simplify {
 
     namespace core {
 
-        VertexArray::VertexArray(GLsizei buffer_size/* = 1*/)
-            : _buffer_ids(buffer_size, 0)
+        VertexArray::VertexArray(GLsizei array_size/* = 1*/)
+            : _gl_vertex_arrays(array_size, 0)
         {
-            glGenVertexArrays(buffer_size, _buffer_ids.data());
+            glGenVertexArrays(array_size, _gl_vertex_arrays.data());
         }
 
         VertexArray::~VertexArray()
         {
-            glDeleteVertexArrays(static_cast<GLsizei>(_buffer_ids.size()), _buffer_ids.data());
+            glDeleteVertexArrays(static_cast<GLsizei>(_gl_vertex_arrays.size()), _gl_vertex_arrays.data());
         }
     }
 }

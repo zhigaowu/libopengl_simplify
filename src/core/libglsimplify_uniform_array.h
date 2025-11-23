@@ -60,6 +60,7 @@ namespace gl_simplify {
                     type = ref.type;
                     id = ref.id;
                     point = ref.point;
+
                     return *this;
                 }
 
@@ -75,6 +76,7 @@ namespace gl_simplify {
                     type = ref.type;
                     id = ref.id;
                     point = ref.point;
+
                     return *this;
                 }
 
@@ -83,21 +85,21 @@ namespace gl_simplify {
                     glBindBufferBase(type, point, id);
                 }
 
-                void BindRange(GLintptr offset, GLsizeiptr size)
+                void Bind(GLintptr offset, GLsizeiptr size)
                 {
                     glBindBufferRange(type, point, id, offset, size);
                 }
             };
-
-        private:
-            using BindPoints = std::vector<BindPoint>;
-            BindPoints _bind_points;
 
         public:
             explicit UniformArray(GLsizei buffer_size = 1);
             ~UniformArray();
 
             BindPoint& GetBindPoint(GLsizei buffer_index = 0, GLuint bind_point = 0);
+
+        private:
+            using BindPoints = std::vector<BindPoint>;
+            BindPoints _bind_points;
         };
     }
 }

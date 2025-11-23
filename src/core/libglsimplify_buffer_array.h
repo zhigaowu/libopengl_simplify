@@ -20,6 +20,7 @@
 #include "libglsimplify_types.h"
 
 #include <vector>
+#include <memory>
 
 namespace gl_simplify {
 
@@ -32,40 +33,48 @@ namespace gl_simplify {
 
             BufferArray& Bind(GLsizei buffer_index = 0)
             {
-                glBindBuffer(_buffer_type, _buffer_ids[buffer_index]);
+                glBindBuffer(_gl_buffer_type, _gl_buffer_arrays[buffer_index]);
 
                 return *this;
             }
 
-            void Upload(GLsizeiptr size, const void *data, GLenum usage)
+            BufferArray& Upload(GLsizeiptr size, const void *data, GLenum usage)
             {
-                glBufferData(_buffer_type, size, data, usage);
+                glBufferData(_gl_buffer_type, size, data, usage);
+
+                return *this;
             }
 
-            void Upload(GLsizeiptr offset, GLsizeiptr size, const void *data, GLenum usage)
+            BufferArray& Upload(GLsizeiptr offset, GLsizeiptr size, const void *data, GLenum usage)
             {
-                glBufferSubData(_buffer_type, offset, size, data);
+                glBufferSubData(_gl_buffer_type, offset, size, data);
+
+                return *this;
             }
 
-            void SetAttribute(GLuint attribute_index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void* offset)
+            BufferArray& SetAttribute(GLuint attribute_index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void* offset)
             {
                 glVertexAttribPointer(attribute_index, size, type, normalized, stride, offset);
                 glEnableVertexAttribArray(attribute_index);
+
+                return *this;
             }
 
-            void SetAttributeDivisor(GLuint attribute_index, GLuint divisor)
+            BufferArray& SetAttributeDivisor(GLuint attribute_index, GLuint divisor)
             {
                 glVertexAttribDivisor(attribute_index, divisor);
+
+                return *this;
             }
             
             void Unbind()
             {
-                glBindBuffer(_buffer_type, 0);  
+                glBindBuffer(_gl_buffer_type, 0);  
             }
         
         protected:
-            GLenum _buffer_type;
-            std::vector<GLuint> _buffer_ids;
+            GLenum _gl_buffer_type;
+            std::vector<GLuint> _gl_buffer_arrays;
         };
     }
 }

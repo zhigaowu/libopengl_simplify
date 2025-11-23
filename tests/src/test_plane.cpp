@@ -1,12 +1,8 @@
-
-
 #include "glfw/libglsimplify_window.h"
 
 #include "scene/libglsimplify_scene.h"
 
-#include "entity/libglsimplify_plane.h"
-
-#include "material/libglsimplify_material_factory.h"
+#include "entity/basic/libglsimplify_plane.h"
 
 #include <iostream>
 
@@ -23,37 +19,44 @@ int test_plane(int argc, char **argv, int width, int height)
             break;
         }
 
+        window.SetCameraMovementSpeed(5.0f);       // 移动速度
+        window.SetCameraRotationSensitivity(0.15f); // 旋转灵敏度
+
         char error[128] = { 0 };
 
-        gl_simplify::scene::ScenePtr scene = std::make_shared<gl_simplify::scene::Scene>();
+        gl_simplify::scene::ScenePtr scene = CreateScene(width, height);
 
-        if (!scene->Create(width, height, error, sizeof(error)))
+        if (!scene->Create(error, sizeof(error)))
         {
             std::cerr << "create scene error: " << error << std::endl;
             break;
         }
 
-        gl_simplify::material::MaterialPtr rock = gl_simplify::material::MaterialFactory::Create("resource/texture/diffuse_cube.png", "resource/texture/specular_cube.png");
+        // 暂时禁用背面剔除，方便调试
+        scene->enableCullFace(false);
 
         do
         {
-            gl_simplify::entity::PlanePtr plane = CreatePlane();
+            gl_simplify::entity::basic::PlanePtr plane = CreatePlane();
 
-            plane->Create();
+            plane->Build(gl_simplify::entity::basic::Plane::dafaultVertextDataBuffer(),
+                         gl_simplify::entity::basic::Plane::defaultIndexBuffer());
 
-            plane->Attatch(rock);
-            plane->Scale(glm::vec3(4.0, 0.0, 4.0));
-            plane->Translate(glm::vec3(0.0, -8.0, 0.0));
+            //plane->SetColor(glm::vec4(0.8f, 0.8f, 0.8f, 1.0f));
+
+            // 不需要缩放和平移，保持在原点
+            // plane->Scale(glm::vec3(4.0, 0.0, 4.0));
+            // plane->Translate(glm::vec3(0.0, -8.0, 0.0));
             
             scene->AddEntity(plane);
         } while (false);
 
-        scene->GetBackground().SetColor(glm::vec4(0.2f, 0.3f, 0.3f, 1.0f));
-
-        gl_simplify::entity::CameraPtr camera = scene->GetCamera();
-        camera->Translate(glm::vec3(0.0f, 8.0f, 8.0f));
-        camera->LookAt(glm::vec3(0.0f, 2.0f, 0.0f));
-        //camera->LookFront(glm::vec3(0.0f, 0.0f, -1.0f));
+        gl_simplify::camera::BaseCameraPtr camera = scene->GetCamera();
+        // 将相机放在上方和后方的位置
+        camera->SetPosition(glm::vec3(0.0f, 3.0f, 5.0f));
+        
+        // 让相机看向平面中心 (0, 0, 0)
+        camera->LookAt(glm::vec3(0.0f, 0.0f, 0.0f));
 
         window.SetScene(scene);
 

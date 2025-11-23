@@ -21,7 +21,7 @@ namespace gl_simplify {
             
             if (0 == bindpoint.type)
             {
-                bindpoint = BindPoint(_buffer_ids[buffer_index], _buffer_type, bind_point);
+                bindpoint = BindPoint(_gl_buffer_arrays[buffer_index], _gl_buffer_type, bind_point);
             }
 
             return bindpoint;

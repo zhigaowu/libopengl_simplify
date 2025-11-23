@@ -9,13 +9,7 @@
 #define DECLARE_TEST_CASE(name) extern int test_##name(int argc, char **argv, int, int)
 #define DEFINE_TEST_CASE(cases, name) cases.insert(std::make_pair("test_"#name, test_##name))
 
-DECLARE_TEST_CASE(all);
 DECLARE_TEST_CASE(plane);
-DECLARE_TEST_CASE(cube);
-DECLARE_TEST_CASE(cylinder);
-DECLARE_TEST_CASE(sphere);
-DECLARE_TEST_CASE(line);
-DECLARE_TEST_CASE(cone);
 
 int main(int argc, char **argv) 
 {
@@ -25,13 +19,7 @@ int main(int argc, char **argv)
     testcases avaliable_cases;
     do
     {
-        DEFINE_TEST_CASE(avaliable_cases, all);
         DEFINE_TEST_CASE(avaliable_cases, plane);
-        DEFINE_TEST_CASE(avaliable_cases, cube);
-        DEFINE_TEST_CASE(avaliable_cases, cylinder);
-        DEFINE_TEST_CASE(avaliable_cases, sphere);
-        DEFINE_TEST_CASE(avaliable_cases, line);
-        DEFINE_TEST_CASE(avaliable_cases, cone);
     } while (false);
 
     int res = -1;

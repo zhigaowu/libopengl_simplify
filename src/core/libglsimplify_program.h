@@ -30,6 +30,10 @@ namespace gl_simplify {
     namespace core {
 
         class Program : private NonCopyable {
+
+            /*
+            * Set uniform variable values in the shader program.
+            */
             template<typename ValueType>
             struct UniformValueSetter
             {
@@ -38,17 +42,17 @@ namespace gl_simplify {
                     glUniform1f(location, v0);
                 }
 
-                UniformValueSetter(GLint location, ValueType v0, GLfloat v1)
+                UniformValueSetter(GLint location, ValueType v0, ValueType v1)
                 {
                     glUniform2f(location, v0, v1);
                 }
 
-                UniformValueSetter(GLint location, ValueType v0, GLfloat v1, GLfloat v2)
+                UniformValueSetter(GLint location, ValueType v0, ValueType v1, ValueType v2)
                 {
                     glUniform3f(location, v0, v1, v2);
                 }
 
-                UniformValueSetter(GLint location, ValueType v0, GLfloat v1, GLfloat v2, GLfloat v3)
+                UniformValueSetter(GLint location, ValueType v0, ValueType v1, ValueType v2, ValueType v3)
                 {
                     glUniform4f(location, v0, v1, v2, v3);
                 }
@@ -297,8 +301,6 @@ namespace gl_simplify {
                     UniformVecSetter(location, vec);
                 }
             };
-
-            using ProgramConfigurer = std::function<void(Program&)>;
             
         public:
             Program();
@@ -313,7 +315,7 @@ namespace gl_simplify {
             Variable GetVariable(const std::string& vavriable_name);
         
         private:
-            GLuint _program_id;
+            GLuint _gl_program_id;
         };
     }
 }

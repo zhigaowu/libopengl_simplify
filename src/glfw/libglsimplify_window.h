@@ -17,9 +17,7 @@
 #ifndef GL_SIMPLIFY_GLFW_WINDOW_H
 #define GL_SIMPLIFY_GLFW_WINDOW_H
 
-#include "core/libglsimplify_types.h"
-
-#include "libglsimplify_mouse.h"
+#include "libglsimplify_control.h"
 
 #include "scene/libglsimplify_scene.h"
 
@@ -61,6 +59,36 @@ namespace gl_simplify {
             void SetScene(scene::ScenePtr& scene)
             {
                 _scene = scene;
+            }
+
+            void SetCameraMovementSpeed(GLfloat speed)
+            {
+                _camera_control.movement_speed = speed;
+            }
+
+            GLfloat GetCameraMovementSpeed() const
+            {
+                return _camera_control.movement_speed;
+            }
+
+            void SetCameraRotationSensitivity(GLfloat sensitivity)
+            {
+                _camera_control.rotation_sensitivity = sensitivity;
+            }
+
+            GLfloat GetCameraRotationSensitivity() const
+            {
+                return _camera_control.rotation_sensitivity;
+            }
+
+            void SetCameraPanSpeed(GLfloat speed)
+            {
+                _camera_control.pan_speed = speed;
+            }
+
+            GLfloat GetCameraPanSpeed() const
+            {
+                return _camera_control.pan_speed;
             }
 
             void SetWindowSizeChangedCallback(const CallbackWindowSizeChanged& callback_window_size_changed)
@@ -133,7 +161,12 @@ namespace gl_simplify {
             GLFWwindow* _share;
 
         private:
+            CameraControl _camera_control;
+
+        private:
             Mouse _mouse;
+
+        private:
             scene::ScenePtr _scene;
 
         private:

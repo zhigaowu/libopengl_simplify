@@ -1,25 +1,25 @@
 
 #include "libglsimplify_scene.h"
 
-#include "render/libglsimplify_phong_model.h"
+#include "camera/libglsimplify_default_camera.h"
+
+#include "renderer/background/libglsimplify_basic_renderer.h"
+#include "renderer/foreground/libglsimplify_basic_renderer.h"
 
 namespace gl_simplify {
 
     namespace scene {
 
-        Scene::Scene()
-            : _camera(nullptr)
-
-            , _background()
+        Scene::Scene(int width, int height)
+            : core::NonCopyable()
             
-            , _render_model(CreatePhongModel())
+            , _camera(CreateDefaultCamera((float)width / (float)height))
 
-            , _directional_light(CreateDirectionalLight())
+            , _background(CreateBasicBackgroundRenderer())
+            
+            , _entity_type_renderers{CreateBasicForegroundRenderer(), nullptr}
 
-            , _point_lights()
-            , _spot_lights()
-
-            , _entities()
+            , _entity_groups(static_cast<size_t>(entity::EntityType::Count))
         {
         }
 
@@ -27,115 +27,22 @@ namespace gl_simplify {
         {
         }
 
-        light::DirectionalLightPtr Scene::GetDirectionalLight()
+        void Scene::SetBackground(const renderer::background::BasicRendererPtr &background)
         {
-            return _directional_light;
+            _background = background;
         }
 
-        light::PointLightPtr Scene::AddPointLight(const glm::vec3& position)
+        void Scene::SetEntityRenderer(entity::EntityType type, const renderer::BaseRendererPtr &renderer)
         {
-            light::PointLightPtr light = std::make_shared<light::PointLight>(position);
-
-            _point_lights.emplace_back(light);
-
-            return light;
-        }
-
-        light::PointLightPtr Scene::GetPointLight(GLint index)
-        {
-            if (index >= 0 && index < _point_lights.size())
+            if (type != entity::EntityType::Count && renderer)
             {
-                return _point_lights[index];
+                _entity_type_renderers[static_cast<size_t>(type)] = renderer;
             }
-            return nullptr;
-        }
-
-        light::SpotLightPtr Scene::AddSpotLight(const glm::vec3& position, const glm::vec3& direction)
-        {
-            light::SpotLightPtr light = std::make_shared<light::SpotLight>(position);
-
-            light->SetDirection(direction);
-
-            _spot_lights.emplace_back(light);
-
-            return light;
-        }
-
-        light::SpotLightPtr Scene::GetSpotLight(GLint index)
-        {
-            if (index >= 0 && index < _spot_lights.size())
-            {
-                return _spot_lights[index];
-            }
-            return nullptr;
-        }
-
-        bool Scene::Create(int width, int height, GLchar *error, GLsizei error_length)
-        {
-            _camera = std::make_shared<entity::Camera>((float)width / (float)height);
-
-            // -------- default render option ---------
-            glEnable(GL_DEPTH_TEST);
-
-            glEnable(GL_CULL_FACE);
-            glFrontFace(GL_CCW);
-            glCullFace(GL_BACK);
-
-            SetRenderMode(RenderMode::Fill);
-            SetMultipleSampling(true);
-
-            return _render_model->Build(error, error_length);
-        }
-
-        void Scene::Render()
-        {
-            // clear background
-            _background.Clear();
-
-            // render entities in the scene
-            _render_model->Use();
-            _render_model->UpdateCameraView(_camera);
-            _render_model->UpdateDirectionalLight(_directional_light);
-            _render_model->UpdatePointLights(_point_lights);
-            _render_model->UpdateSpotLights(_spot_lights);
-
-            for (Entities::iterator it = _entities.begin(); it != _entities.end(); ++it)
-            {
-                entity::EntityPtr& entity = it->second;
-
-                _render_model->UpdateEntity(entity);
-                
-                entity->Render();
-            }
-
-            // render background
-            _background.Use();
-            _background.UpdateCameraView(_camera);
-            _background.UpdateDirectionalLight(_directional_light);
-            _background.UpdatePointLights(_point_lights);
-            _background.UpdateSpotLights(_spot_lights);
-            _background.Render();
-        }
-
-        void Scene::Destroy()
-        {
-            _entities.clear();
-
-            _point_lights.clear();
-            _spot_lights.clear();
         }
 
         void Scene::SetRenderMode(RenderMode render_mode)
         {
             glPolygonMode(GL_FRONT_AND_BACK, static_cast<GLint>(render_mode));
-        }
-
-        void Scene::SetRenderModel(const render::RenderModelPtr& render_model)
-        {
-            if (render_model)
-            {
-                _render_model = render_model;
-            }
         }
 
         void Scene::SetMultipleSampling(bool enabled)
@@ -150,17 +57,118 @@ namespace gl_simplify {
             }
         }
 
-        void Scene::AddEntity(const entity::EntityPtr& entity)
+        void Scene::enableCullFace(bool enabled)
         {
-            if (entity)
+            if (enabled)
             {
-                _entities.emplace(entity.get(), entity);
+                glEnable(GL_CULL_FACE);
+            }
+            else
+            {
+                glDisable(GL_CULL_FACE);
             }
         }
 
-        void Scene::DeleteEntity(const entity::EntityPtr& entity)
+        void Scene::setFrontFace(GLenum mode)
         {
-            _entities.erase(entity.get());
+            glFrontFace(mode);
+        }
+
+        void Scene::setCullFace(GLenum mode)
+        {
+            glCullFace(mode);
+        }
+
+        bool Scene::Create(GLchar *error, GLsizei error_length)
+        {
+            if (!_background || !_background->Build(error, error_length))
+            {
+                return false;
+            }
+
+            for (renderer::BaseRendererPtr& renderer : _entity_type_renderers)
+            {
+                if (renderer)
+                {
+                    if (!renderer->Build(error, error_length))
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            // -------- default render option ---------
+            glEnable(GL_DEPTH_TEST);
+
+            enableCullFace(true);
+            setFrontFace(GL_CCW);
+            setCullFace(GL_BACK);
+
+            SetRenderMode(RenderMode::Fill);
+            SetMultipleSampling(true);
+
+            return true;
+        }
+
+        void Scene::Render()
+        {
+            // clear background
+            _background->Clear();
+
+            for (size_t i = 0; i < _entity_type_renderers.size(); ++i)
+            {
+                renderer::BaseRendererPtr& renderer = _entity_type_renderers[i];
+                if (renderer)
+                {
+                    renderer->Use();
+                    renderer->BindCamera(_camera);
+
+                    const Entities& entities = _entity_groups[i];
+                    for (const entity::BaseEntityPtr& entity : entities)
+                    {
+                        renderer->Render(entity);
+                    }
+                }
+            }
+
+            // render background
+            _background->Use();
+            _background->BindCamera(_camera);
+            _background->Render(nullptr);
+        }
+
+        void Scene::Destroy()
+        {
+            _entity_type_renderers.clear();
+
+            _entity_groups.clear();
+        }
+
+        void Scene::AddEntity(const entity::BaseEntityPtr& entity)
+        {
+            if (entity)
+            {
+                Entities& entities = _entity_groups[static_cast<size_t>(entity->GetType())];
+
+                if (std::find_if(entities.begin(), entities.end(), [&entity](const entity::BaseEntityPtr& e) { return e.get() == entity.get(); }) == entities.end())
+                {
+                    entities.push_back(entity);
+                }
+            }
+        }
+
+        void Scene::DeleteEntity(const entity::BaseEntityPtr& entity)
+        {
+            if (entity)
+            {
+                Entities& entities = _entity_groups[static_cast<size_t>(entity->GetType())];
+
+                Entities::iterator it = std::find_if(entities.begin(), entities.end(), [&entity](const entity::BaseEntityPtr& e) { return e.get() == entity.get(); });
+                if (it != entities.end())
+                {
+                    entities.erase(it);
+                }
+            }
         }
     }
 }

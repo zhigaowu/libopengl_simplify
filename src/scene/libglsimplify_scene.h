@@ -17,14 +17,7 @@
 #ifndef GL_SIMPLIFY_SCENE_SCENE_H
 #define GL_SIMPLIFY_SCENE_SCENE_H
 
-#include "libglsimplify_background.h"
-
-#include "entity/libglsimplify_camera.h"
-
-#include "light/libglsimplify_directional_light.h"
-#include "light/libglsimplify_spot_light.h"
-
-#include <map>
+#include "renderer/background/libglsimplify_basic_renderer.h"
 
 namespace gl_simplify {
 
@@ -39,59 +32,52 @@ namespace gl_simplify {
             };
 
         private:
-            entity::CameraPtr _camera;
+            camera::BaseCameraPtr _camera;
 
         private:
-            Background _background;
+            renderer::background::BasicRendererPtr _background;
 
         private:
-            render::RenderModelPtr _render_model;
-
-        private:
-            light::DirectionalLightPtr _directional_light;
-
-        private:
-            light::PointLights _point_lights;
-
-        private:
-            light::SpotLights _spot_lights;
+            using EntityTypeRenderers = std::vector<renderer::BaseRendererPtr>;
+            EntityTypeRenderers _entity_type_renderers;
 
         private:
             // eneities
-            using Entities = std::map<entity::Entity*, entity::EntityPtr>;
-            Entities _entities;
+            using Entities = std::list<entity::BaseEntityPtr>;
+            using EntityTypeGroups = std::vector<Entities>;
+            EntityTypeGroups _entity_groups;
 
         public:
-            Scene();
-            virtual ~Scene();
+            Scene(int width, int height);
+            ~Scene();
 
-            entity::CameraPtr GetCamera() { return _camera; }
+            camera::BaseCameraPtr GetCamera() { return _camera; }
 
-            Background& GetBackground() { return _background; }
+            void SetBackground(const renderer::background::BasicRendererPtr& background);
+            renderer::background::BasicRendererPtr GetBackground() const { return _background; }
 
-            light::DirectionalLightPtr GetDirectionalLight();
-
-            light::PointLightPtr AddPointLight(const glm::vec3& position);
-            light::PointLightPtr GetPointLight(GLint index);
-
-            light::SpotLightPtr AddSpotLight(const glm::vec3& position, const glm::vec3& direction = glm::vec3(0.0f, -1.0f, 0.0f));
-            light::SpotLightPtr GetSpotLight(GLint index);
-
-            virtual bool Create(int width, int height, GLchar* error, GLsizei error_length);
-            virtual void Render();
-            virtual void Destroy();
+            void SetEntityRenderer(entity::EntityType type, const renderer::BaseRendererPtr& renderer);
 
             void SetRenderMode(RenderMode render_mode);
-            void SetRenderModel(const render::RenderModelPtr& render_model);
 
             void SetMultipleSampling(bool enabled);
 
-            void AddEntity(const entity::EntityPtr& entity);
-            void DeleteEntity(const entity::EntityPtr& entity);
+            void enableCullFace(bool enabled);
+            void setFrontFace(GLenum mode);
+            void setCullFace(GLenum mode);
+
+            bool Create(GLchar* error, GLsizei error_length);
+            void Render();
+            void Destroy();
+
+            void AddEntity(const entity::BaseEntityPtr& entity);
+            void DeleteEntity(const entity::BaseEntityPtr& entity);
         };
 
         using ScenePtr = std::shared_ptr<Scene>;
     }
 }
+
+#define CreateScene(...) CreateWithParameter(gl_simplify::scene::Scene, __VA_ARGS__)
 
 #endif // GL_SIMPLIFY_SCENE_SCENE_H

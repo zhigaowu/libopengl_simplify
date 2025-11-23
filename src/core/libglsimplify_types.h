@@ -52,4 +52,7 @@ namespace gl_simplify {
     }
 }
 
+#define CreateDefault(Name) std::make_shared<Name>()
+#define CreateWithParameter(Name, ...) std::make_shared<Name>(__VA_ARGS__)
+
 #endif // GL_SIMPLIFY_CORE_TYPES_H

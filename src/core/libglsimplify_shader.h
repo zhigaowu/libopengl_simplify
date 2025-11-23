@@ -33,7 +33,7 @@ namespace gl_simplify {
             
         public:
             explicit Shader(GLenum shader_type, const std::string& source_code = "");
-            virtual ~Shader();
+            ~Shader();
 
             bool Compile(GLchar* error, GLsizei error_length);
         };

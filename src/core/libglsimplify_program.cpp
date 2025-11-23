@@ -6,28 +6,28 @@ namespace gl_simplify {
     namespace core {
 
         Program::Program()
-            : _program_id(glCreateProgram())
+            : _gl_program_id(glCreateProgram())
         {
         }
 
         Program::~Program()
         {
-            glDeleteProgram(_program_id);
+            glDeleteProgram(_gl_program_id);
         }
 
         Program &Program::Attach(const Shader &shader)
         {
-            glAttachShader(_program_id, shader.id);
+            glAttachShader(_gl_program_id, shader.id);
 
             return *this;
         }
 
         bool Program::Link(GLchar* error, GLsizei error_length)
         {
-            glLinkProgram(_program_id);
+            glLinkProgram(_gl_program_id);
 
             int success = 0;
-            glGetProgramiv(_program_id, GL_LINK_STATUS, &success);
+            glGetProgramiv(_gl_program_id, GL_LINK_STATUS, &success);
 
             if(0 != success)
             {
@@ -35,7 +35,7 @@ namespace gl_simplify {
             }
             else
             {
-                glGetProgramInfoLog(_program_id, error_length, nullptr, error);
+                glGetProgramInfoLog(_gl_program_id, error_length, nullptr, error);
                 
                 return false;
             }
@@ -43,14 +43,14 @@ namespace gl_simplify {
 
         Program &Program::Use()
         {
-            glUseProgram(_program_id);
+            glUseProgram(_gl_program_id);
 
             return *this;
         }
 
         Program::Variable Program::GetVariable(const std::string &vavriable_name)
         {
-            return Variable(glGetUniformLocation(_program_id, vavriable_name.c_str()));
+            return Variable(glGetUniformLocation(_gl_program_id, vavriable_name.c_str()));
         }
     }
 }

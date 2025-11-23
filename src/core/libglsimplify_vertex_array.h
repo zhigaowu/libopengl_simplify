@@ -25,12 +25,12 @@ namespace gl_simplify {
 
         class VertexArray : private NonCopyable {
         public:
-            explicit VertexArray(GLsizei buffer_size = 1);
+            explicit VertexArray(GLsizei array_size = 1);
             ~VertexArray();
 
-            VertexArray& Bind(GLsizei buffer_index = 0)
+            VertexArray& Bind(GLsizei array_index = 0)
             {
-                glBindVertexArray(_buffer_ids[buffer_index]);
+                glBindVertexArray(_gl_vertex_arrays[array_index]);
 
                 return *this;
             }
@@ -41,7 +41,7 @@ namespace gl_simplify {
             }
         
         private:
-            std::vector<GLuint> _buffer_ids;
+            std::vector<GLuint> _gl_vertex_arrays;
         };
     }
 }
