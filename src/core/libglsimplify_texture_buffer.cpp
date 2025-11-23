@@ -8,133 +8,191 @@ namespace gl_simplify {
 
     namespace core {
 
-        TextureBuffer::TextureBuffer(GLsizei texture_count/* = 1*/)
-            : _textures(texture_count)
-            , _texture_ids(texture_count)
+        Texture::Texture(GLenum texture_type)
+            : NonCopyable()
 
+            , _self_generated(true)
+
+            , _gl_id(0)
+            , _gl_type(texture_type)
+
+            , _format()
         {
-            glGenTextures(static_cast<GLsizei>(_texture_ids.size()), _texture_ids.data());
+            glGenTextures(1, &_gl_id);
         }
 
-        TextureBuffer::~TextureBuffer()
+        Texture::Texture(GLObjectID gl_id, GLenum texture_type)
+            : NonCopyable()
+
+            , _self_generated(false)
+
+            , _gl_id(gl_id)
+            , _gl_type(texture_type)
+
+            , _format()
         {
-            glDeleteTextures(static_cast<GLsizei>(_texture_ids.size()), _texture_ids.data());
         }
 
-        TextureBuffer::Texture& TextureBuffer::GetTexture(GLint index/* = 0*/, GLenum texture_type/* = GL_TEXTURE_2D*/)
+        Texture::~Texture()
         {
-            if (0 == _textures[index].type)
+            if (_self_generated) 
             {
-                _textures[index] = Texture(_texture_ids[index], texture_type);
+                glDeleteTextures(1, &_gl_id);
             }
-
-            return _textures[index];
         }
 
-        TextureBuffer::Texture &TextureBuffer::Texture::UploadColor(const glm::vec4 &color, GLint level, GLint border)
+        Texture* Texture::UseTextureUnit(GLuint texture_unit)
         {
-            width = 64;
-            height = 64;
+            glActiveTexture(texture_unit);
 
-            std::vector<GLubyte> texture_memory(height * (width * 3), 0);
-
-            GLubyte R = color.r * 255;
-            GLubyte G = color.g * 255;
-            GLubyte B = color.b * 255;
-
-            GLubyte* rgb = texture_memory.data();
-            for (int r = 0; r < height; ++r)
-            {
-                for (int c = 0; c < width; ++c)
-                {
-                    rgb[0] = R;
-                    rgb[1] = G;
-                    rgb[2] = B;
-
-                    rgb += 3;
-                }
-            }
-            
-            glTexImage2D(type, level, GL_RGB, width, height, border, GL_RGB, GL_UNSIGNED_BYTE, texture_memory.data());
-            glGenerateMipmap(type);
-
-            return *this;
+            return this;
         }
 
-        TextureBuffer::Texture &TextureBuffer::Texture::UploadImage(const std::string &image_path, GLboolean flip_vertical /* = 0*/
-                                                                    ,
-                                                                    GLint level /* = 0*/
-                                                                    ,
-                                                                    GLint border /* = 0*/
-                                                                    ,
-                                                                    GLenum data_type /* = GL_UNSIGNED_BYTE*/)
+        Texture* Texture::Bind()
         {
-            stbi_set_flip_vertically_on_load(flip_vertical);
-            
-            int nrChannels;
-            unsigned char *data = stbi_load(image_path.c_str(), &width, &height, &nrChannels, 0);
+            glBindTexture(_gl_type, _gl_id);
 
-            switch (nrChannels)
+            return this;
+        }
+
+        void Texture::Unbind()
+        {
+            glBindTexture(_gl_type, 0);
+        }
+
+        Texture* Texture::SetParameter(GLenum pname, GLint pvalue)
+        {
+            glTexParameteri(_gl_type, pname, pvalue);
+
+            return this;
+        }
+
+        Texture* Texture::GenerateMipmap()
+        {
+            glGenerateMipmap(_gl_type);
+
+            return this;
+        }
+
+        void Texture2D::Upload(GLenum target_type, const std::string &image_path, TextureFormat& format, Dimension& dimension)
+        {
+            stbi_set_flip_vertically_on_load(format.flip_vertical);
+            
+            unsigned char *data = stbi_load(image_path.c_str(), &dimension.width, &dimension.height, &format.channels, 0);
+
+            switch (format.channels)
             {
             case 4:
             {
-                glTexImage2D(type, level, GL_RGBA, width, height, border, GL_RGBA, GL_UNSIGNED_BYTE, data);
+                format.gl_internalformat = GL_RGBA;
                 break;
             }
             case 1:
             {
-                glTexImage2D(type, level, GL_RED, width, height, border, GL_RED, GL_UNSIGNED_BYTE, data);
+                format.gl_internalformat = GL_RED;
                 break;
             }
             default:
-                glTexImage2D(type, level, GL_RGB, width, height, border, GL_RGB, GL_UNSIGNED_BYTE, data);
+            {
+                format.gl_internalformat = GL_RGB;
                 break;
             }
-
-            glGenerateMipmap(type);
+            }
+            
+            glTexImage2D(target_type, format.level, format.gl_internalformat, dimension.width, dimension.height, format.border, format.gl_internalformat, format.data_type, data);
 
             stbi_image_free(data);
-
-            return *this;
         }
 
-        TextureBuffer::Texture &TextureBuffer::Texture::UploadImage(GLenum target_type
-                                                                    , 
-                                                                    const std::string &image_path
-                                                                    , 
-                                                                    GLboolean flip_vertical /* = 0*/
-                                                                    ,
-                                                                    GLint level /* = 0*/
-                                                                    ,
-                                                                    GLint border /* = 0*/
-                                                                    ,
-                                                                    GLenum data_type /* = GL_UNSIGNED_BYTE*/)
+        Texture2D::Texture2D()
+            : Texture(GL_TEXTURE_2D)
+
+            , _dimension()
         {
-            stbi_set_flip_vertically_on_load(flip_vertical);
+        }
+
+        Texture2D::Texture2D(GLObjectID gl_id)
+            : Texture(gl_id, GL_TEXTURE_2D)
+
+            , _dimension()
+        {
+        }
+
+        Texture2D::~Texture2D()
+        {
+        }
+
+        Texture2D *Texture2D::Build(const Dimension& dimension, const glm::vec3 &color)
+        {
+            std::vector<glm::u8vec3> texture_memory(dimension.height * dimension.width, glm::u8vec3(color.r * 255, color.g * 255, color.b * 255));
             
-            int nrChannels;
-            unsigned char *data = stbi_load(image_path.c_str(), &width, &height, &nrChannels, 0);
+            _format.gl_internalformat = GL_RGB;
+            _format.channels = 3;
 
-            switch (nrChannels)
+            glTexImage2D(_gl_type, _format.level, _format.gl_internalformat, dimension.width, dimension.height, _format.border, _format.gl_internalformat, _format.data_type, texture_memory.data());
+
+            return this;
+        }
+
+        Texture2D *Texture2D::Build(const Dimension& dimension,  const glm::vec4 &color)
+        {
+            std::vector<glm::u8vec4> texture_memory(dimension.height * dimension.width, glm::u8vec4(color.r * 255, color.g * 255, color.b * 255, color.a * 255));
+
+            _format.gl_internalformat = GL_RGBA;
+            _format.channels = 4;
+
+            glTexImage2D(_gl_type, _format.level, _format.gl_internalformat, dimension.width, dimension.height, _format.border, _format.gl_internalformat, _format.data_type, texture_memory.data());
+
+            return this;
+        }
+
+        Texture2D *Texture2D::Build(const std::string &image_path)
+        {
+            Upload(_gl_type, image_path, _format, _dimension);
+
+            return this;
+        }
+
+        TextureCube::TextureCube()
+            : Texture(GL_TEXTURE_CUBE_MAP)
+        {
+        }
+
+        TextureCube::TextureCube(GLObjectID gl_id)
+            : Texture(gl_id, GL_TEXTURE_CUBE_MAP)
+        {
+        }
+
+        TextureCube::~TextureCube()
+        {
+        }
+
+        TextureCube *TextureCube::Build(const std::string &images_path)
+        {
+            struct face_info {
+                GLenum type;
+                std::string file_name;
+            };
+
+            static const std::vector<face_info> faces_info{ 
+                face_info{GL_TEXTURE_CUBE_MAP_POSITIVE_X, "/right.jpg"}, 
+                face_info{GL_TEXTURE_CUBE_MAP_NEGATIVE_X, "/left.jpg"}, 
+                face_info{GL_TEXTURE_CUBE_MAP_POSITIVE_Y, "/top.jpg"}, 
+                face_info{GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, "/bottom.jpg"}, 
+                face_info{GL_TEXTURE_CUBE_MAP_POSITIVE_Z, "/front.jpg"}, 
+                face_info{GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, "/back.jpg"}
+            };
+
+            TextureFormat format;
+            Texture2D::Dimension dimension;
+            for (size_t i = 0; i < faces_info.size(); ++i)
             {
-            case 4:
-            {
-                glTexImage2D(target_type, level, GL_RGBA, width, height, border, GL_RGBA, GL_UNSIGNED_BYTE, data);
-                break;
-            }
-            case 1:
-            {
-                glTexImage2D(target_type, level, GL_RED, width, height, border, GL_RED, GL_UNSIGNED_BYTE, data);
-                break;
-            }
-            default:
-                glTexImage2D(target_type, level, GL_RGB, width, height, border, GL_RGB, GL_UNSIGNED_BYTE, data);
-                break;
+                const face_info& face = faces_info[i];
+
+                Texture2D::Upload(face.type, images_path + face.file_name, format, dimension);
             }
 
-            stbi_image_free(data);
-
-            return *this;
+            return this;
         }
     }
 }

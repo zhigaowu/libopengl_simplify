@@ -41,7 +41,7 @@ namespace gl_simplify {
             }
         
         private:
-            std::vector<GLuint> _gl_vertex_arrays;
+            GLObjectIDs _gl_vertex_arrays;
         };
     }
 }

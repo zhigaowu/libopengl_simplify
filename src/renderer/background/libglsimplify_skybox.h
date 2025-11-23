@@ -35,7 +35,7 @@ namespace gl_simplify {
             void Render() override;
 
         private:
-            core::TextureBuffer _sky_texture_buffer;
+            core::TextureCubePtr _sky_texture;
         };
 
         using SkyBoxPtr = std::shared_ptr<SkyBox>;

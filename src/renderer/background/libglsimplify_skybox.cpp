@@ -8,7 +8,7 @@ namespace gl_simplify {
         SkyBox::SkyBox()
             : BaseEntity()
 
-            , _sky_texture_buffer()
+            , _sky_texture(CreateTextureCube())
         {
         }
 
@@ -18,38 +18,17 @@ namespace gl_simplify {
 
         void SkyBox::Load(const std::string &path)
         {
-            struct face_info {
-                GLenum type;
-                std::string file_name;
-            };
+            _sky_texture->Bind();
 
-            static const std::vector<face_info> faces_info{ 
-                face_info{GL_TEXTURE_CUBE_MAP_POSITIVE_X, "/right.jpg"}, 
-                face_info{GL_TEXTURE_CUBE_MAP_NEGATIVE_X, "/left.jpg"}, 
-                face_info{GL_TEXTURE_CUBE_MAP_POSITIVE_Y, "/top.jpg"}, 
-                face_info{GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, "/bottom.jpg"}, 
-                face_info{GL_TEXTURE_CUBE_MAP_POSITIVE_Z, "/front.jpg"}, 
-                face_info{GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, "/back.jpg"}
-            };
+            _sky_texture->Build(path);
 
-            core::TextureBuffer::Texture& texture = _sky_texture_buffer.GetTexture(0, GL_TEXTURE_CUBE_MAP);
+            _sky_texture->SetParameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR)
+                    ->SetParameter(GL_TEXTURE_MAG_FILTER, GL_LINEAR)
+                    ->SetParameter(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE)
+                    ->SetParameter(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE)
+                    ->SetParameter(GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
-            texture.Bind();
-
-            for (size_t i = 0; i < faces_info.size(); ++i)
-            {
-                const face_info& face = faces_info[i];
-
-                texture.UploadImage(face.type, path + face.file_name);
-            }
-
-            texture.SetParameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR)
-                    .SetParameter(GL_TEXTURE_MAG_FILTER, GL_LINEAR)
-                    .SetParameter(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE)
-                    .SetParameter(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE)
-                    .SetParameter(GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-
-            texture.Unbind();
+            _sky_texture->Unbind();
         }
 
         /*void SkyBox::Build()
@@ -113,8 +92,7 @@ namespace gl_simplify {
         
         void SkyBox::Render()
         {
-            core::TextureBuffer::Texture& texture = _sky_texture_buffer.GetTexture();
-            texture.Bind();
+            _sky_texture->Bind();
 
             _vao->Bind();
 
@@ -122,7 +100,7 @@ namespace gl_simplify {
             
             _vao->Unbind();
 
-            texture.Unbind();
+            _sky_texture->Unbind();
         }
     }
 }

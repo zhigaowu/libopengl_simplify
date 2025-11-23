@@ -22,6 +22,8 @@
 #include <glm/glm.hpp>
 
 #include <cmath>
+#include <memory>
+#include <vector>
 
 #if __cplusplus < 202002L
 
@@ -49,6 +51,8 @@ namespace gl_simplify {
             NonCopyable& operator=(NonCopyable&&) = delete;
         };
 
+        using GLObjectID = GLuint;
+        using GLObjectIDs = std::vector<GLObjectID>;
     }
 }
 

@@ -19,9 +19,6 @@
 
 #include "libglsimplify_types.h"
 
-#include <vector>
-#include <memory>
-
 namespace gl_simplify {
 
     namespace core {
@@ -74,7 +71,7 @@ namespace gl_simplify {
         
         protected:
             GLenum _gl_buffer_type;
-            std::vector<GLuint> _gl_buffer_arrays;
+            GLObjectIDs _gl_buffer_arrays;
         };
     }
 }
