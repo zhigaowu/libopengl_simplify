@@ -158,6 +158,10 @@ namespace gl_simplify {
                 GLfloat xoffset = static_cast<GLfloat>(xpos - _mouse.x);
                 GLfloat yoffset = static_cast<GLfloat>(_mouse.y - ypos);  // y 坐标反转（屏幕坐标系是上到下）
 
+                // 计算三维移动方向：x轴（右）、y轴（上）、z轴（移动距离）
+                GLfloat move_distance = std::sqrt(xoffset * xoffset + yoffset * yoffset);
+                _mouse.direction = glm::vec3(xoffset, yoffset, move_distance);
+
                 // 更新鼠标位置
                 _mouse.x = xpos;
                 _mouse.y = ypos;
@@ -166,19 +170,19 @@ namespace gl_simplify {
                 if (_mouse.right_button_down)
                 {
                     // 应用鼠标灵敏度
-                    xoffset *= _camera_control.rotation_sensitivity;
-                    yoffset *= _camera_control.rotation_sensitivity;
+                    GLfloat adjusted_xoffset = xoffset * _camera_control.rotation_sensitivity;
+                    GLfloat adjusted_yoffset = yoffset * _camera_control.rotation_sensitivity;
 
                     // 水平旋转（yaw）：围绕世界 up 轴旋转
-                    if (xoffset != 0.0f)
+                    if (adjusted_xoffset != 0.0f)
                     {
-                        _scene->GetCamera()->Rotate(xoffset);
+                        _scene->GetCamera()->Rotate(adjusted_xoffset);
                     }
 
                     // 垂直旋转（pitch）：围绕相机的 right 轴旋转
-                    if (yoffset != 0.0f)
+                    if (adjusted_yoffset != 0.0f)
                     {
-                        _scene->GetCamera()->Rotate(_scene->GetCamera()->GetRight(), yoffset);
+                        _scene->GetCamera()->Rotate(_scene->GetCamera()->GetRight(), adjusted_yoffset);
                     }
                 }
 

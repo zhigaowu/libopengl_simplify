@@ -20,12 +20,15 @@
 #include "core/libglsimplify_buffer_array.h"
 #include "core/libglsimplify_vertex_array.h"
 
+#include "core/libglsimplify_texture_buffer.h"
+
 namespace gl_simplify {
 
     namespace entity {
         enum class EntityType {
             Basic = 0,
             Textured = 1,
+            Lighted = 2,
             Count
         };
 
@@ -55,6 +58,7 @@ namespace gl_simplify {
 
         protected:
             glm::vec4 _color;
+            core::TexturePtr _texture;
 
         protected:
             glm::mat4 _model;
@@ -74,6 +78,9 @@ namespace gl_simplify {
 
             void SetColor(const glm::vec4& color);
             const glm::vec4& GetColor() const { return _color; }
+
+            void SetTexture(const core::TexturePtr& texture);
+            const core::TexturePtr& GetTexture() const { return _texture; }
 
             void Translate(const glm::vec3& position);
 

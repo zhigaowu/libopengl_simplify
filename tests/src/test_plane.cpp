@@ -33,7 +33,10 @@ int test_plane(int argc, char **argv, int width, int height)
 
         do
         {
-            //plane->SetColor(glm::vec4(0.8f, 0.8f, 0.8f, 1.0f));
+            gl_simplify::core::Texture2DPtr texture = CreateTexture2D();
+            texture->Build("resources/textures/wood.jpg")->SetDefaultParameters();
+
+            plane->SetTexture(texture);
 
             // 不需要缩放和平移，保持在原点
             // plane->Scale(glm::vec3(4.0, 0.0, 4.0));
@@ -53,7 +56,7 @@ int test_plane(int argc, char **argv, int width, int height)
 
         GLfloat rotation_angle = 0.0f;
         window.Show([plane, &rotation_angle, &window] (GLFWwindow*, gl_simplify::scene::ScenePtr scene) {
-                plane->Rotate(rotation_angle , glm::vec3(0.0f, 1.0f, 0.0f)); // 绕 Y 轴旋转
+                //plane->Rotate(rotation_angle , glm::vec3(0.0f, 1.0f, 0.0f)); // 绕 Y 轴旋转
                 scene->Render();
                 rotation_angle += window.GetDeltaTime(); // 每帧增加旋转角度
             });

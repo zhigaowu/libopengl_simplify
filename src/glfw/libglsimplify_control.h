@@ -30,6 +30,8 @@ namespace gl_simplify {
 
             GLfloat x;
             GLfloat y;
+
+            glm::vec3 direction;
             
             Mouse()
                 : left_button_down(false)
@@ -38,6 +40,8 @@ namespace gl_simplify {
 
                 , x(0.0f)
                 , y(0.0f)
+                
+                , direction(glm::vec3(0.0f, 0.0f, 0.0f))
             {
             }
         };

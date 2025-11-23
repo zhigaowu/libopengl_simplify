@@ -44,15 +44,17 @@ namespace gl_simplify {
 
             virtual ~Texture();
 
-            Texture* UseTextureUnit(GLuint texture_unit);
+            Texture* SetUnit(GLuint texture_unit = GL_TEXTURE0);
+            Texture* ActiveUnit();
+
+            GLuint GetUnit() const { return _gl_unit; }
+            GLuint GetUnitIndex() const { return _gl_unit - GL_TEXTURE0; }
 
             Texture* Bind();
 
             void Unbind();
 
             Texture* SetParameter(GLenum pname, GLint pvalue);
-
-            Texture* GenerateMipmap();
 
             void SetFormatFlipVertical(GLboolean flip_vertical) { _format.flip_vertical = flip_vertical; }
             void setFormatLevel(GLint level) { _format.level = level; }
@@ -63,6 +65,9 @@ namespace gl_simplify {
 
         private:
             bool _self_generated;
+
+        private:
+            GLuint _gl_unit;
         
         protected:
             GLObjectID _gl_id;
@@ -96,6 +101,8 @@ namespace gl_simplify {
 
             Texture2D* Build(const std::string &image_path);
 
+            Texture2D* SetDefaultParameters();
+
             const Dimension& GetDimension() const { return _dimension; }
 
         private:
@@ -114,6 +121,8 @@ namespace gl_simplify {
             ~TextureCube();
 
             TextureCube* Build(const std::string &images_path);
+
+            TextureCube* SetDefaultParameters();
         };
         using TextureCubePtr = std::shared_ptr<TextureCube>;
         

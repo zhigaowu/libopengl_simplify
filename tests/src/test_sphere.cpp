@@ -29,14 +29,14 @@ int test_sphere(int argc, char **argv, int width, int height)
             break;
         }
 
-        gl_simplify::entity::basic::SpherePtr sphere = CreateSphereOf(1.0f, 16, 16);
+        gl_simplify::entity::basic::SpherePtr sphere = CreateSphereOf(1.0f, 64, 64);
         do
         {
-            //sphere->SetColor(glm::vec4(0.8f, 0.8f, 0.8f, 1.0f));
+            
+            gl_simplify::core::Texture2DPtr texture = CreateTexture2D();
+            texture->Build("resources/textures/eo_base_2020_clean_tn.jpg")->SetDefaultParameters();
 
-            // 不需要缩放和平移，保持在原点
-            // sphere->Scale(glm::vec3(4.0, 0.0, 4.0));
-            // sphere->Translate(glm::vec3(0.0, -8.0, 0.0));
+            sphere->SetTexture(texture);
             
             scene->AddEntity(sphere);
         } while (false);
@@ -50,11 +50,11 @@ int test_sphere(int argc, char **argv, int width, int height)
 
         window.SetScene(scene);
 
-        GLfloat rotation_angle = 0.0f;
-        window.Show([sphere, &rotation_angle] (GLFWwindow*, gl_simplify::scene::ScenePtr scene) {
-                sphere->Rotate(rotation_angle, glm::vec3(0.0f, 1.0f, 0.0f)); // 绕 Y 轴旋转
+        window.Show([sphere, &window] (GLFWwindow*, gl_simplify::scene::ScenePtr scene) {
+                // 使用帧时间实现匀速旋转
+                GLfloat rotation_speed = 20.0f; // 每秒旋转20度
+                sphere->Rotate(rotation_speed * window.GetDeltaTime(), glm::vec3(0.0f, 1.0f, 0.0f));
                 scene->Render();
-                rotation_angle += 0.05f; // 每帧增加旋转角度
             });
 
         res = 0;

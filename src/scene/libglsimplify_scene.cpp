@@ -4,7 +4,9 @@
 #include "camera/libglsimplify_default_camera.h"
 
 #include "renderer/background/libglsimplify_basic_renderer.h"
+
 #include "renderer/foreground/libglsimplify_basic_renderer.h"
+#include "renderer/foreground/libglsimplify_texture_renderer.h"
 
 namespace gl_simplify {
 
@@ -13,11 +15,11 @@ namespace gl_simplify {
         Scene::Scene(int width, int height)
             : core::NonCopyable()
             
-            , _camera(CreateDefaultCamera((float)width / (float)height))
+            , _camera(CreateDefaultCamera(height > 0 ? (float)width / (float)height : 1.0f))
 
             , _background(CreateBasicBackgroundRenderer())
             
-            , _entity_type_renderers{CreateBasicForegroundRenderer(), nullptr}
+            , _entity_type_renderers{CreateBasicForegroundRenderer(), CreateTextureForegroundRenderer()}
 
             , _entity_groups(static_cast<size_t>(entity::EntityType::Count))
         {

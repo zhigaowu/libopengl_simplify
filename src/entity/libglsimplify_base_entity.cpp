@@ -65,7 +65,8 @@ namespace gl_simplify {
 
             , _index_count(0)
 
-            , _color(glm::vec4(0.8f, 0.8f, 0.8f, 1.0f))
+            , _color(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f))
+            , _texture(nullptr)
 
             , _model(glm::translate(glm::mat4(1.0), glm::vec3(0.0f)))
         {
@@ -79,6 +80,16 @@ namespace gl_simplify {
         void BaseEntity::SetColor(const glm::vec4 &color)
         {
             _color = color;
+        }
+
+        void BaseEntity::SetTexture(const core::TexturePtr &texture)
+        {
+            if (texture)
+            {
+                _texture = texture;
+
+                _entity_type = EntityType::Textured;
+            }
         }
 
         void BaseEntity::Translate(const glm::vec3 &position)

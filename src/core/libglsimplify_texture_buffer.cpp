@@ -13,6 +13,8 @@ namespace gl_simplify {
 
             , _self_generated(true)
 
+            , _gl_unit(GL_TEXTURE0)
+
             , _gl_id(0)
             , _gl_type(texture_type)
 
@@ -41,10 +43,17 @@ namespace gl_simplify {
             }
         }
 
-        Texture* Texture::UseTextureUnit(GLuint texture_unit)
+        Texture* Texture::SetUnit(GLuint texture_unit)
         {
-            glActiveTexture(texture_unit);
+            _gl_unit = texture_unit;
 
+            return this;
+        }
+
+        Texture *Texture::ActiveUnit()
+        {
+            glActiveTexture(_gl_unit);
+            
             return this;
         }
 
@@ -63,13 +72,6 @@ namespace gl_simplify {
         Texture* Texture::SetParameter(GLenum pname, GLint pvalue)
         {
             glTexParameteri(_gl_type, pname, pvalue);
-
-            return this;
-        }
-
-        Texture* Texture::GenerateMipmap()
-        {
-            glGenerateMipmap(_gl_type);
 
             return this;
         }
@@ -129,7 +131,11 @@ namespace gl_simplify {
             _format.gl_internalformat = GL_RGB;
             _format.channels = 3;
 
+            Bind();  // 绑定纹理后再上传数据
+
             glTexImage2D(_gl_type, _format.level, _format.gl_internalformat, dimension.width, dimension.height, _format.border, _format.gl_internalformat, _format.data_type, texture_memory.data());
+
+            glGenerateMipmap(_gl_type);
 
             return this;
         }
@@ -141,14 +147,33 @@ namespace gl_simplify {
             _format.gl_internalformat = GL_RGBA;
             _format.channels = 4;
 
+            Bind();  // 绑定纹理后再上传数据
+
             glTexImage2D(_gl_type, _format.level, _format.gl_internalformat, dimension.width, dimension.height, _format.border, _format.gl_internalformat, _format.data_type, texture_memory.data());
 
+            glGenerateMipmap(_gl_type);
+            
             return this;
         }
 
         Texture2D *Texture2D::Build(const std::string &image_path)
         {
+            Bind();  // 绑定纹理后再上传数据
+
             Upload(_gl_type, image_path, _format, _dimension);
+
+            glGenerateMipmap(_gl_type);
+
+            return this;
+        }
+
+        Texture2D *Texture2D::SetDefaultParameters()
+        {
+            Bind();  // 绑定纹理后再设置参数
+            SetParameter(GL_TEXTURE_WRAP_S, GL_REPEAT)
+                ->SetParameter(GL_TEXTURE_WRAP_T, GL_REPEAT)
+                ->SetParameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR)
+                ->SetParameter(GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
             return this;
         }
@@ -191,6 +216,17 @@ namespace gl_simplify {
 
                 Texture2D::Upload(face.type, images_path + face.file_name, format, dimension);
             }
+
+            return this;
+        }
+
+        TextureCube *TextureCube::SetDefaultParameters()
+        {
+            SetParameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR)
+                    ->SetParameter(GL_TEXTURE_MAG_FILTER, GL_LINEAR)
+                    ->SetParameter(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE)
+                    ->SetParameter(GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE)
+                    ->SetParameter(GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
             return this;
         }

@@ -42,7 +42,7 @@ namespace gl_simplify {
 
         void BaseCamera::SetAspect(GLfloat aspect)
         {
-            if (!_keep_aspect)
+            if (!_keep_aspect && aspect > 0.0f)
             {
                 _aspect = aspect;
             }
