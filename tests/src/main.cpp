@@ -10,6 +10,7 @@
 #define DEFINE_TEST_CASE(cases, name) cases.insert(std::make_pair("test_"#name, test_##name))
 
 DECLARE_TEST_CASE(plane);
+DECLARE_TEST_CASE(sphere);
 
 int main(int argc, char **argv) 
 {
@@ -20,6 +21,7 @@ int main(int argc, char **argv)
     do
     {
         DEFINE_TEST_CASE(avaliable_cases, plane);
+        DEFINE_TEST_CASE(avaliable_cases, sphere);
     } while (false);
 
     int res = -1;

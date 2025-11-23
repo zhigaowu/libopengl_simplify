@@ -54,7 +54,7 @@ namespace gl_simplify {
             GLfloat fov_sensitivity;
             
             CameraControl()
-                : movement_speed(2.5f)
+                : movement_speed(4.0f)
                 , rotation_sensitivity(0.1f)
                 , last_frame_time(0.0f)
                 , delta_time(0.0f)

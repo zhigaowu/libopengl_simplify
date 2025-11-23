@@ -38,7 +38,7 @@ namespace gl_simplify {
 
         void BasicRenderer::Render(const entity::BaseEntityPtr &entity)
         {
-            _program.GetVariable("entity_color").SetVec(entity->getColor());
+            _program.GetVariable("entity_color").SetVec(entity->GetColor());
 
             BaseRenderer::Render(entity);
         }

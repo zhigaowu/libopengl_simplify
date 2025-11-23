@@ -66,8 +66,8 @@ namespace gl_simplify {
         void DefaultCamera::Rotate(GLfloat angle)
         {
             // 围绕 up 轴旋转 front 向量（水平旋转，即 yaw）
-            glm::mat4 rotation = glm::rotate(glm::mat4(1.0f), glm::radians(angle), _up);
-            _front = glm::vec3(rotation * glm::vec4(_front, 0.0f));
+            glm::mat4 rotation_matrix = glm::rotate(glm::mat4(1.0f), glm::radians(angle), _up);
+            _front = glm::vec3(rotation_matrix * glm::vec4(_front, 0.0f));
             _front = glm::normalize(_front);
         }
 

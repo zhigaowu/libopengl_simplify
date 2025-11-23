@@ -55,11 +55,15 @@ namespace gl_simplify {
         }
 
         BaseEntity::BaseEntity(EntityType type)
-            : _entityType(type)
+            : core::NonCopyable()
+
+            , _entity_type(type)
 
             , _vbo(nullptr)
             , _ebo(nullptr)
             , _vao(nullptr)
+
+            , _index_count(0)
 
             , _color(glm::vec4(0.8f, 0.8f, 0.8f, 1.0f))
 
@@ -72,14 +76,7 @@ namespace gl_simplify {
             destroyArrays();
         }
 
-        void BaseEntity::Build(const VertexDataBuffer &vertices, const IndexBuffer &indices)
-        {
-            createDefaultArrays();
-
-            configureDefaultVertexAttributes(vertices, indices);
-        }
-
-        void BaseEntity::setColor(const glm::vec4 &color)
+        void BaseEntity::SetColor(const glm::vec4 &color)
         {
             _color = color;
         }

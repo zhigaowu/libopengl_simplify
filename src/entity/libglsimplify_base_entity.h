@@ -43,12 +43,15 @@ namespace gl_simplify {
 
         class BaseEntity : private core::NonCopyable {
         private:
-            EntityType _entityType;
+            EntityType _entity_type;
 
         protected:
             core::BufferArray* _vbo;
             core::BufferArray* _ebo;
             core::VertexArray* _vao;
+
+        protected:
+            GLuint _index_count;
 
         protected:
             glm::vec4 _color;
@@ -65,14 +68,12 @@ namespace gl_simplify {
             explicit BaseEntity(EntityType type = EntityType::Basic);
             virtual ~BaseEntity();
 
-            virtual void Build(const VertexDataBuffer& vertices, const IndexBuffer& indices);
-
             virtual void Render() = 0;
 
-            EntityType GetType() const { return _entityType; }
+            EntityType GetType() const { return _entity_type; }
 
-            void setColor(const glm::vec4& color);
-            const glm::vec4& getColor() const { return _color; }
+            void SetColor(const glm::vec4& color);
+            const glm::vec4& GetColor() const { return _color; }
 
             void Translate(const glm::vec3& position);
 

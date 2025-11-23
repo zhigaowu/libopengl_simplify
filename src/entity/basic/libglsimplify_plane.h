@@ -24,13 +24,14 @@ namespace gl_simplify {
     namespace entity::basic {
 
         class Plane : public BaseEntity {
-        public:
-        static const VertexDataBuffer& dafaultVertextDataBuffer();
-        static const IndexBuffer& defaultIndexBuffer();
+        private:
+            GLuint _index_count;
 
         public:
-            Plane();
+            explicit Plane(GLfloat width = 2.0f, GLfloat height = 2.0f, GLint width_segments = 1, GLint height_segments = 1, GLboolean double_sided = GL_FALSE);
             ~Plane();
+
+            void Reset(GLfloat width = 2.0f, GLfloat height = 2.0f, GLint width_segments = 1, GLint height_segments = 1, GLboolean double_sided = GL_FALSE);
 
             void Render() override;
         };
@@ -39,6 +40,7 @@ namespace gl_simplify {
     }
 }
 
-#define CreatePlane() CreateDefaultEntity(gl_simplify::entity::basic::Plane)
+#define CreatePlane() CreateDefault(gl_simplify::entity::basic::Plane)
+#define CreatePlaneOf(...) CreateWithParameter(gl_simplify::entity::basic::Plane, __VA_ARGS__)
 
 #endif // GL_SIMPLIFY_ENTITY_PLANE_H

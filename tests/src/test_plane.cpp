@@ -19,9 +19,6 @@ int test_plane(int argc, char **argv, int width, int height)
             break;
         }
 
-        window.SetCameraMovementSpeed(5.0f);       // 移动速度
-        window.SetCameraRotationSensitivity(0.15f); // 旋转灵敏度
-
         char error[128] = { 0 };
 
         gl_simplify::scene::ScenePtr scene = CreateScene(width, height);
@@ -32,15 +29,9 @@ int test_plane(int argc, char **argv, int width, int height)
             break;
         }
 
-        // 暂时禁用背面剔除，方便调试
-        scene->enableCullFace(false);
-
         do
         {
-            gl_simplify::entity::basic::PlanePtr plane = CreatePlane();
-
-            plane->Build(gl_simplify::entity::basic::Plane::dafaultVertextDataBuffer(),
-                         gl_simplify::entity::basic::Plane::defaultIndexBuffer());
+            gl_simplify::entity::basic::PlanePtr plane = CreatePlaneOf(2.0f, 2.0f, 1, 1, GL_TRUE);
 
             //plane->SetColor(glm::vec4(0.8f, 0.8f, 0.8f, 1.0f));
 
