@@ -25,10 +25,10 @@ namespace gl_simplify {
 
         class Sphere : public BaseEntity {
         public:
-            explicit Sphere(GLfloat radius = 1.0f, GLint stacks = 10, GLint sectors = 10);
+            explicit Sphere(GLfloat radius = 1.0f, GLint stacks = 16, GLint sectors = 16);
             ~Sphere();
 
-            void Reset(GLfloat radius = 1.0f, GLint stacks = 10, GLint sectors = 10);
+            void Reset(GLfloat radius = 1.0f, GLint stacks = 16, GLint sectors = 16);
 
             void Render() override;
         };

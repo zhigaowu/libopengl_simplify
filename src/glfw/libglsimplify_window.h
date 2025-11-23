@@ -91,6 +91,16 @@ namespace gl_simplify {
                 return _camera_control.pan_speed;
             }
 
+            GLfloat GetLastFrameTime() const
+            {
+                return _camera_control.last_frame_time;
+            }
+
+            GLfloat GetDeltaTime() const
+            {
+                return _camera_control.delta_time;
+            }
+
             void SetWindowSizeChangedCallback(const CallbackWindowSizeChanged& callback_window_size_changed)
             {
                 _callback_window_size_changed = [this, callback_window_size_changed] (GLFWwindow* window, int width, int height) {

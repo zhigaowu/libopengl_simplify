@@ -29,10 +29,10 @@ int test_plane(int argc, char **argv, int width, int height)
             break;
         }
 
+        gl_simplify::entity::basic::PlanePtr plane = CreatePlaneOf(2.0f, 2.0f, 1, 1, GL_TRUE);
+
         do
         {
-            gl_simplify::entity::basic::PlanePtr plane = CreatePlaneOf(2.0f, 2.0f, 1, 1, GL_TRUE);
-
             //plane->SetColor(glm::vec4(0.8f, 0.8f, 0.8f, 1.0f));
 
             // 不需要缩放和平移，保持在原点
@@ -51,8 +51,11 @@ int test_plane(int argc, char **argv, int width, int height)
 
         window.SetScene(scene);
 
-        window.Show([] (GLFWwindow*, gl_simplify::scene::ScenePtr scene) {
+        GLfloat rotation_angle = 0.0f;
+        window.Show([plane, &rotation_angle, &window] (GLFWwindow*, gl_simplify::scene::ScenePtr scene) {
+                plane->Rotate(rotation_angle , glm::vec3(0.0f, 1.0f, 0.0f)); // 绕 Y 轴旋转
                 scene->Render();
+                rotation_angle += window.GetDeltaTime(); // 每帧增加旋转角度
             });
 
         res = 0;

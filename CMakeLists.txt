@@ -42,7 +42,10 @@ ELSEIF ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "AppleClang")
         ADD_COMPILE_OPTIONS(-Wno-c99-extensions)
     ENDIF()
 ELSE()
+    # MSVC 编译器
     ADD_DEFINITIONS(-D_CRT_SECURE_NO_WARNINGS)
+    # 使用 UTF-8 编码，避免 C4819 警告
+    ADD_COMPILE_OPTIONS(/utf-8)
 ENDIF()
 
 # 通用外部库依赖导入函数

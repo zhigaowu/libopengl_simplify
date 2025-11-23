@@ -29,10 +29,9 @@ int test_sphere(int argc, char **argv, int width, int height)
             break;
         }
 
+        gl_simplify::entity::basic::SpherePtr sphere = CreateSphereOf(1.0f, 16, 16);
         do
         {
-            gl_simplify::entity::basic::SpherePtr sphere = CreateSphereOf(1.0f, 16, 16);
-
             //sphere->SetColor(glm::vec4(0.8f, 0.8f, 0.8f, 1.0f));
 
             // 不需要缩放和平移，保持在原点
@@ -51,8 +50,11 @@ int test_sphere(int argc, char **argv, int width, int height)
 
         window.SetScene(scene);
 
-        window.Show([] (GLFWwindow*, gl_simplify::scene::ScenePtr scene) {
+        GLfloat rotation_angle = 0.0f;
+        window.Show([sphere, &rotation_angle] (GLFWwindow*, gl_simplify::scene::ScenePtr scene) {
+                sphere->Rotate(rotation_angle, glm::vec3(0.0f, 1.0f, 0.0f)); // 绕 Y 轴旋转
                 scene->Render();
+                rotation_angle += 0.05f; // 每帧增加旋转角度
             });
 
         res = 0;
