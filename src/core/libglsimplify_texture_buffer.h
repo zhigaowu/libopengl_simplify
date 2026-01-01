@@ -88,6 +88,7 @@ namespace gl_simplify {
             };
             
         public:
+            static void Upload(GLenum target_type, const unsigned char* color, const TextureFormat& format, const Dimension& dimension);
             static void Upload(GLenum target_type, const std::string &image_path, TextureFormat& format, Dimension& dimension);
 
         public:
@@ -100,6 +101,8 @@ namespace gl_simplify {
             Texture2D* Build(const Dimension& dimension, const glm::vec4& color);
 
             Texture2D* Build(const std::string &image_path);
+
+            Texture2D* Build(const unsigned char* color, const TextureFormat& format, const Dimension& dimension);
 
             Texture2D* SetDefaultParameters();
 

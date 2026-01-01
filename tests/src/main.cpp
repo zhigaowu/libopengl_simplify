@@ -11,6 +11,7 @@
 
 DECLARE_TEST_CASE(plane);
 DECLARE_TEST_CASE(sphere);
+DECLARE_TEST_CASE(sdf_text);
 
 int main(int argc, char **argv) 
 {
@@ -22,6 +23,7 @@ int main(int argc, char **argv)
     {
         DEFINE_TEST_CASE(avaliable_cases, plane);
         DEFINE_TEST_CASE(avaliable_cases, sphere);
+        DEFINE_TEST_CASE(avaliable_cases, sdf_text);
     } while (false);
 
     int res = -1;

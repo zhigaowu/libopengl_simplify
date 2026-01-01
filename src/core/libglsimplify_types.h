@@ -42,7 +42,7 @@ namespace gl_simplify {
         class NonCopyable {
         protected:
             NonCopyable() = default;
-            ~NonCopyable() = default;
+            virtual ~NonCopyable() = default;
 
             NonCopyable(const NonCopyable&) = delete;
             NonCopyable& operator=(const NonCopyable&) = delete;
@@ -55,6 +55,9 @@ namespace gl_simplify {
         using GLObjectIDs = std::vector<GLObjectID>;
     }
 }
+
+#define DISABLE_DEFAULT_CONSTRUCT(ClassName) \
+    ClassName() = delete;
 
 #define CreateDefault(Name) std::make_shared<Name>()
 #define CreateWithParameter(Name, ...) std::make_shared<Name>(__VA_ARGS__)

@@ -27,8 +27,9 @@ namespace gl_simplify {
     namespace entity {
         enum class EntityType {
             Basic = 0,
-            Textured = 1,
-            Lighted = 2,
+            Text = 1,
+            Textured = 2,
+            Lighted = 3,
             Count
         };
 
@@ -79,7 +80,7 @@ namespace gl_simplify {
             void SetColor(const glm::vec4& color);
             const glm::vec4& GetColor() const { return _color; }
 
-            void SetTexture(const core::TexturePtr& texture);
+            void SetTexture(const core::TexturePtr& texture, bool reset_entity_type = true);
             const core::TexturePtr& GetTexture() const { return _texture; }
 
             void Translate(const glm::vec3& position);

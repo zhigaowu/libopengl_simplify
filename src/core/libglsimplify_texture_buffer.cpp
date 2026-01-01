@@ -76,7 +76,24 @@ namespace gl_simplify {
             return this;
         }
 
-        void Texture2D::Upload(GLenum target_type, const std::string &image_path, TextureFormat& format, Dimension& dimension)
+        void Texture2D::Upload(GLenum target_type, const unsigned char *color, const TextureFormat &format, const Dimension &dimension)
+        {
+            // 对于单通道纹理，设置1字节对齐以避免 FreeType 位图读取错误
+            if (format.gl_internalformat == GL_RED || format.channels == 1)
+            {
+                glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+            }
+            
+            glTexImage2D(target_type, format.level, format.gl_internalformat, dimension.width, dimension.height, format.border, format.gl_internalformat, format.data_type, color);
+            
+            // 恢复默认的4字节对齐
+            if (format.gl_internalformat == GL_RED || format.channels == 1)
+            {
+                glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+            }
+        }
+
+        void Texture2D::Upload(GLenum target_type, const std::string &image_path, TextureFormat &format, Dimension &dimension)
         {
             stbi_set_flip_vertically_on_load(format.flip_vertical);
             
@@ -101,7 +118,7 @@ namespace gl_simplify {
             }
             }
             
-            glTexImage2D(target_type, format.level, format.gl_internalformat, dimension.width, dimension.height, format.border, format.gl_internalformat, format.data_type, data);
+            Upload(target_type, data, format, dimension);
 
             stbi_image_free(data);
         }
@@ -131,6 +148,8 @@ namespace gl_simplify {
             _format.gl_internalformat = GL_RGB;
             _format.channels = 3;
 
+            _dimension = dimension;
+
             Bind();  // 绑定纹理后再上传数据
 
             glTexImage2D(_gl_type, _format.level, _format.gl_internalformat, dimension.width, dimension.height, _format.border, _format.gl_internalformat, _format.data_type, texture_memory.data());
@@ -146,6 +165,8 @@ namespace gl_simplify {
 
             _format.gl_internalformat = GL_RGBA;
             _format.channels = 4;
+
+            _dimension = dimension;
 
             Bind();  // 绑定纹理后再上传数据
 
@@ -167,9 +188,24 @@ namespace gl_simplify {
             return this;
         }
 
+        Texture2D *Texture2D::Build(const unsigned char *color, const TextureFormat& format, const Dimension& dimension)
+        {
+            _format = format;
+            _dimension = dimension;
+
+            Bind();  // 绑定纹理后再上传数据
+
+            Upload(_gl_type, color, format, dimension);
+
+            glGenerateMipmap(_gl_type);
+
+            return this;
+        }
+
         Texture2D *Texture2D::SetDefaultParameters()
         {
             Bind();  // 绑定纹理后再设置参数
+
             SetParameter(GL_TEXTURE_WRAP_S, GL_REPEAT)
                 ->SetParameter(GL_TEXTURE_WRAP_T, GL_REPEAT)
                 ->SetParameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR)

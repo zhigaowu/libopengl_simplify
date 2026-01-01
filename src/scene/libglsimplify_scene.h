@@ -18,6 +18,7 @@
 #define GL_SIMPLIFY_SCENE_SCENE_H
 
 #include "renderer/background/libglsimplify_basic_renderer.h"
+#include "renderer/text/libglsimplify_base_text_renderer.h"
 
 namespace gl_simplify {
 
@@ -57,6 +58,8 @@ namespace gl_simplify {
             renderer::background::BasicRendererPtr GetBackground() const { return _background; }
 
             void SetEntityRenderer(entity::EntityType type, const renderer::BaseRendererPtr& renderer);
+
+            renderer::text::BaseTextRendererPtr GetTextRenderer() const;
 
             void SetRenderMode(RenderMode render_mode);
 

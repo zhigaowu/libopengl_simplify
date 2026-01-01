@@ -56,19 +56,24 @@ INCLUDE(${CMAKE_SOURCE_DIR}/cmake/PrintFlags.cmake)
 FIND_PACKAGE(glfw3 REQUIRED)
 PRINT_PACKAGE_INFO("glfw3" "${glfw3_INCLUDE_DIRS}" "${glfw3_LIBRARIES}")
 
+# glad
+FIND_PACKAGE(glad REQUIRED)
+PRINT_PACKAGE_INFO("glad" "${glad_INCLUDE_DIRS}" "${glad_SOURCES}")
+
+# FreeType
+FIND_PACKAGE(FreeType REQUIRED)
+PRINT_PACKAGE_INFO("FreeType" "${FreeType_INCLUDE_DIRS}" "${FreeType_LIBRARIES}")
+
 # assimp
 FIND_PACKAGE(assimp REQUIRED)
 PRINT_PACKAGE_INFO("assimp" "${assimp_INCLUDE_DIRS}" "${assimp_LIBRARIES}")
 
-# glog
-FIND_PACKAGE(glad REQUIRED)
-PRINT_PACKAGE_INFO("glad" "${glad_INCLUDE_DIRS}" "${glad_SOURCES}")
-
 # include 3rd headers
 INCLUDE_DIRECTORIES(
     ${glfw3_INCLUDE_DIRS} 
-    ${assimp_INCLUDE_DIR}
     ${glad_INCLUDE_DIRS} 
+    ${FreeType_INCLUDE_DIRS}
+    ${assimp_INCLUDE_DIRS}
     ${CMAKE_SOURCE_DIR}/3rd/glm/include 
     ${CMAKE_SOURCE_DIR}/3rd/stb/include)
 

@@ -8,6 +8,8 @@
 #include "renderer/foreground/libglsimplify_basic_renderer.h"
 #include "renderer/foreground/libglsimplify_texture_renderer.h"
 
+#include "renderer/text/libglsimplify_simple_text_renderer.h"
+
 namespace gl_simplify {
 
     namespace scene {
@@ -19,7 +21,7 @@ namespace gl_simplify {
 
             , _background(CreateBasicBackgroundRenderer())
             
-            , _entity_type_renderers{CreateBasicForegroundRenderer(), CreateTextureForegroundRenderer()}
+            , _entity_type_renderers{CreateBasicForegroundRenderer(), CreateSimpleTextRenderer(), CreateTextureForegroundRenderer()}
 
             , _entity_groups(static_cast<size_t>(entity::EntityType::Count))
         {
@@ -40,6 +42,11 @@ namespace gl_simplify {
             {
                 _entity_type_renderers[static_cast<size_t>(type)] = renderer;
             }
+        }
+
+        renderer::text::BaseTextRendererPtr Scene::GetTextRenderer() const
+        {
+            return std::dynamic_pointer_cast<renderer::text::BaseTextRenderer>(_entity_type_renderers[static_cast<size_t>(entity::EntityType::Text)]);
         }
 
         void Scene::SetRenderMode(RenderMode render_mode)

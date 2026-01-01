@@ -82,13 +82,16 @@ namespace gl_simplify {
             _color = color;
         }
 
-        void BaseEntity::SetTexture(const core::TexturePtr &texture)
+        void BaseEntity::SetTexture(const core::TexturePtr &texture, bool reset_entity_type)
         {
             if (texture)
             {
                 _texture = texture;
 
-                _entity_type = EntityType::Textured;
+                if (reset_entity_type)
+                {
+                    _entity_type = EntityType::Textured;
+                }
             }
         }
 
