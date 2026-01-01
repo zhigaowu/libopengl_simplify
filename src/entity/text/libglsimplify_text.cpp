@@ -101,6 +101,7 @@ namespace gl_simplify {
 
         void Text::Render()
         {
+            // 渲染由渲染器批处理完成，这里不需要实现
         }
     }
 }
